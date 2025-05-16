@@ -1,34 +1,41 @@
 using UnityEngine;
 
-
 public class PhysicalObject : MonoBehaviour
 {
     public PhysicalMaterial materialPreset;
-    public float mass = 1f; // user-defined
+
+    public float mass = 1f;
+    public Vector3 velocity;
+    public Vector3 forceAccumulator;
+
+    public float radius; // for spheres only
+
+    public enum ShapeType { Sphere, AABB }
+    public ShapeType shape;
 
     private float dragCoefficient;
-    public Vector3 velocity;
+
+    public bool isStatic = false;
 
     void Start()
     {
-        if (materialPreset != null)
-        {
-            dragCoefficient = materialPreset.dragCoefficient;
-        }
-        else
-        {
-            dragCoefficient = 1f;
-        }
+        dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
     }
 
     void FixedUpdate()
     {
-        Vector3 gravity = SimulationEnvironment.Instance.GetGravity();
-        ApplyForce(gravity * mass);
+        if (isStatic) return;
 
+        ApplyGravity();
         ApplyAirResistance();
 
         transform.position += velocity * Time.fixedDeltaTime;
+    }
+
+    private void ApplyGravity()
+    {
+        Vector3 gravity = SimulationEnvironment.Instance.GetGravity();
+        ApplyForce(gravity * mass);
     }
 
     public void ApplyForce(Vector3 force)
