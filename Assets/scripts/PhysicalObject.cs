@@ -24,6 +24,7 @@ public class PhysicalObject : MonoBehaviour
 
     void FixedUpdate()
     {
+        Debug.Log($"{name} - isStatic: {isStatic}, velocity: {velocity}");
         if (isStatic) return;
 
         ApplyGravity();
@@ -40,6 +41,7 @@ public class PhysicalObject : MonoBehaviour
 
     public void ApplyForce(Vector3 force)
     {
+        if (isStatic) return;
         Vector3 acceleration = force / mass;
         velocity += acceleration * Time.fixedDeltaTime;
     }

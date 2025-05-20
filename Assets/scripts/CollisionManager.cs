@@ -87,7 +87,8 @@ public class CollisionManager : MonoBehaviour
         Vector3 normal = (b.transform.position - a.transform.position).normalized;
 
         float relativeVelocity = Vector3.Dot(b.velocity - a.velocity, normal);
-        if (relativeVelocity > 0) return; // already moving apart
+        //if (relativeVelocity > 0.01f) return; // only skip if clearly separating
+
 
         float restitution = 1f; // fully elastic
 
@@ -115,5 +116,20 @@ public class CollisionManager : MonoBehaviour
             if (!b.isStatic)
                 b.transform.position += correction * invMassB;
         }
+        if (!a.isStatic)
+        {
+            a.velocity = Vector3.zero;
+            a.isStatic = true;
+            Debug.Log($"{a.name} has been stopped and marked static");
+        }
+
+
+        if (!b.isStatic)
+        {
+            b.velocity = Vector3.zero;
+            b.isStatic = true;
+            Debug.Log($"{a.name} has been stopped and marked static");
+        }
+
     }
 }

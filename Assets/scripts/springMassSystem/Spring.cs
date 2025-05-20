@@ -7,14 +7,25 @@ public class Spring
     public float restLength;
     public float stiffness;
     public float damping;
+    public LineRenderer lineRenderer; // visual representation
 
-    public Spring(MassPoint a, MassPoint b, float stiffness, float damping)
+    public Spring(MassPoint a, MassPoint b, float stiffness, float damping, Transform lineParent, Material lineMaterial)
     {
         pointA = a;
         pointB = b;
         restLength = Vector3.Distance(a.position, b.position);
         this.stiffness = stiffness;
         this.damping = damping;
+
+        // Create the visual line
+        GameObject lineObj = new GameObject("SpringLine");
+        lineObj.transform.parent = lineParent;
+        lineRenderer = lineObj.AddComponent<LineRenderer>();
+        lineRenderer.material = lineMaterial;
+        lineRenderer.startWidth = 0.02f;
+        lineRenderer.endWidth = 0.02f;
+        lineRenderer.positionCount = 2;
+        lineRenderer.useWorldSpace = true;
     }
 
     public void ApplyForce(float deltaTime)
@@ -36,5 +47,16 @@ public class Spring
         pointA.ApplyForce(totalForce, deltaTime);
         pointB.ApplyForce(-totalForce, deltaTime);
     }
+
+    public void UpdateLine()
+    {
+        if (lineRenderer != null)
+        {
+            lineRenderer.SetPosition(0, pointA.position);
+            lineRenderer.SetPosition(1, pointB.position);
+        }
+    }
+
+
 
 }
