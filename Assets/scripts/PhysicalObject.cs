@@ -8,7 +8,8 @@ public class PhysicalObject : MonoBehaviour
     public Vector3 velocity;
     public Vector3 forceAccumulator;
 
-    public float radius; // for spheres only
+    [HideInInspector]
+    public float radius;
 
     public enum ShapeType { Sphere, AABB }
     public ShapeType shape;
@@ -20,11 +21,16 @@ public class PhysicalObject : MonoBehaviour
     void Start()
     {
         dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
+
+        if (shape == ShapeType.Sphere)
+        {
+            radius = transform.localScale.x / 2f;
+        }
     }
+
 
     void FixedUpdate()
     {
-        Debug.Log($"{name} - isStatic: {isStatic}, velocity: {velocity}");
         if (isStatic) return;
 
         ApplyGravity();
