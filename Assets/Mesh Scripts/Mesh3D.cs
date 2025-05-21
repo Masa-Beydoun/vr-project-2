@@ -1,25 +1,46 @@
-using System.Collections.Generic;
+using UnityEngine;
+using System;
 
 public class Mesh3D
 {
-    public List<Node> Nodes = new List<Node>();
-    public List<Tetrahedron> Elements = new List<Tetrahedron>();
+    public Node[] Nodes { get; private set; }
+    public Tetrahedron[] Elements { get; private set; }
 
-    public void GenerateSimpleCubeMesh()
+    public void GenerateCubeMesh(Vector3 size, Vector3 center)
     {
-        Nodes.Add(new Node(0, 0, 0, 0));
-        Nodes.Add(new Node(1, 1, 0, 0));
-        Nodes.Add(new Node(2, 1, 1, 0));
-        Nodes.Add(new Node(3, 0, 1, 0));
-        Nodes.Add(new Node(4, 0, 0, 1));
-        Nodes.Add(new Node(5, 1, 0, 1));
-        Nodes.Add(new Node(6, 1, 1, 1));
-        Nodes.Add(new Node(7, 0, 1, 1));
+        // Generate 8 nodes for a cube
+        float hx = size.x / 2, hy = size.y / 2, hz = size.z / 2;
+        Nodes = new Node[]
+        {
+            new Node(center + new Vector3(-hx, -hy, -hz)),
+            new Node(center + new Vector3(hx, -hy, -hz)),
+            new Node(center + new Vector3(hx, hy, -hz)),
+            new Node(center + new Vector3(-hx, hy, -hz)),
+            new Node(center + new Vector3(-hx, -hy, hz)),
+            new Node(center + new Vector3(hx, -hy, hz)),
+            new Node(center + new Vector3(hx, hy, hz)),
+            new Node(center + new Vector3(-hx, hy, hz))
+        };
 
-        Elements.Add(new Tetrahedron(0, 0, 1, 3, 4));
-        Elements.Add(new Tetrahedron(1, 1, 2, 3, 6));
-        Elements.Add(new Tetrahedron(2, 1, 3, 4, 6));
-        Elements.Add(new Tetrahedron(3, 3, 4, 6, 7));
-        Elements.Add(new Tetrahedron(4, 1, 4, 5, 6));
+        // Decompose cube into 5 tetrahedrons (optimal for FEM)
+        Elements = new Tetrahedron[]
+        {
+            new Tetrahedron(0, 1, 3, 4), // T0
+            new Tetrahedron(1, 2, 3, 6), // T1
+            new Tetrahedron(1, 3, 4, 6), // T2
+            new Tetrahedron(3, 4, 6, 7), // T3
+            new Tetrahedron(1, 4, 5, 6)  // T4
+        };
+    }
+
+    public Vector3[] GetTetCorners(Tetrahedron tet)
+    {
+        return new Vector3[]
+        {
+            Nodes[tet.NodeIndices[0]].Position,
+            Nodes[tet.NodeIndices[1]].Position,
+            Nodes[tet.NodeIndices[2]].Position,
+            Nodes[tet.NodeIndices[3]].Position
+        };
     }
 }

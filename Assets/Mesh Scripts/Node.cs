@@ -2,12 +2,10 @@ using UnityEngine;
 
 public class Node
 {
-    public int Id;
-    public Vector3 Position;
+    public Vector3 Position { get; set; }
 
-    public Node(int id, float x, float y, float z)
+    public Node(Vector3 position)
     {
-        Id = id;
-        Position = new Vector3(x, y, z);
+        Position = position;
     }
 }

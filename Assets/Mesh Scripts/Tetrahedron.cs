@@ -1,11 +1,12 @@
 public class Tetrahedron
 {
-    public int Id;
-    public int[] NodeIndices;
+    public int[] NodeIndices { get; }
 
-    public Tetrahedron(int id, int n0, int n1, int n2, int n3)
+    public Tetrahedron(params int[] indices)
     {
-        Id = id;
-        NodeIndices = new int[] { n0, n1, n2, n3 };
+        if (indices.Length != 4)
+            throw new System.ArgumentException("Tetrahedron requires exactly 4 node indices");
+        
+        NodeIndices = indices;
     }
 }
