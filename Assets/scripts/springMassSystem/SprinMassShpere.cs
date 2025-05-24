@@ -13,11 +13,16 @@ public class SpringMassSphere : MonoBehaviour
     private List<MassPoint> massPoints = new List<MassPoint>();
     private List<Spring> springs = new List<Spring>();
 
-    void Start()
+    void start()
     {
+        float radius = transform.localScale.x / 2f;
+        float step = (2f * radius) / (resolution - 1);
+        connectionRadius = step * Mathf.Sqrt(3); 
         GenerateMassPoints();
         ConnectSprings();
     }
+
+
 
     void FixedUpdate()
     {

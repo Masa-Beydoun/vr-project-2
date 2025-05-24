@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class SpringMassObject : MonoBehaviour
 {
-    public int resolution = 4; // Number of points per axis (e.g., 4x4x4 cube)
+    public int resolution = 4; 
     public float springStiffness = 500f;
     public float springDamping = 2f;
-    public float connectionRadius = 1f;
-    public GameObject pointPrefab; // For visualizing mass points
-    public Material springLineMaterial; // assign in Inspector
+    public GameObject pointPrefab; 
+    public Material springLineMaterial;
+    [SerializeField] private MassPointDragger dragger;
+
 
     private MassPoint[,,] massPointGrid;
     private List<Spring> springs = new List<Spring>();
@@ -92,9 +93,18 @@ public class SpringMassObject : MonoBehaviour
 
                     MassPoint mp = new MassPoint(worldPos, po);
                     massPointGrid[x, y, z] = mp;
+
+                    // Register the point for dragging
+                    if (dragger != null)
+                    {
+                        dragger.RegisterPoint(mp, go);
+                    }
+
                 }
             }
         }
+        massPointGrid[0, 0, 0].isPinned = true;
+        massPointGrid[0, 0, resolution - 1].isPinned = true;
 
     }
     
@@ -110,14 +120,14 @@ public class SpringMassObject : MonoBehaviour
                     MassPoint current = massPointGrid[x, y, z];
 
                     if(current == null) continue;
-                    // +X neighbor
+             
                     if (x + 1 < resolution && massPointGrid[x + 1, y, z]!=null)
                         springs.Add(new Spring(current, massPointGrid[x + 1, y, z], springStiffness, springDamping, this.transform, springLineMaterial));
-                    // +Y neighbor
+                     
                     if (y + 1 < resolution && massPointGrid[x,y+1,z]!=null)
                         springs.Add(new Spring(current, massPointGrid[x, y + 1, z], springStiffness, springDamping, this.transform, springLineMaterial));
 
-                    // +Z neighbor
+                     
                     if (z + 1 < resolution && massPointGrid[x, y, z + 1] != null)
                         springs.Add(new Spring(current, massPointGrid[x, y, z + 1], springStiffness, springDamping, this.transform, springLineMaterial));
 

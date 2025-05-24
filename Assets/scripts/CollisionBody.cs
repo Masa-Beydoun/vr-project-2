@@ -1,4 +1,4 @@
-// CollisionBody.cs
+
 using UnityEngine;
 
 [RequireComponent(typeof(PhysicalObject))]

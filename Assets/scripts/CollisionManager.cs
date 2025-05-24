@@ -56,7 +56,7 @@ public class CollisionManager : MonoBehaviour
 
         if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.Sphere)
         {
-            return SphereAABBCollision(b, a); // flip order
+            return SphereAABBCollision(b, a); 
         }
 
         return false;
@@ -69,7 +69,7 @@ public class CollisionManager : MonoBehaviour
         Vector3 boxMax = aabb.transform.position + boxHalfSize;
         Vector3 sphereCenter = sphere.transform.position;
 
-        // Clamp sphere center to the AABB
+        
         float x = Mathf.Max(boxMin.x, Mathf.Min(sphereCenter.x, boxMax.x));
         float y = Mathf.Max(boxMin.y, Mathf.Min(sphereCenter.y, boxMax.y));
         float z = Mathf.Max(boxMin.z, Mathf.Min(sphereCenter.z, boxMax.z));
@@ -87,10 +87,10 @@ public class CollisionManager : MonoBehaviour
         Vector3 normal = (b.transform.position - a.transform.position).normalized;
 
         float relativeVelocity = Vector3.Dot(b.velocity - a.velocity, normal);
-        //if (relativeVelocity > 0.01f) return; // only skip if clearly separating
+        //if (relativeVelocity > 0.01f) return; 
 
 
-        float restitution = 1f; // fully elastic
+        float restitution = 1f; 
 
         float invMassA = a.isStatic ? 0f : 1f / a.mass;
         float invMassB = b.isStatic ? 0f : 1f / b.mass;
@@ -104,7 +104,7 @@ public class CollisionManager : MonoBehaviour
         if (!b.isStatic)
             b.velocity += impulse * invMassB;
 
-        // Optional: separate spheres only
+        
         if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.Sphere)
         {
             float penetrationDepth = (a.radius + b.radius) - Vector3.Distance(a.transform.position, b.transform.position);

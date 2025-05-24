@@ -3,7 +3,7 @@ public class MassPoint
 {
     public Vector3 position;
     public Vector3 velocity;
-    public PhysicalObject physicalObject;  // reference to PhysicalObject
+    public PhysicalObject physicalObject;  
     public bool isPinned = false;
 
     public MassPoint(Vector3 position, PhysicalObject physicalObject)

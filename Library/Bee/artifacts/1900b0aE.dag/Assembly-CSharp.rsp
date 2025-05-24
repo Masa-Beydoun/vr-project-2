@@ -358,6 +358,8 @@
 "Assets/scripts/PhysicalObject.cs"
 "Assets/scripts/SimulationEnvironment.cs"
 "Assets/scripts/springMassSystem/MassPoint.cs"
+"Assets/scripts/springMassSystem/MassPointDragger.cs"
+"Assets/scripts/springMassSystem/PointHandle.cs"
 "Assets/scripts/springMassSystem/Spring.cs"
 "Assets/scripts/springMassSystem/SpringMassCube.cs"
 "Assets/scripts/springMassSystem/SprinMassShpere.cs"

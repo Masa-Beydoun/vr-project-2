@@ -7,7 +7,11 @@ public class Spring
     public float restLength;
     public float stiffness;
     public float damping;
-    public LineRenderer lineRenderer; // visual representation
+    public LineRenderer lineRenderer;
+    private float currentForceMagnitude = 0f;
+    private static float observedMaxForce = 1f;
+
+
 
     public Spring(MassPoint a, MassPoint b, float stiffness, float damping, Transform lineParent, Material lineMaterial)
     {
@@ -17,7 +21,6 @@ public class Spring
         this.stiffness = stiffness;
         this.damping = damping;
 
-        // Create the visual line
         GameObject lineObj = new GameObject("SpringLine");
         lineObj.transform.parent = lineParent;
         lineRenderer = lineObj.AddComponent<LineRenderer>();
@@ -30,6 +33,8 @@ public class Spring
 
     public void ApplyForce(float deltaTime)
     {
+        
+
         Vector3 delta = pointB.position - pointA.position;
         float currentLength = delta.magnitude;
         if (currentLength == 0) return;
@@ -46,16 +51,29 @@ public class Spring
 
         pointA.ApplyForce(totalForce, deltaTime);
         pointB.ApplyForce(-totalForce, deltaTime);
+        currentForceMagnitude = force.magnitude;
+
+        // Update global max if needed
+        if (currentForceMagnitude > observedMaxForce)
+            observedMaxForce = currentForceMagnitude;
     }
 
     public void UpdateLine()
     {
-        if (lineRenderer != null)
-        {
-            lineRenderer.SetPosition(0, pointA.position);
-            lineRenderer.SetPosition(1, pointB.position);
-        }
+        // Use observedMaxForce instead of fixed maxForce
+        float t = Mathf.Clamp01(currentForceMagnitude / observedMaxForce);
+        float hue = Mathf.Lerp(0f, 0.8f, t);
+        Color springColor = Color.HSVToRGB(hue, 1f, 1f);
+
+        lineRenderer.material.color = springColor;
+
+        lineRenderer.SetPosition(0, pointA.position);
+        lineRenderer.SetPosition(1, pointB.position);
+
+
     }
+
+
 
 
 
