@@ -1,0 +1,169 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\My\\Projects\\VR Project\\vr-project-solids\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\collisionmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\collisionmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\broadphasealgorithms\\broadphasemethod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\broadphasealgorithms\\broadphasemethod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\broadphasealgorithms\\sweepandprune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\broadphasealgorithms\\sweepandprune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\broadphasealgorithms\\uniformgrid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\broadphasealgorithms\\uniformgrid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|c:\\my\\projects\\vr project\\vr-project-solids\\assets\\scripts\\broadphasealgorithms\\octree.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\broadphasealgorithms\\octree.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\broadphasealgorithms\\octreenode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\broadphasealgorithms\\octreenode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\broadphasealgorithms\\ibroadphase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\broadphasealgorithms\\ibroadphase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\springmasssystem\\masspoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\springmasssystem\\masspoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|C:\\My\\Projects\\VR Project\\vr-project-solids\\assets\\scripts\\broadphasealgorithms\\boundingprojection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{463EBD4B-BC9F-2F07-F657-E03E0ACC6B82}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\broadphasealgorithms\\boundingprojection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IBroadPhase.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\IBroadPhase.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\BroadPhaseAlgorithms\\IBroadPhase.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\IBroadPhase.cs",
+              "RelativeToolTip": "Assets\\scripts\\BroadPhaseAlgorithms\\IBroadPhase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T14:09:36.001Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SweepAndPrune.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\SweepAndPrune.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\BroadPhaseAlgorithms\\SweepAndPrune.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\SweepAndPrune.cs",
+              "RelativeToolTip": "Assets\\scripts\\BroadPhaseAlgorithms\\SweepAndPrune.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T14:19:54.591Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UniformGrid.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\UniformGrid.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\BroadPhaseAlgorithms\\UniformGrid.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\UniformGrid.cs",
+              "RelativeToolTip": "Assets\\scripts\\BroadPhaseAlgorithms\\UniformGrid.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T14:01:16.907Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CollisionManager.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\CollisionManager.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\CollisionManager.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\CollisionManager.cs",
+              "RelativeToolTip": "Assets\\scripts\\CollisionManager.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAQwCIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T20:14:47.44Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BroadPhaseMethod.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\BroadPhaseMethod.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\BroadPhaseAlgorithms\\BroadPhaseMethod.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\BroadPhaseMethod.cs",
+              "RelativeToolTip": "Assets\\scripts\\BroadPhaseAlgorithms\\BroadPhaseMethod.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T13:54:41.251Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Octree.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\Octree.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\BroadPhaseAlgorithms\\Octree.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\Octree.cs",
+              "RelativeToolTip": "Assets\\scripts\\BroadPhaseAlgorithms\\Octree.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAA6wBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T19:28:45.908Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "OctreeNode.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\OctreeNode.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\BroadPhaseAlgorithms\\OctreeNode.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\OctreeNode.cs",
+              "RelativeToolTip": "Assets\\scripts\\BroadPhaseAlgorithms\\OctreeNode.cs",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAkwFMAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T19:25:43.309Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "MassPoint.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "RelativeToolTip": "Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T14:20:24.302Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "BoundingProjection.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\BoundingProjection.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\BroadPhaseAlgorithms\\BoundingProjection.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\BroadPhaseAlgorithms\\BoundingProjection.cs",
+              "RelativeToolTip": "Assets\\scripts\\BroadPhaseAlgorithms\\BoundingProjection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T13:58:51.554Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
