@@ -358,11 +358,9 @@
 "Assets/scripts/PhysicalObject.cs"
 "Assets/scripts/SimulationEnvironment.cs"
 "Assets/scripts/springMassSystem/MassPoint.cs"
-"Assets/scripts/springMassSystem/MassPointDragger.cs"
-"Assets/scripts/springMassSystem/PointHandle.cs"
+"Assets/scripts/springMassSystem/MassPointController.cs"
 "Assets/scripts/springMassSystem/Spring.cs"
-"Assets/scripts/springMassSystem/SpringMassCube.cs"
-"Assets/scripts/springMassSystem/SprinMassShpere.cs"
+"Assets/scripts/springMassSystem/SpringMassObject.cs"
 -langversion:9.0
 /deterministic
 /optimize+

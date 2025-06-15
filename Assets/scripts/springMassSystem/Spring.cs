@@ -5,11 +5,14 @@ public class Spring
     public MassPoint pointA;
     public MassPoint pointB;
     public float restLength;
-    public float stiffness;
-    public float damping;
     public LineRenderer lineRenderer;
     private float currentForceMagnitude = 0f;
     private static float observedMaxForce = 1f;
+
+    [HideInInspector]
+    public float springStiffness;
+    [HideInInspector]
+    public float springDamping;
 
 
 
@@ -18,8 +21,8 @@ public class Spring
         pointA = a;
         pointB = b;
         restLength = Vector3.Distance(a.position, b.position);
-        this.stiffness = stiffness;
-        this.damping = damping;
+        this.springStiffness = stiffness;
+        this.springDamping = damping;
 
         GameObject lineObj = new GameObject("SpringLine");
         lineObj.transform.parent = lineParent;
@@ -30,6 +33,8 @@ public class Spring
         lineRenderer.positionCount = 2;
         lineRenderer.useWorldSpace = true;
     }
+
+
 
     public void ApplyForce(float deltaTime)
     {
@@ -42,10 +47,10 @@ public class Spring
         Vector3 direction = delta / currentLength;
         float displacement = currentLength - restLength;
 
-        Vector3 force = stiffness * displacement * direction;
+        Vector3 force = springStiffness * displacement * direction;
 
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
-        Vector3 dampingForce = damping * Vector3.Dot(relativeVelocity, direction) * direction;
+        Vector3 dampingForce = springDamping * Vector3.Dot(relativeVelocity, direction) * direction;
 
         Vector3 totalForce = force + dampingForce;
 
