@@ -1,4 +1,3 @@
-// SimulationEnvironment.cs
 using UnityEngine;
 
 public class SimulationEnvironment : MonoBehaviour
@@ -17,11 +16,13 @@ public class SimulationEnvironment : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(gameObject); // destroy the whole GameObject
         }
         else
         {
             Instance = this;
+            // Optional: Uncomment if it should persist across scenes
+            // DontDestroyOnLoad(gameObject);
         }
     }
 

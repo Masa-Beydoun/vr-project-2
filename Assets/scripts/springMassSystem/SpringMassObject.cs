@@ -4,7 +4,10 @@ using UnityEngine;
 public enum MassShapeType
 {
     Cube,
-    Sphere
+    Sphere,
+    Cylinder,
+    Capsule,
+    Other
 }
 
 public class SpringMassSystem : MonoBehaviour
@@ -22,6 +25,16 @@ public class SpringMassSystem : MonoBehaviour
 
     private float connectionRadius;
 
+    [Header("Shape Dimensions")]
+    public float radius = 0.5f;     // for Sphere, Cylinder, Capsule
+    public float height = 1.0f;     // for Cylinder, Capsule
+    public float width = 1.0f;      // for Cube
+    public float depth = 1.0f;      // for Cube
+
+    [Header("For Mesh Input")]
+    public GameObject meshSourceObject;
+
+
     void Start()
     {
         switch (shapeType)
@@ -34,7 +47,26 @@ public class SpringMassSystem : MonoBehaviour
                 GenerateSpherePoints();
                 ConnectSphereSprings();
                 break;
+            case MassShapeType.Cylinder:
+                GenerateCylinderPoints();
+                ConnectSphereSprings();
+                break;
+            case MassShapeType.Capsule:
+                GenerateCapsulePoints();
+                ConnectSphereSprings();
+                break;
+            case MassShapeType.Other:
+                if (meshSourceObject != null)
+                {
+                    GenerateMeshPoints(meshSourceObject);
+                }
+                else
+                {
+                    Debug.LogError("You selected 'Other' but did not assign a meshSourceObject.");
+                }
+                break;
         }
+        Debug.Log("Mesh source: " + meshSourceObject);
 
         //if (allpoints.count > 0 && allpoints[0].physicalobject != null && allpoints[0].physicalobject.materialpreset != null)
         //{
@@ -68,11 +100,10 @@ public class SpringMassSystem : MonoBehaviour
 
     void GenerateCubePoints()
     {
-        Vector3 size = transform.localScale;
-        float dx = size.x / (resolution - 1);
-        float dy = size.y / (resolution - 1);
-        float dz = size.z / (resolution - 1);
-        Vector3 origin = transform.position - size / 2;
+        float dx = width / (resolution - 1);
+        float dy = height / (resolution - 1);
+        float dz = depth / (resolution - 1);
+        Vector3 origin = transform.position - new Vector3(width, height, depth) / 2f;
 
         cubeGrid = new MassPoint[resolution, resolution, resolution];
 
@@ -85,9 +116,8 @@ public class SpringMassSystem : MonoBehaviour
                     Vector3 localPos = new Vector3(x * dx, y * dy, z * dz);
                     Vector3 worldPos = origin + localPos;
 
-
                     GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
-                    go.transform.localScale = Vector3.one * 0.05f;  // fixed size, ignore parent scale
+                    go.transform.localScale = Vector3.one * 0.05f;
 
                     var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                     var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
@@ -99,13 +129,16 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
 
-        // Pin corners
-        cubeGrid[0, 0, 0].isPinned = true;
-        cubeGrid[0, 0, resolution - 1].isPinned = true;
     }
+
 
     void ConnectCubeSprings()
     {
+        float dx = width / (resolution - 1);
+        float dy = height / (resolution - 1);
+        float dz = depth / (resolution - 1);
+        connectionRadius = Mathf.Sqrt(dx * dx + dy * dy + dz * dz) * 1.1f; // Slightly over nearest-neighbor distance
+
         for (int x = 0; x < resolution; x++)
         {
             for (int y = 0; y < resolution; y++)
@@ -113,25 +146,42 @@ public class SpringMassSystem : MonoBehaviour
                 for (int z = 0; z < resolution; z++)
                 {
                     var current = cubeGrid[x, y, z];
-                    if (x + 1 < resolution)
-                        springs.Add(new Spring(current, cubeGrid[x + 1, y, z], springStiffness, springDamping, transform, springLineMaterial));
-                    if (y + 1 < resolution)
-                        springs.Add(new Spring(current, cubeGrid[x, y + 1, z], springStiffness, springDamping, transform, springLineMaterial));
-                    if (z + 1 < resolution)
-                        springs.Add(new Spring(current, cubeGrid[x, y, z + 1], springStiffness, springDamping, transform, springLineMaterial));
-                    // Add full 3D diagonals (volume diagonals)
-                    if (x + 1 < resolution && y + 1 < resolution && z + 1 < resolution)
-                        springs.Add(new Spring(current, cubeGrid[x + 1, y + 1, z + 1], springStiffness, springDamping, transform, springLineMaterial));
 
+                    for (int i = -1; i <= 1; i++)
+                    {
+                        for (int j = -1; j <= 1; j++)
+                        {
+                            for (int k = -1; k <= 1; k++)
+                            {
+                                if (i == 0 && j == 0 && k == 0) continue;
+
+                                int nx = x + i;
+                                int ny = y + j;
+                                int nz = z + k;
+
+                                if (nx >= 0 && nx < resolution && ny >= 0 && ny < resolution && nz >= 0 && nz < resolution)
+                                {
+                                    var neighbor = cubeGrid[nx, ny, nz];
+                                    float distance = Vector3.Distance(current.position, neighbor.position);
+
+                                    if (distance <= connectionRadius)
+                                    {
+                                        springs.Add(new Spring(current, neighbor, springStiffness, springDamping, transform, springLineMaterial));
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
+
     void GenerateSpherePoints()
     {
-        float radius = transform.localScale.x / 2f;
-        float step = (2f * radius) / (resolution - 1);
+        float r = radius;  
+        float step = (2f * r) / (resolution - 1);
         connectionRadius = step * Mathf.Sqrt(3);
         Vector3 center = transform.position;
 
@@ -173,4 +223,189 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
     }
+
+
+    void GenerateCylinderPoints()
+    {
+        float r = radius;
+        float h = height;
+
+        float stepXZ = (2f * r) / (resolution - 1); // step for X and Z
+        float stepY = h / (resolution - 1);         // step for Y
+
+        connectionRadius = Mathf.Max(stepXZ, stepY) * Mathf.Sqrt(3);
+        Vector3 center = transform.position;
+
+        for (int x = 0; x < resolution; x++)
+        {
+            for (int y = 0; y < resolution; y++)
+            {
+                for (int z = 0; z < resolution; z++)
+                {
+                    Vector3 offset = new Vector3(
+                        x * stepXZ - r,
+                        y * stepY - h / 2f,
+                        z * stepXZ - r
+                    );
+
+                    // Only allow points within the vertical cylinder
+                    Vector2 horizontal = new Vector2(offset.x, offset.z);
+                    if (horizontal.magnitude <= r)
+                    {
+                        Vector3 worldPos = center + offset;
+                        GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
+
+                        Vector3 parentScale = transform.lossyScale;
+                        go.transform.localScale = new Vector3(
+                            0.1f / parentScale.x,
+                            0.1f / parentScale.y,
+                            0.1f / parentScale.z
+                        );
+
+                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+                        var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
+                        go.AddComponent<CollisionBody>();
+
+                        MassPoint mp = new MassPoint(worldPos, po);
+                        controller.Initialize(mp);
+                        allPoints.Add(mp);
+                    }
+                }
+            }
+        }
+    }
+
+
+    void GenerateCapsulePoints()
+    {
+        float r = radius;
+        float h = height;
+        float cylinderHeight = h - 2f * r;
+        if (cylinderHeight < 0f) cylinderHeight = 0f; // Prevent negative height
+
+        float stepXZ = (2f * r) / (resolution - 1);      // horizontal step
+        float stepY = h / (resolution - 1);              // vertical step
+        connectionRadius = Mathf.Max(stepXZ, stepY) * Mathf.Sqrt(3);
+        Vector3 center = transform.position;
+
+        for (int x = 0; x < resolution; x++)
+        {
+            for (int y = 0; y < resolution; y++)
+            {
+                for (int z = 0; z < resolution; z++)
+                {
+                    float offsetY = y * stepY - h / 2f;
+                    Vector3 offset = new Vector3(
+                        x * stepXZ - r,
+                        offsetY,
+                        z * stepXZ - r
+                    );
+
+                    Vector2 horizontal = new Vector2(offset.x, offset.z);
+                    float vert = offset.y;
+
+                    // Inside middle cylinder section
+                    bool insideCylinder = Mathf.Abs(vert) <= cylinderHeight / 2f && horizontal.sqrMagnitude <= r * r;
+
+                    // Inside hemispherical caps
+                    float capY = Mathf.Abs(vert) - cylinderHeight / 2f;
+                    bool insideCaps = (capY >= 0) && (horizontal.sqrMagnitude + capY * capY <= r * r);
+
+                    if (insideCylinder || insideCaps)
+                    {
+                        Vector3 worldPos = center + offset;
+                        GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
+
+                        Vector3 parentScale = transform.lossyScale;
+                        go.transform.localScale = new Vector3(
+                            0.1f / parentScale.x,
+                            0.1f / parentScale.y,
+                            0.1f / parentScale.z
+                        );
+
+                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+                        var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
+                        go.AddComponent<CollisionBody>();
+
+                        MassPoint mp = new MassPoint(worldPos, po);
+                        controller.Initialize(mp);
+                        allPoints.Add(mp);
+                    }
+                }
+            }
+        }
+    }
+
+    public void GenerateMeshPoints(GameObject meshObject)
+    {
+        MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
+        if (meshFilters.Length == 0)
+        {
+            Debug.LogError("No MeshFilters found!");
+            return;
+        }
+
+        float minDistance = 0.01f;
+        HashSet<Vector3> seen = new HashSet<Vector3>();
+
+        foreach (MeshFilter mf in meshFilters)
+        {
+            Mesh mesh = mf.sharedMesh;
+            if (mesh == null) continue;
+
+            foreach (Vector3 localPos in mesh.vertices)
+            {
+                Vector3 worldPos = mf.transform.TransformPoint(localPos);
+
+                // Avoid duplicates
+                bool isDuplicate = false;
+                foreach (Vector3 existing in seen)
+                {
+                    if (Vector3.Distance(existing, worldPos) < minDistance)
+                    {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (isDuplicate) continue;
+                seen.Add(worldPos);
+
+                GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
+                go.transform.localScale = Vector3.one * 0.05f;
+
+                var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+                var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
+                go.AddComponent<CollisionBody>();
+
+                MassPoint mp = new MassPoint(worldPos, po);
+                controller.Initialize(mp);
+                allPoints.Add(mp);
+            }
+        }
+
+        ConnectMeshSprings();
+    }
+
+
+    void ConnectMeshSprings()
+    {
+        for (int i = 0; i < allPoints.Count; i++)
+        {
+            for (int j = i + 1; j < allPoints.Count; j++)
+            {
+                if (allPoints[i] != allPoints[j] &&
+                    Vector3.Distance(allPoints[i].position, allPoints[j].position) > 0.0001f &&
+                    Vector3.Distance(allPoints[i].position, allPoints[j].position) <= connectionRadius)
+                {
+                    springs.Add(new Spring(allPoints[i], allPoints[j], springStiffness, springDamping, transform, springLineMaterial));
+                }
+
+            }
+        }
+        Debug.Log("Connected total springs: " + springs.Count);
+
+    }
+
+
+
 }

@@ -1,0 +1,474 @@
+Using pre-set license
+Built from '2022.3/staging' branch; Version is '2022.3.60f1 (5f63fdee6d95) revision 6251517'; Using compiler version '192829333'; Build Type 'Release'
+OS: 'Windows 11  (10.0.22631) 64bit Core' Language: 'en' Physical Memory: 15791 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 1
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\2022.3.60f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker9
+-projectPath
+C:/Users/Masa/VR-Project
+-logFile
+Logs/AssetImportWorker9.log
+-srvPort
+51044
+Successfully changed project path to: C:/Users/Masa/VR-Project
+C:/Users/Masa/VR-Project
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [8764]  Target information:
+
+Player connection [8764]  * "[IP] 192.168.85.1 [Port] 0 [Flags] 2 [Guid] 3240726009 [EditorId] 3240726009 [Version] 1048832 [Id] WindowsEditor(7,LAPTOP-AOC9EG3G) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [8764]  * "[IP] 192.168.182.1 [Port] 0 [Flags] 2 [Guid] 3240726009 [EditorId] 3240726009 [Version] 1048832 [Id] WindowsEditor(7,LAPTOP-AOC9EG3G) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [8764]  * "[IP] 10.2.0.2 [Port] 0 [Flags] 2 [Guid] 3240726009 [EditorId] 3240726009 [Version] 1048832 [Id] WindowsEditor(7,LAPTOP-AOC9EG3G) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [8764]  * "[IP] 172.20.10.2 [Port] 0 [Flags] 2 [Guid] 3240726009 [EditorId] 3240726009 [Version] 1048832 [Id] WindowsEditor(7,LAPTOP-AOC9EG3G) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [8764] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8764] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+Refreshing native plugins compatible for Editor in 14.18 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2022.3.60f1 (5f63fdee6d95)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2022.3.60f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/Masa/VR-Project/Assets
+GfxDevice: creating device client; threaded=0; jobified=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3050 Laptop GPU (ID=0x25a5)
+    Vendor:   NVIDIA
+    VRAM:     3964 MB
+    Driver:   32.0.15.6607
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2022.3.60f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2022.3.60f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2022.3.60f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56404
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.60f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.006231 seconds.
+- Loaded All Assemblies, in  0.443 seconds
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.271 seconds
+Domain Reload Profiling: 712ms
+	BeginReloadAssembly (188ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (36ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (56ms)
+	LoadAllAssembliesAndSetupDomain (150ms)
+		LoadAssemblies (187ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (147ms)
+			TypeCache.Refresh (146ms)
+				TypeCache.ScanAssembly (135ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (272ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (222ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (10ms)
+			SetLoadedEditorAssemblies (8ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (2ms)
+			ProcessInitializeOnLoadAttributes (154ms)
+			ProcessInitializeOnLoadMethodAttributes (48ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+========================================================================
+Worker process is ready to serve import requests
+Caller must complete domain reload
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  0.650 seconds
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.555 seconds
+Domain Reload Profiling: 1202ms
+	BeginReloadAssembly (160ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (5ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (27ms)
+	RebuildCommonClasses (35ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (42ms)
+	LoadAllAssembliesAndSetupDomain (399ms)
+		LoadAssemblies (319ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (172ms)
+			TypeCache.Refresh (152ms)
+				TypeCache.ScanAssembly (134ms)
+			ScanForSourceGeneratedMonoScriptInfo (14ms)
+			ResolveRequiredComponents (5ms)
+	FinalizeReload (556ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (416ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (7ms)
+			SetLoadedEditorAssemblies (3ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (65ms)
+			ProcessInitializeOnLoadAttributes (306ms)
+			ProcessInitializeOnLoadMethodAttributes (26ms)
+			AfterProcessingInitializeOnLoad (8ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (6ms)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.07 seconds
+Refreshing native plugins compatible for Editor in 4.64 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 3145 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 19 unused Assets / (54.8 KB). Loaded Objects now: 3628.
+Memory consumption went from 129.6 MB to 129.6 MB.
+Total: 3.403600 ms (FindLiveObjects: 0.418600 ms CreateObjectMapping: 0.136800 ms MarkObjects: 2.706800 ms  DeleteObjects: 0.138800 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-codec-MediaFoundation-h265: 746d11721c4dcdbdad8f713fa42b33f4 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Prepare
+Caller must complete domain reload
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  0.535 seconds
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.964 seconds
+Domain Reload Profiling: 1496ms
+	BeginReloadAssembly (184ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (5ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (36ms)
+	RebuildCommonClasses (43ms)
+	RebuildNativeTypeToScriptingClass (18ms)
+	initialDomainReloadingComplete (36ms)
+	LoadAllAssembliesAndSetupDomain (251ms)
+		LoadAssemblies (345ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (14ms)
+			TypeCache.Refresh (7ms)
+				TypeCache.ScanAssembly (0ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (6ms)
+	FinalizeReload (964ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (370ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (6ms)
+			SetLoadedEditorAssemblies (3ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (56ms)
+			ProcessInitializeOnLoadAttributes (277ms)
+			ProcessInitializeOnLoadMethodAttributes (20ms)
+			AfterProcessingInitializeOnLoad (7ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (6ms)
+Refreshing native plugins compatible for Editor in 4.80 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 3138 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 14 unused Assets / (28.5 KB). Loaded Objects now: 3631.
+Memory consumption went from 128.8 MB to 128.7 MB.
+Total: 3.557600 ms (FindLiveObjects: 0.346700 ms CreateObjectMapping: 0.099800 ms MarkObjects: 3.047300 ms  DeleteObjects: 0.061900 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-codec-MediaFoundation-h265: 746d11721c4dcdbdad8f713fa42b33f4 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 107614.199113 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_09_summer.prefab
+  artifactKey: Guid(a8c65c6073464ca4f9a70e33b0944e29) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_09_summer.prefab using Guid(a8c65c6073464ca4f9a70e33b0944e29) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '69d0c581b661e0225c09de11d2301017') in 0.149396 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 41
+========================================================================
+Received Import Request.
+  Time since last request: 0.000100 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_autumn.prefab
+  artifactKey: Guid(e2c24967d66be6f4ba0fec3e6494eb7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_autumn.prefab using Guid(e2c24967d66be6f4ba0fec3e6494eb7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '9e66d4e6be02dd64dc08e9d21f7432e4') in 0.023302 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 26
+========================================================================
+Received Import Request.
+  Time since last request: 0.000037 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_gradient_green.prefab
+  artifactKey: Guid(2936bedc39e5f4c4c94081ba4da450cc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_gradient_green.prefab using Guid(2936bedc39e5f4c4c94081ba4da450cc) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '5fed298a4ef2e7ea172606b29f42a908') in 0.023283 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 26
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_gradient_blue.prefab
+  artifactKey: Guid(7634530a700875c4eac2cfeec75138ce) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_gradient_blue.prefab using Guid(7634530a700875c4eac2cfeec75138ce) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '4a1aa7e5df65dfc5ac152d9f2adb457d') in 0.023034 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 26
+========================================================================
+Received Import Request.
+  Time since last request: 0.102733 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_summer_blue.prefab
+  artifactKey: Guid(a425cb2aaf8fa124cb0fe75b7b7513f7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_summer_blue.prefab using Guid(a425cb2aaf8fa124cb0fe75b7b7513f7) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: 'afd663e4ba67f15d0b72fb7662b91b80') in 0.023341 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 26
+========================================================================
+Received Import Request.
+  Time since last request: 0.000049 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_winter.prefab
+  artifactKey: Guid(7a97f35638234094890e40674b465b57) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_winter.prefab using Guid(7a97f35638234094890e40674b465b57) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '54d1624d9ef9550310f331cedb66dd07') in 0.021119 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 26
+========================================================================
+Received Import Request.
+  Time since last request: 0.000026 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_winter_gradient_blue.prefab
+  artifactKey: Guid(140fd5f7ca612a54db373dc4e043807a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_winter_gradient_blue.prefab using Guid(140fd5f7ca612a54db373dc4e043807a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '5db27d5959eea355e117fd0ab3efa33b') in 0.021712 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 26
+========================================================================
+Received Import Request.
+  Time since last request: 0.000048 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_winter_gradient_yellow.prefab
+  artifactKey: Guid(7a692ce9bdb7c90448768886be2adbb5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_19_winter_gradient_yellow.prefab using Guid(7a692ce9bdb7c90448768886be2adbb5) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '6a3673e26213c23299f929b7eacc6c82') in 0.024092 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 26
+========================================================================
+Received Import Request.
+  Time since last request: 0.234262 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_autumn.prefab
+  artifactKey: Guid(ffb5d1c3ed796204c8c5c7d9c33b1dcf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_autumn.prefab using Guid(ffb5d1c3ed796204c8c5c7d9c33b1dcf) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: 'ce7865e7b3a42da4c4ffd8b6cef4be1c') in 0.019637 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000044 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_gradient_green.prefab
+  artifactKey: Guid(5978b6130ff8bd547abfb998d1a6d2b0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_gradient_green.prefab using Guid(5978b6130ff8bd547abfb998d1a6d2b0) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '9cf28bf956b6373e17b0b5801c74f189') in 0.018018 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000027 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_gradient_yellow.prefab
+  artifactKey: Guid(dac0f44b0c9ef2c4aa0d24f6825b33f4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_gradient_yellow.prefab using Guid(dac0f44b0c9ef2c4aa0d24f6825b33f4) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: 'dfdf6a32001c174e8828bc786cad3cb0') in 0.020244 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_summer_blue.prefab
+  artifactKey: Guid(6059ce3910892d548804e9dd89d3019c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_summer_blue.prefab using Guid(6059ce3910892d548804e9dd89d3019c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '45fb4d428fdbd0605b7a76c0cfe98221') in 0.022588 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.023629 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_winter_blue.prefab
+  artifactKey: Guid(af8560f139a0db2429457748ab4fbbeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_winter_blue.prefab using Guid(af8560f139a0db2429457748ab4fbbeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '4a2f9730e28a5e91ef2c2c908782bd57') in 0.018369 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000848 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_winter_gradient_green.prefab
+  artifactKey: Guid(49052e6a27179924cba9ebd393b7f3ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_winter_gradient_green.prefab using Guid(49052e6a27179924cba9ebd393b7f3ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: 'd1bf6151779e2c5ffc03318fb5940213') in 0.019739 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000026 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_winter_gradient_yellow.prefab
+  artifactKey: Guid(c85a5b91ee2298d4cb56bfd283a6d920) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_21_winter_gradient_yellow.prefab using Guid(c85a5b91ee2298d4cb56bfd283a6d920) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '7c6012a8fdaa10286b69cacd40c0c995') in 0.022596 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000030 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_autumn.prefab
+  artifactKey: Guid(5656b97b5c9896745a7a072be99a7fde) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_autumn.prefab using Guid(5656b97b5c9896745a7a072be99a7fde) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: 'c08681282f41e1a93455039caf0898db') in 0.022331 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.052748 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_gradient_red.prefab
+  artifactKey: Guid(0d55c613a2ca4ba42a28164c0b6735af) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_gradient_red.prefab using Guid(0d55c613a2ca4ba42a28164c0b6735af) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '0cab503ca6cd023f78858417393e0941') in 0.019033 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000027 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_summer.prefab
+  artifactKey: Guid(dacf2e240ad874a42950ac4b473ad322) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_summer.prefab using Guid(dacf2e240ad874a42950ac4b473ad322) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '56b2f4dc3504975de5874dff4642cef3') in 0.019832 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000025 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_summer_red.prefab
+  artifactKey: Guid(197bcd3c804957e40a3ff1edab0cbdee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_28_summer_red.prefab using Guid(197bcd3c804957e40a3ff1edab0cbdee) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '9691730f18354077c97c93385f0be691') in 0.019499 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000034 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_41_gradient_blue.prefab
+  artifactKey: Guid(6cc098154b931da42b05037d6b08e142) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_41_gradient_blue.prefab using Guid(6cc098154b931da42b05037d6b08e142) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: 'ed733ef0573dd30de0405f0875f87ba7') in 0.022664 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.073114 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_41_gradient_yellow.prefab
+  artifactKey: Guid(559cfd4c1139b3741a09069cd2e9b04a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_41_gradient_yellow.prefab using Guid(559cfd4c1139b3741a09069cd2e9b04a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '765ac518af8926c5e6148922ff212772') in 0.019639 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+========================================================================
+Received Import Request.
+  Time since last request: 0.000051 seconds.
+  path: Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_41_summer_blue.prefab
+  artifactKey: Guid(407325f805016ec4a9a7ef4a71019b3c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Low_Poly_Nature_Pack_Lite/Prefabs/Trees/Tree_41_summer_blue.prefab using Guid(407325f805016ec4a9a7ef4a71019b3c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 16 workers.
+ -> (artifact id: '05670472eb8e7bd7723d564a0125768e') in 0.022936 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 20
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+TcpMessagingSession - receive error: operation aborted. errorcode: 995, details: The I/O operation has been aborted because of either a thread exit or an application request.
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0
