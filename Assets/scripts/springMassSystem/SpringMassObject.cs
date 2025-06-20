@@ -338,6 +338,7 @@ public class SpringMassSystem : MonoBehaviour
 
     public void GenerateMeshPoints(GameObject meshObject)
     {
+        
         MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
         if (meshFilters.Length == 0)
         {
@@ -389,6 +390,7 @@ public class SpringMassSystem : MonoBehaviour
 
     void ConnectMeshSprings()
     {
+        connectionRadius = int.MaxValue;
         for (int i = 0; i < allPoints.Count; i++)
         {
             for (int j = i + 1; j < allPoints.Count; j++)
