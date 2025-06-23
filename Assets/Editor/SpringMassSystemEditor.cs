@@ -12,8 +12,33 @@ public class SpringMassSystemEditor : Editor
 
         system.shapeType = (MassShapeType)EditorGUILayout.EnumPopup("Shape Type", system.shapeType);
         system.resolution = EditorGUILayout.IntField("Resolution", system.resolution);
-        system.springStiffness = EditorGUILayout.FloatField("Spring Stiffness", system.springStiffness);
-        system.springDamping = EditorGUILayout.FloatField("Spring Damping", system.springDamping);
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Spring Configuration", EditorStyles.boldLabel);
+
+        system.useCustomSpringProperties = EditorGUILayout.Toggle("Use Custom Properties", system.useCustomSpringProperties);
+
+        if (system.useCustomSpringProperties)
+        {
+            system.springStiffness = EditorGUILayout.FloatField("Spring Stiffness", system.springStiffness);
+            system.springDamping = EditorGUILayout.FloatField("Spring Damping", system.springDamping);
+        }
+        else
+        {
+            system.materialPreset = (PhysicalMaterial)EditorGUILayout.ObjectField("Material Preset", system.materialPreset, typeof(PhysicalMaterial), false);
+
+            if (system.materialPreset != null)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Preview from Material", EditorStyles.boldLabel);
+                EditorGUILayout.FloatField("Stiffness", system.materialPreset.stiffness);
+                EditorGUILayout.FloatField("Density", system.materialPreset.Density);
+                EditorGUILayout.FloatField("Drag Coefficient", system.materialPreset.dragCoefficient);
+                EditorGUILayout.FloatField("Bounciness", system.materialPreset.bounciness);
+                EditorGUILayout.FloatField("Fracture Threshold", system.materialPreset.fractureThreshold);
+            }
+        }
+
         system.pointPrefab = (GameObject)EditorGUILayout.ObjectField("Point Prefab", system.pointPrefab, typeof(GameObject), false);
         system.springLineMaterial = (Material)EditorGUILayout.ObjectField("Spring Line Material", system.springLineMaterial, typeof(Material), false);
 
@@ -40,8 +65,14 @@ public class SpringMassSystemEditor : Editor
 
             case MassShapeType.Other:
                 system.meshSourceObject = (GameObject)EditorGUILayout.ObjectField("Mesh Source Object", system.meshSourceObject, typeof(GameObject), true);
-                system.k = EditorGUILayout.IntField("K nearest neighbors", system.k);
+                system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
+
+                if (system.meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
+                {
+                    system.k = EditorGUILayout.IntField("K Nearest Neighbors", system.k);
+                }
                 break;
+
         }
 
         if (GUI.changed)

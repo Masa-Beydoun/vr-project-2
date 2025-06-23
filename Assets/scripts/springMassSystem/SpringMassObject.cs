@@ -9,6 +9,19 @@ public enum MassShapeType
     Capsule,
     Other
 }
+public enum SpringParameterMode
+{
+    Manual,
+    UseMaterial
+}
+
+public enum MeshConnectionMode
+{
+    KNearestNeighbors,
+    TriangleEdges,
+    Hybrid
+}
+
 
 public class SpringMassSystem : MonoBehaviour
 {
@@ -35,9 +48,23 @@ public class SpringMassSystem : MonoBehaviour
     public GameObject meshSourceObject;
     public int k;
 
+    [Header("Spring Settings")]
+    public bool useCustomSpringProperties = true;
+    public PhysicalMaterial materialPreset;
+
+
+    [Header("Mesh Connection Settings")]
+    public MeshConnectionMode meshConnectionMode = MeshConnectionMode.KNearestNeighbors;
+
 
     void Start()
     {
+
+        if (!useCustomSpringProperties && materialPreset != null)
+        {
+            springStiffness = materialPreset.stiffness;
+            springDamping = 2f; // Optional: you can add damping to the material class if needed
+        }
         switch (shapeType)
         {
             case MassShapeType.Cube:
@@ -67,7 +94,6 @@ public class SpringMassSystem : MonoBehaviour
                 }
                 break;
         }
-        
 
         //if (allpoints.count > 0 && allpoints[0].physicalobject != null && allpoints[0].physicalobject.materialpreset != null)
         //{
@@ -76,6 +102,14 @@ public class SpringMassSystem : MonoBehaviour
         //    springdamping = 2f; // if you want damping from materialpreset, add it there too.
         //} 
     }
+
+    void LogConnectionSummary(string algorithmName)
+    {
+        Debug.Log($"Object: {gameObject.name} | Algorithm used: {algorithmName} | " +
+                  $"Mass points: {allPoints.Count} | Springs: {springs.Count}");
+    }
+
+
 
     void FixedUpdate()
     {
@@ -333,7 +367,7 @@ public class SpringMassSystem : MonoBehaviour
         }
     }
 
-    public void GenerateMeshPoints(GameObject meshObject)
+    void GenerateMeshPoints(GameObject meshObject)
     {
         
         MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
@@ -381,62 +415,140 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
 
-        ConnectMeshSprings_KNN(k); // or 8, 10 depending on density
+        if (meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
+        {
+            ConnectMeshSprings_KNN(k);
+            LogConnectionSummary("Accelerated KNN");
+        }
+        else if (meshConnectionMode == MeshConnectionMode.TriangleEdges)
+        {
+            ConnectMeshSprings_Triangles(meshFilters);
+            LogConnectionSummary("Triangle Edges");
+
+        }
+        else if (meshConnectionMode == MeshConnectionMode.Hybrid)  
+        {
+            ConnectMeshSprings_Hybrid(k);
+            LogConnectionSummary("Hybrid (Triangles + KNN)");
+
+        }
 
     }
+
+
+    void ConnectMeshSprings_Triangles(MeshFilter[] meshFilters)
+    {
+        Dictionary<Vector3, MassPoint> pointLookup = new Dictionary<Vector3, MassPoint>();
+        foreach (var mp in allPoints)
+        {
+            pointLookup[mp.position] = mp;
+        }
+
+        int connections = 0;
+
+        foreach (MeshFilter mf in meshFilters)
+        {
+            Mesh mesh = mf.sharedMesh;
+            if (mesh == null) continue;
+
+            Vector3[] vertices = mesh.vertices;
+            int[] triangles = mesh.triangles;
+
+            for (int i = 0; i < triangles.Length; i += 3)
+            {
+                Vector3 v0 = mf.transform.TransformPoint(vertices[triangles[i]]);
+                Vector3 v1 = mf.transform.TransformPoint(vertices[triangles[i + 1]]);
+                Vector3 v2 = mf.transform.TransformPoint(vertices[triangles[i + 2]]);
+
+                TryAddSpring(v0, v1);
+                TryAddSpring(v1, v2);
+                TryAddSpring(v2, v0);
+            }
+        }
+
+        void TryAddSpring(Vector3 a, Vector3 b)
+        {
+            if (!pointLookup.ContainsKey(a) || !pointLookup.ContainsKey(b)) return;
+
+            MassPoint p1 = pointLookup[a];
+            MassPoint p2 = pointLookup[b];
+
+            if (p1 != null && p2 != null && p1 != p2)
+            {
+                springs.Add(new Spring(p1, p2, springStiffness, springDamping, transform, springLineMaterial));
+                connections++;
+            }
+        }
+
+    }
+
+    void ConnectMeshSprings_Hybrid(int k)
+    {
+        // Clear previous springs first if needed
+        springs.Clear();
+
+        // Connect triangle edges for surface cohesion
+        MeshFilter[] meshFilters = meshSourceObject.GetComponentsInChildren<MeshFilter>();
+        ConnectMeshSprings_Triangles(meshFilters);
+
+        // Connect KNN springs for volume/internal tension
+        ConnectMeshSprings_KNN(k);
+
+    }
+
 
     void ConnectMeshSprings_KNN(int k)
     {
         int n = allPoints.Count;
+        HashSet<(int, int)> connectedPairs = new HashSet<(int, int)>();
+
+        if (n == 0) return;
+
+        // Estimate cell size roughly as average nearest distance
+        float cellSize = EstimateConnectionRadius(allPoints);
+
+        SpatialGrid grid = new SpatialGrid(cellSize);
+
+        // Insert points into grid
+        for (int i = 0; i < n; i++)
+        {
+            grid.AddPoint(allPoints[i].position, i);
+        }
 
         for (int i = 0; i < n; i++)
         {
-            MassPoint current = allPoints[i];
-            List<(float, int)> distances = new List<(float, int)>();
+            var current = allPoints[i];
+            List<(float dist, int idx)> candidates = new List<(float, int)>();
 
-            for (int j = 0; j < n; j++)
+            var neighborIndices = grid.GetNeighbors(current.position);
+
+            foreach (int j in neighborIndices)
             {
                 if (i == j) continue;
                 float dist = Vector3.Distance(current.position, allPoints[j].position);
-                distances.Add((dist, j));
+                candidates.Add((dist, j));
             }
 
-            distances.Sort((a, b) => a.Item1.CompareTo(b.Item1));
+            candidates.Sort((a, b) => a.dist.CompareTo(b.dist));
 
-            for (int d = 0; d < Mathf.Min(k, distances.Count); d++)
+            for (int c = 0; c < Mathf.Min(k, candidates.Count); c++)
             {
-                int neighborIndex = distances[d].Item2;
-                springs.Add(new Spring(current, allPoints[neighborIndex], springStiffness, springDamping, transform, springLineMaterial));
-            }
-        }
+                int neighborIdx = candidates[c].idx;
+                int minIdx = Mathf.Min(i, neighborIdx);
+                int maxIdx = Mathf.Max(i, neighborIdx);
 
-        Debug.Log($"Connected {springs.Count} springs using KNN (k = {k}) \n " +
-            $"Mesh source: { meshSourceObject} \n " +
-            $"Created {allPoints.Count} mass point \n " +
-            $"next \n");
-
-    }
-
-    /*
-    void ConnectMeshSprings()
-    {
-        connectionRadius = EstimateConnectionRadius(allPoints);
-        for (int i = 0; i < allPoints.Count; i++)
-        {
-            for (int j = i + 1; j < allPoints.Count; j++)
-            {
-                if (allPoints[i] != allPoints[j] &&
-                    Vector3.Distance(allPoints[i].position, allPoints[j].position) > 0.0001f &&
-                    Vector3.Distance(allPoints[i].position, allPoints[j].position) <= connectionRadius)
+                if (!connectedPairs.Contains((minIdx, maxIdx)))
                 {
-                    springs.Add(new Spring(allPoints[i], allPoints[j], springStiffness, springDamping, transform, springLineMaterial));
+                    springs.Add(new Spring(current, allPoints[neighborIdx], springStiffness, springDamping, transform, springLineMaterial));
+                    connectedPairs.Add((minIdx, maxIdx));
                 }
-
             }
         }
-        Debug.Log("Connected total springs: " + springs.Count);
 
+        
     }
+
+    // Estimate average nearest neighbor distance (same as in your commented code)
     float EstimateConnectionRadius(List<MassPoint> points)
     {
         float totalNearest = 0f;
@@ -455,8 +567,7 @@ public class SpringMassSystem : MonoBehaviour
             count++;
         }
 
-        return (totalNearest / count) * 1.2f; // add a small buffer
+        return (totalNearest / count) * 1.2f; // small buffer
     }
-    */
 
 }

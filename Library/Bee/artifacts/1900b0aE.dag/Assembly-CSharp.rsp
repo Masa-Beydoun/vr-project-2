@@ -360,6 +360,7 @@
 "Assets/scripts/SimulationEnvironment.cs"
 "Assets/scripts/springMassSystem/MassPoint.cs"
 "Assets/scripts/springMassSystem/MassPointController.cs"
+"Assets/scripts/springMassSystem/SpatialGrid.cs"
 "Assets/scripts/springMassSystem/Spring.cs"
 "Assets/scripts/springMassSystem/SpringMassObject.cs"
 -langversion:9.0

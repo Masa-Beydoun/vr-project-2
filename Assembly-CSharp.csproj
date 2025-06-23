@@ -62,6 +62,7 @@
     <Compile Include="Assets\scripts\springMassSystem\Spring.cs" />
     <Compile Include="Assets\scripts\PhysicalObject.cs" />
     <Compile Include="Assets\scripts\CollisionManager.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\SpatialGrid.cs" />
     <Compile Include="Assets\scripts\CollisionBody.cs" />
     <Compile Include="Assets\scripts\CollisionHandler.cs" />
     <Compile Include="Assets\scripts\springMassSystem\MassPoint.cs" />

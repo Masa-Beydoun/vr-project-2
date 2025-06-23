@@ -758,6 +758,9 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 0}
   k: 0
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!1001 &951317344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1014,6 +1017,9 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 0}
   k: 0
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!114 &1430292134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1078,7 +1084,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1495567081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1103,6 +1109,9 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 1709918717}
   k: 4
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!4 &1495567082
 Transform:
   m_ObjectHideFlags: 0
@@ -1159,6 +1168,9 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 1953962177}
   k: 3
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!4 &1551921919
 Transform:
   m_ObjectHideFlags: 0
@@ -1206,7 +1218,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1, y: 1, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1234,7 +1246,10 @@ MonoBehaviour:
   width: 1
   depth: 1
   meshSourceObject: {fileID: 415952376}
-  k: 6
+  k: 4
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 2
 --- !u!1001 &1730889384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1346,6 +1361,9 @@ MonoBehaviour:
   depth: 2
   meshSourceObject: {fileID: 0}
   k: 0
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!114 &1890435889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1471,6 +1489,9 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 0}
   k: 0
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!114 &1941609704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1624,6 +1645,9 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 45264140}
   k: 4
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!1 &2050290691
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,6 +1689,9 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 315835603}
   k: 4
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
 --- !u!4 &2050290693
 Transform:
   m_ObjectHideFlags: 0
@@ -1735,7 +1762,10 @@ MonoBehaviour:
   width: 1
   depth: 1
   meshSourceObject: {fileID: 1298921294}
-  k: 6
+  k: 4
+  useCustomSpringProperties: 0
+  materialPreset: {fileID: 11400000, guid: 9db27100363fa3743962a20a6886730d, type: 2}
+  meshConnectionMode: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
