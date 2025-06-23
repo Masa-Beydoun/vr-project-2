@@ -132,4 +132,13 @@ public class CollisionManager : MonoBehaviour
         }
 
     }
+
+
+    void OnCollisionDetected(MassPoint a, MassPoint b, Vector3 normal)
+    {
+        var handler = FindObjectOfType<CollisionHandler>();
+        if (handler != null)
+            handler.HandleCollision(a, b, normal);
+    }
+
 }

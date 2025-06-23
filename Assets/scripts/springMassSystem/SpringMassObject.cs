@@ -33,6 +33,7 @@ public class SpringMassSystem : MonoBehaviour
 
     [Header("For Mesh Input")]
     public GameObject meshSourceObject;
+    public int k;
 
 
     void Start()
@@ -66,7 +67,7 @@ public class SpringMassSystem : MonoBehaviour
                 }
                 break;
         }
-        Debug.Log("Mesh source: " + meshSourceObject);
+        
 
         //if (allpoints.count > 0 && allpoints[0].physicalobject != null && allpoints[0].physicalobject.materialpreset != null)
         //{
@@ -131,7 +132,6 @@ public class SpringMassSystem : MonoBehaviour
 
     }
 
-
     void ConnectCubeSprings()
     {
         float dx = width / (resolution - 1);
@@ -176,7 +176,6 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
     }
-
 
     void GenerateSpherePoints()
     {
@@ -223,7 +222,6 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
     }
-
 
     void GenerateCylinderPoints()
     {
@@ -274,7 +272,6 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
     }
-
 
     void GenerateCapsulePoints()
     {
@@ -372,7 +369,7 @@ public class SpringMassSystem : MonoBehaviour
                 seen.Add(worldPos);
 
                 GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
-                go.transform.localScale = Vector3.one * 0.05f;
+                go.transform.localScale = Vector3.one * 0.1f;
 
                 var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                 var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
@@ -384,13 +381,46 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
 
-        ConnectMeshSprings();
+        ConnectMeshSprings_KNN(k); // or 8, 10 depending on density
+
     }
 
+    void ConnectMeshSprings_KNN(int k)
+    {
+        int n = allPoints.Count;
 
+        for (int i = 0; i < n; i++)
+        {
+            MassPoint current = allPoints[i];
+            List<(float, int)> distances = new List<(float, int)>();
+
+            for (int j = 0; j < n; j++)
+            {
+                if (i == j) continue;
+                float dist = Vector3.Distance(current.position, allPoints[j].position);
+                distances.Add((dist, j));
+            }
+
+            distances.Sort((a, b) => a.Item1.CompareTo(b.Item1));
+
+            for (int d = 0; d < Mathf.Min(k, distances.Count); d++)
+            {
+                int neighborIndex = distances[d].Item2;
+                springs.Add(new Spring(current, allPoints[neighborIndex], springStiffness, springDamping, transform, springLineMaterial));
+            }
+        }
+
+        Debug.Log($"Connected {springs.Count} springs using KNN (k = {k}) \n " +
+            $"Mesh source: { meshSourceObject} \n " +
+            $"Created {allPoints.Count} mass point \n " +
+            $"next \n");
+
+    }
+
+    /*
     void ConnectMeshSprings()
     {
-        connectionRadius = int.MaxValue;
+        connectionRadius = EstimateConnectionRadius(allPoints);
         for (int i = 0; i < allPoints.Count; i++)
         {
             for (int j = i + 1; j < allPoints.Count; j++)
@@ -407,7 +437,26 @@ public class SpringMassSystem : MonoBehaviour
         Debug.Log("Connected total springs: " + springs.Count);
 
     }
+    float EstimateConnectionRadius(List<MassPoint> points)
+    {
+        float totalNearest = 0f;
+        int count = 0;
 
+        foreach (var p in points)
+        {
+            float nearest = float.MaxValue;
+            foreach (var q in points)
+            {
+                if (p == q) continue;
+                float dist = Vector3.Distance(p.position, q.position);
+                if (dist < nearest) nearest = dist;
+            }
+            totalNearest += nearest;
+            count++;
+        }
 
+        return (totalNearest / count) * 1.2f; // add a small buffer
+    }
+    */
 
 }

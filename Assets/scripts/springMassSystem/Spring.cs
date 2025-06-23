@@ -69,7 +69,7 @@ public class Spring
 
     public void UpdateLine()
     {
-        Debug.Log("Updating line between: " + pointA.position + " and " + pointB.position);
+        //Debug.Log("Updating line between: " + pointA.position + " and " + pointB.position);
 
         if (broken)
         {

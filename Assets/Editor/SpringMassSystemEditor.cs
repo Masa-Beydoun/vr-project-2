@@ -40,6 +40,7 @@ public class SpringMassSystemEditor : Editor
 
             case MassShapeType.Other:
                 system.meshSourceObject = (GameObject)EditorGUILayout.ObjectField("Mesh Source Object", system.meshSourceObject, typeof(GameObject), true);
+                system.k = EditorGUILayout.IntField("K nearest neighbors", system.k);
                 break;
         }
 
