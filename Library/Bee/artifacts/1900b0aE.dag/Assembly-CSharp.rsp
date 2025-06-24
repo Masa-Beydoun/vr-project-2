@@ -353,16 +353,16 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.60f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.60f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/scripts/CollisionBody.cs"
+"Assets/scripts/CollisionHandler.cs"
 "Assets/scripts/CollisionManager.cs"
 "Assets/scripts/materials/PhysicalMaterial.cs"
 "Assets/scripts/PhysicalObject.cs"
 "Assets/scripts/SimulationEnvironment.cs"
 "Assets/scripts/springMassSystem/MassPoint.cs"
-"Assets/scripts/springMassSystem/MassPointDragger.cs"
-"Assets/scripts/springMassSystem/PointHandle.cs"
+"Assets/scripts/springMassSystem/MassPointController.cs"
+"Assets/scripts/springMassSystem/SpatialGrid.cs"
 "Assets/scripts/springMassSystem/Spring.cs"
-"Assets/scripts/springMassSystem/SpringMassCube.cs"
-"Assets/scripts/springMassSystem/SprinMassShpere.cs"
+"Assets/scripts/springMassSystem/SpringMassObject.cs"
 -langversion:9.0
 /deterministic
 /optimize+

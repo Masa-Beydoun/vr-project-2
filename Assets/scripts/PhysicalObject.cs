@@ -5,29 +5,22 @@ public class PhysicalObject : MonoBehaviour
     public PhysicalMaterial materialPreset;
 
     public float mass = 1f;
+    public float radius = 0.1f;     // Used for spheres
+    public Vector3 size = Vector3.one * 0.1f; // Used for cubes
+
     public Vector3 velocity;
     public Vector3 forceAccumulator;
-
-    [HideInInspector]
-    public float radius;
 
     public enum ShapeType { Sphere, AABB }
     public ShapeType shape;
 
     private float dragCoefficient;
-
     public bool isStatic = false;
 
     void Start()
     {
         dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
-
-        if (shape == ShapeType.Sphere)
-        {
-            radius = transform.localScale.x / 2f;
-        }
     }
-
 
     void FixedUpdate()
     {
@@ -35,7 +28,6 @@ public class PhysicalObject : MonoBehaviour
 
         ApplyGravity();
         ApplyAirResistance();
-
         transform.position += velocity * Time.fixedDeltaTime;
     }
 
@@ -55,7 +47,7 @@ public class PhysicalObject : MonoBehaviour
     private void ApplyAirResistance()
     {
         float airDensity = SimulationEnvironment.Instance.GetAirDensity();
-        float area = transform.localScale.x * transform.localScale.z;
+        float area = size.x * size.z; // assume cube front face
         float speed = velocity.magnitude;
 
         if (speed <= 0.01f) return;

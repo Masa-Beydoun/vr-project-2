@@ -18,7 +18,7 @@ public class CollisionManager : MonoBehaviour
 
                 if (IsColliding(objA, objB))
                 {
-                    Debug.Log($"Collision detected between {objA.name} and {objB.name}");
+                    //Debug.Log($"Collision detected between {objA.name} and {objB.name}");
                     ResolveCollision(objA, objB);
                 }
             }
@@ -120,7 +120,7 @@ public class CollisionManager : MonoBehaviour
         {
             a.velocity = Vector3.zero;
             a.isStatic = true;
-            Debug.Log($"{a.name} has been stopped and marked static");
+            //Debug.Log($"{a.name} has been stopped and marked static");
         }
 
 
@@ -128,8 +128,17 @@ public class CollisionManager : MonoBehaviour
         {
             b.velocity = Vector3.zero;
             b.isStatic = true;
-            Debug.Log($"{a.name} has been stopped and marked static");
+            //Debug.Log($"{a.name} has been stopped and marked static");
         }
 
     }
+
+
+    void OnCollisionDetected(MassPoint a, MassPoint b, Vector3 normal)
+    {
+        var handler = FindObjectOfType<CollisionHandler>();
+        if (handler != null)
+            handler.HandleCollision(a, b, normal);
+    }
+
 }
