@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.3654118, y: 31.54866, z: -1.1554842}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -99,9 +99,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   mass: 1
+  radius: 0
+  size: {x: 0.1, y: 0.1, z: 0.1}
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
-  radius: 0
   shape: 1
   isStatic: 0
 --- !u!114 &8525151706135609279
