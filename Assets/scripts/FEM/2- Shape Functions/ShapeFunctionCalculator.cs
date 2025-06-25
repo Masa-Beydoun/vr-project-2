@@ -20,8 +20,11 @@ public static class ShapeFunctionCalculator
 
         ShapeFunction[] shapeFunctions = new ShapeFunction[4];
 
+
+        // for linear formula later 
         Matrix4x4 Ainv = A.inverse;
 
+        // do it for the 4 tetrahedron nodes  
         for (int i = 0; i < 4; i++)
         {
             Vector4 rhs = Vector4.zero;
@@ -32,6 +35,8 @@ public static class ShapeFunctionCalculator
             shapeFunctions[i] = new ShapeFunction(coeffs.x, coeffs.y, coeffs.z, coeffs.w);
         }
 
+
+        // رجعنا مصفوفة فيها 4 دوال شكل، كل وحدة تمثل تأثير الرأس على أي نقطة داخل العنصر.
         return shapeFunctions;
     }
 }

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: test
+  m_EditorClassIdentifier: Assembly-CSharp::PhysicalMaterial
+  materialName: 
+  Density: 1
+  dragCoefficient: 1
+  bounciness: 0.3
+  stiffness: 1000
+  fractureThreshold: 10000
+  youngsModulus: 200000
+  poissonRatio: 0.3
