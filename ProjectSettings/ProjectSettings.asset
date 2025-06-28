@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: 017733ed49a39b14db7cec8ab00ce2cb
+  productGUID: 4730d553cd534504699c73b16493ec0a
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: mesh - one
+  productName: VR-Project
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -681,14 +681,14 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: mesh - one
+  metroPackageName: VR-Project
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: mesh - one
+  metroApplicationDescription: VR-Project
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -758,11 +758,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 685858d6-b47b-4cc2-811d-557c7b481768
+  cloudProjectId: 19ed0b4e-794f-4e0a-896b-0f35024dbe55
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: mesh - one
-  organizationId: hiba77moh
+  projectName: VR-Project
+  organizationId: unity_766492f94bbd37d2991c
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
