@@ -761,6 +761,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!1001 &951317344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1020,6 +1022,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!114 &1430292134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,7 +1102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeType: 4
-  resolution: 20
+  resolution: 60
   springStiffness: 500
   springDamping: 2
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
@@ -1111,7 +1115,9 @@ MonoBehaviour:
   k: 4
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
-  meshConnectionMode: 0
+  meshConnectionMode: 2
+  useVoxelFilling: 1
+  generationMode: 5
 --- !u!4 &1495567082
 Transform:
   m_ObjectHideFlags: 0
@@ -1171,6 +1177,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!4 &1551921919
 Transform:
   m_ObjectHideFlags: 0
@@ -1236,7 +1244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeType: 4
-  resolution: 5
+  resolution: 30
   springStiffness: 500
   springDamping: 2
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
@@ -1250,6 +1258,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 2
+  useVoxelFilling: 0
+  generationMode: 0
 --- !u!1001 &1730889384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1364,6 +1374,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!114 &1890435889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1492,6 +1504,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!114 &1941609704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1648,6 +1662,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!1 &2050290691
 GameObject:
   m_ObjectHideFlags: 0
@@ -1692,6 +1708,8 @@ MonoBehaviour:
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!4 &2050290693
 Transform:
   m_ObjectHideFlags: 0
@@ -1723,7 +1741,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2094849916
 Transform:
   m_ObjectHideFlags: 0
@@ -1752,7 +1770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeType: 4
-  resolution: 5
+  resolution: 3
   springStiffness: 500
   springDamping: 2
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
@@ -1766,6 +1784,8 @@ MonoBehaviour:
   useCustomSpringProperties: 0
   materialPreset: {fileID: 11400000, guid: 9db27100363fa3743962a20a6886730d, type: 2}
   meshConnectionMode: 2
+  useVoxelFilling: 1
+  generationMode: 6
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

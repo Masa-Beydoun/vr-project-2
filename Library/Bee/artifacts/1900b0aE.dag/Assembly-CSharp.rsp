@@ -358,11 +358,17 @@
 "Assets/scripts/materials/PhysicalMaterial.cs"
 "Assets/scripts/PhysicalObject.cs"
 "Assets/scripts/SimulationEnvironment.cs"
+"Assets/scripts/springMassSystem/DuplicateDetector.cs"
+"Assets/scripts/springMassSystem/FloodFillPreview.cs"
 "Assets/scripts/springMassSystem/MassPoint.cs"
 "Assets/scripts/springMassSystem/MassPointController.cs"
+"Assets/scripts/springMassSystem/MeshInsideChecker.cs"
+"Assets/scripts/springMassSystem/MeshIntersectionTester.cs"
 "Assets/scripts/springMassSystem/SpatialGrid.cs"
 "Assets/scripts/springMassSystem/Spring.cs"
 "Assets/scripts/springMassSystem/SpringMassObject.cs"
+"Assets/scripts/springMassSystem/SpringPairComparer.cs"
+"Assets/scripts/springMassSystem/VoxelFiller.cs"
 -langversion:9.0
 /deterministic
 /optimize+

@@ -28,5 +28,19 @@ public class MassPoint
         if (isPinned) return;
         position += velocity * deltaTime;
     }
+
+
+
+    public override bool Equals(object obj)
+    {
+        if (obj is MassPoint other)
+            return Vector3.Distance(this.position, other.position) < 1e-4f;
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return position.GetHashCode();
+    }
 }
     

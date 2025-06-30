@@ -60,15 +60,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\scripts\springMassSystem\Spring.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\DuplicateDetector.cs" />
     <Compile Include="Assets\scripts\PhysicalObject.cs" />
     <Compile Include="Assets\scripts\CollisionManager.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\SpringPairComparer.cs" />
     <Compile Include="Assets\scripts\springMassSystem\SpatialGrid.cs" />
     <Compile Include="Assets\scripts\CollisionBody.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\FloodFillPreview.cs" />
     <Compile Include="Assets\scripts\CollisionHandler.cs" />
     <Compile Include="Assets\scripts\springMassSystem\MassPoint.cs" />
     <Compile Include="Assets\scripts\springMassSystem\MassPointController.cs" />
     <Compile Include="Assets\scripts\springMassSystem\SpringMassObject.cs" />
     <Compile Include="Assets\scripts\SimulationEnvironment.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\VoxelFiller.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\MeshIntersectionTester.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\MeshInsideChecker.cs" />
     <Compile Include="Assets\scripts\materials\PhysicalMaterial.cs" />
   </ItemGroup>
   <ItemGroup>
