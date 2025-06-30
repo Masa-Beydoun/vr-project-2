@@ -1770,7 +1770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeType: 4
-  resolution: 3
+  resolution: 10
   springStiffness: 500
   springDamping: 2
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
@@ -1785,7 +1785,7 @@ MonoBehaviour:
   materialPreset: {fileID: 11400000, guid: 9db27100363fa3743962a20a6886730d, type: 2}
   meshConnectionMode: 2
   useVoxelFilling: 1
-  generationMode: 6
+  generationMode: 8
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

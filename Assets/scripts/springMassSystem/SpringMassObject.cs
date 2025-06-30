@@ -23,7 +23,8 @@ public enum MeshPointGenerationMode
     MeshVerticesAndVolume,
     FillUsingFloodFill,
     FillUsingOctreeBasic,
-    FillUsingOctreeAdvanced
+    FillUsingOctreeAdvanced,
+    FillUsingSDFDistanceOnly
 }
 
 public enum MeshConnectionMode
@@ -139,6 +140,10 @@ public class SpringMassSystem : MonoBehaviour
                     else if (generationMode == MeshPointGenerationMode.FillUsingOctreeAdvanced)
                     {
                         VoxelFiller.FillUsingOctreeAdvanced(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                    }
+                    else if (generationMode == MeshPointGenerationMode.FillUsingSDFDistanceOnly)
+                    {
+                        VoxelFiller.FillUsingSDFDistanceOnly(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
                     }
 
 

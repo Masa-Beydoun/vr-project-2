@@ -1,6 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public struct Triangle
+{
+    public Vector3 v0, v1, v2;
+    public Triangle(Vector3 a, Vector3 b, Vector3 c)
+    {
+        v0 = a; v1 = b; v2 = c;
+    }
+}
+
 public static class VoxelFiller
 {
     public static void FillUsingBounds(GameObject meshObject, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, int resolution)
@@ -346,4 +356,120 @@ public static class VoxelFiller
         Subdivide(worldBounds, 0);
         Debug.Log($"[Octree Advanced] Spawned {filledCount} adaptive points at depth {maxDepth}");
     }
+
+
+    public static void FillUsingSDFDistanceOnly(GameObject meshObject, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, int resolution)
+    {
+        Bounds bounds = CalculateWorldBounds(meshObject);
+        float voxelSize = 1f / resolution;
+
+        MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
+        List<Triangle> allTriangles = new List<Triangle>();
+
+        // Collect triangles from all meshes
+        foreach (var mf in meshFilters)
+        {
+            Mesh mesh = mf.sharedMesh;
+            if (mesh == null) continue;
+
+            Vector3[] vertices = mesh.vertices;
+            int[] tris = mesh.triangles;
+            Matrix4x4 localToWorld = mf.transform.localToWorldMatrix;
+
+            for (int i = 0; i < tris.Length; i += 3)
+            {
+                Vector3 v0 = localToWorld.MultiplyPoint3x4(vertices[tris[i]]);
+                Vector3 v1 = localToWorld.MultiplyPoint3x4(vertices[tris[i + 1]]);
+                Vector3 v2 = localToWorld.MultiplyPoint3x4(vertices[tris[i + 2]]);
+                allTriangles.Add(new Triangle(v0, v1, v2));
+            }
+        }
+
+        int count = 0;
+
+        for (float x = bounds.min.x; x < bounds.max.x; x += voxelSize)
+        {
+            for (float y = bounds.min.y; y < bounds.max.y; y += voxelSize)
+            {
+                for (float z = bounds.min.z; z < bounds.max.z; z += voxelSize)
+                {
+                    Vector3 p = new Vector3(x, y, z);
+                    float minDist = float.MaxValue;
+
+                    foreach (var tri in allTriangles)
+                    {
+                        float d = DistanceToTriangle(p, tri);
+                        if (d < minDist)
+                            minDist = d;
+                    }
+
+                    // You could visualize this or filter by max distance
+                    GameObject go = Object.Instantiate(pointPrefab, p, Quaternion.identity, parent);
+                    go.transform.localScale = Vector3.one * voxelSize;
+
+                    var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+                    var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
+                    go.AddComponent<CollisionBody>();
+
+                    MassPoint mp = new MassPoint(p, po);
+                    mp.signedDistance = minDist; // You can store this in MassPoint if needed
+                    controller.Initialize(mp);
+                    uniquePoints.Add(mp);
+                    count++;
+                }
+            }
+        }
+
+        Debug.Log($"[SDF Distance] Spawned {count} points.");
+    }
+
+    public static float DistanceToTriangle(Vector3 point, Triangle tri)
+    {
+        Vector3 edge0 = tri.v1 - tri.v0;
+        Vector3 edge1 = tri.v2 - tri.v0;
+        Vector3 v0ToPoint = point - tri.v0;
+
+        float a = Vector3.Dot(edge0, edge0);
+        float b = Vector3.Dot(edge0, edge1);
+        float c = Vector3.Dot(edge1, edge1);
+        float d = Vector3.Dot(edge0, v0ToPoint);
+        float e = Vector3.Dot(edge1, v0ToPoint);
+
+        float det = a * c - b * b;
+        float s = b * e - c * d;
+        float t = b * d - a * e;
+
+        if (s + t <= det)
+        {
+            if (s < 0)
+            {
+                if (t < 0) return (point - tri.v0).magnitude; // region 4
+                else return DistanceToSegment(point, tri.v0, tri.v2); // region 3
+            }
+            else if (t < 0) return DistanceToSegment(point, tri.v0, tri.v1); // region 5
+            else return DistanceToPlane(point, tri); // region 0
+        }
+        else
+        {
+            if (s < 0) return DistanceToSegment(point, tri.v1, tri.v2); // region 2
+            else if (t < 0) return DistanceToSegment(point, tri.v0, tri.v1); // region 6
+            else return DistanceToSegment(point, tri.v1, tri.v2); // region 1
+        }
+    }
+
+    public static float DistanceToSegment(Vector3 p, Vector3 a, Vector3 b)
+    {
+        Vector3 ab = b - a;
+        float t = Mathf.Clamp01(Vector3.Dot(p - a, ab) / ab.sqrMagnitude);
+        Vector3 closest = a + t * ab;
+        return Vector3.Distance(p, closest);
+    }
+
+    public static float DistanceToPlane(Vector3 p, Triangle tri)
+    {
+        Vector3 normal = Vector3.Cross(tri.v1 - tri.v0, tri.v2 - tri.v0).normalized;
+        return Mathf.Abs(Vector3.Dot(p - tri.v0, normal));
+    }
+
+
 }

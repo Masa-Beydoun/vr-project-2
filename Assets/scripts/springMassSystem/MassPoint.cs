@@ -7,6 +7,8 @@ public class MassPoint
     public PhysicalObject physicalObject;
     public bool isPinned = false;
 
+    public float signedDistance;  // <-- Add this
+
     public MassPoint(Vector3 position, PhysicalObject physicalObject)
     {
         this.position = position;
