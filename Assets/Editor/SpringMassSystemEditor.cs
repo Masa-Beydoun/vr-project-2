@@ -1,5 +1,7 @@
 using UnityEditor;
 using UnityEngine;
+using System.Collections;
+
 
 [CustomEditor(typeof(SpringMassSystem))]
 public class SpringMassSystemEditor : Editor
@@ -65,13 +67,19 @@ public class SpringMassSystemEditor : Editor
 
             case MassShapeType.Other:
                 system.meshSourceObject = (GameObject)EditorGUILayout.ObjectField("Mesh Source Object", system.meshSourceObject, typeof(GameObject), true);
+
+                system.useVoxelFilling = EditorGUILayout.Toggle("Use Voxel Filling", system.useVoxelFilling);
+
                 system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
 
                 if (system.meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
                 {
                     system.k = EditorGUILayout.IntField("K Nearest Neighbors", system.k);
                 }
+                system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
+
                 break;
+
 
         }
 
