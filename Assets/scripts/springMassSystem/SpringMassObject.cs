@@ -14,6 +14,18 @@ public enum SpringParameterMode
     Manual,
     UseMaterial
 }
+public enum MeshPointGenerationMode
+{
+    UseMeshVertices,
+    FillUsingBounds,
+    FillUsingVolumeSampling,
+    MeshVerticesAndBounds,
+    MeshVerticesAndVolume,
+    FillUsingFloodFill,
+    FillUsingOctreeBasic,
+    FillUsingOctreeAdvanced,
+    FillUsingSDFDistanceOnly
+}
 
 public enum MeshConnectionMode
 {
@@ -57,6 +69,13 @@ public class SpringMassSystem : MonoBehaviour
     public MeshConnectionMode meshConnectionMode = MeshConnectionMode.KNearestNeighbors;
 
 
+    [Header("Voxel Settings")]
+    public bool useVoxelFilling = true;
+
+    [Header("Mesh Point Generation")]
+    public MeshPointGenerationMode generationMode = MeshPointGenerationMode.UseMeshVertices;
+
+
     void Start()
     {
 
@@ -86,7 +105,69 @@ public class SpringMassSystem : MonoBehaviour
             case MassShapeType.Other:
                 if (meshSourceObject != null)
                 {
-                    GenerateMeshPoints(meshSourceObject);
+                    // Use a HashSet to avoid duplicate points
+                    HashSet<MassPoint> uniquePoints = new HashSet<MassPoint>();
+                    allPoints.Clear();
+
+                    if (generationMode == MeshPointGenerationMode.UseMeshVertices ||
+                        generationMode == MeshPointGenerationMode.MeshVerticesAndBounds ||
+                        generationMode == MeshPointGenerationMode.MeshVerticesAndVolume)
+                    {
+                        GenerateMeshPoints(meshSourceObject, uniquePoints);
+                    }
+
+                    if (generationMode == MeshPointGenerationMode.FillUsingBounds ||
+                        generationMode == MeshPointGenerationMode.MeshVerticesAndBounds)
+                    {
+                        VoxelFiller.FillUsingBounds(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                    }
+
+                    if (generationMode == MeshPointGenerationMode.FillUsingVolumeSampling ||
+                        generationMode == MeshPointGenerationMode.MeshVerticesAndVolume)
+                    {
+                        VoxelFiller.FillUsingVolumeSampling(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                    }
+
+                    if(generationMode == MeshPointGenerationMode.FillUsingFloodFill)
+                    {
+                        VoxelFiller.FillUsingFloodFill(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+
+                    }
+                    if (generationMode == MeshPointGenerationMode.FillUsingOctreeBasic)
+                    {
+                        VoxelFiller.FillUsingOctreeBasic(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                    }
+                    else if (generationMode == MeshPointGenerationMode.FillUsingOctreeAdvanced)
+                    {
+                        VoxelFiller.FillUsingOctreeAdvanced(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                    }
+                    else if (generationMode == MeshPointGenerationMode.FillUsingSDFDistanceOnly)
+                    {
+                        VoxelFiller.FillUsingSDFDistanceOnly(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                    }
+
+
+
+                    // Copy uniquePoints into allPoints list
+                    allPoints = new List<MassPoint>(uniquePoints);
+
+                    // Connect springs
+                    if (meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
+                    {
+                        ConnectMeshSprings_KNN(k, new HashSet<(int, int)>());
+                        LogConnectionSummary("Accelerated KNN");
+                    }
+                    else if (meshConnectionMode == MeshConnectionMode.TriangleEdges)
+                    {
+                        var meshFilters = meshSourceObject.GetComponentsInChildren<MeshFilter>();
+                        ConnectMeshSprings_Triangles(meshFilters, new HashSet<(int, int)>());
+                        LogConnectionSummary("Triangle Edges");
+                    }
+                    else if (meshConnectionMode == MeshConnectionMode.Hybrid)
+                    {
+                        ConnectMeshSprings_Hybrid(k);
+                        LogConnectionSummary("Hybrid (Triangles + KNN)");
+                    }
                 }
                 else
                 {
@@ -95,12 +176,6 @@ public class SpringMassSystem : MonoBehaviour
                 break;
         }
 
-        //if (allpoints.count > 0 && allpoints[0].physicalobject != null && allpoints[0].physicalobject.materialpreset != null)
-        //{
-        //    var mat = allpoints[0].physicalobject.materialpreset;
-        //    springstiffness = mat.stiffness;
-        //    springdamping = 2f; // if you want damping from materialpreset, add it there too.
-        //} 
     }
 
     void LogConnectionSummary(string algorithmName)
@@ -108,8 +183,6 @@ public class SpringMassSystem : MonoBehaviour
         Debug.Log($"Object: {gameObject.name} | Algorithm used: {algorithmName} | " +
                   $"Mass points: {allPoints.Count} | Springs: {springs.Count}");
     }
-
-
 
     void FixedUpdate()
     {
@@ -213,7 +286,7 @@ public class SpringMassSystem : MonoBehaviour
 
     void GenerateSpherePoints()
     {
-        float r = radius;  
+        float r = radius;
         float step = (2f * r) / (resolution - 1);
         connectionRadius = step * Mathf.Sqrt(3);
         Vector3 center = transform.position;
@@ -367,9 +440,8 @@ public class SpringMassSystem : MonoBehaviour
         }
     }
 
-    void GenerateMeshPoints(GameObject meshObject)
+    void GenerateMeshPoints(GameObject meshObject, HashSet<MassPoint> uniquePoints)
     {
-        
         MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
         if (meshFilters.Length == 0)
         {
@@ -378,7 +450,7 @@ public class SpringMassSystem : MonoBehaviour
         }
 
         float minDistance = 0.01f;
-        HashSet<Vector3> seen = new HashSet<Vector3>();
+        DuplicateDetector detector = new DuplicateDetector(minDistance);
 
         foreach (MeshFilter mf in meshFilters)
         {
@@ -389,18 +461,9 @@ public class SpringMassSystem : MonoBehaviour
             {
                 Vector3 worldPos = mf.transform.TransformPoint(localPos);
 
-                // Avoid duplicates
-                bool isDuplicate = false;
-                foreach (Vector3 existing in seen)
-                {
-                    if (Vector3.Distance(existing, worldPos) < minDistance)
-                    {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                if (isDuplicate) continue;
-                seen.Add(worldPos);
+                // Skip duplicates based on HashSet
+                MassPoint candidate = new MassPoint(worldPos, null);
+                if (uniquePoints.Contains(candidate)) continue;
 
                 GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
                 go.transform.localScale = Vector3.one * 0.1f;
@@ -411,32 +474,14 @@ public class SpringMassSystem : MonoBehaviour
 
                 MassPoint mp = new MassPoint(worldPos, po);
                 controller.Initialize(mp);
-                allPoints.Add(mp);
+
+                uniquePoints.Add(mp);
             }
         }
-
-        if (meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
-        {
-            ConnectMeshSprings_KNN(k);
-            LogConnectionSummary("Accelerated KNN");
-        }
-        else if (meshConnectionMode == MeshConnectionMode.TriangleEdges)
-        {
-            ConnectMeshSprings_Triangles(meshFilters);
-            LogConnectionSummary("Triangle Edges");
-
-        }
-        else if (meshConnectionMode == MeshConnectionMode.Hybrid)  
-        {
-            ConnectMeshSprings_Hybrid(k);
-            LogConnectionSummary("Hybrid (Triangles + KNN)");
-
-        }
-
     }
 
+    void ConnectMeshSprings_Triangles(MeshFilter[] meshFilters, HashSet<(int, int)> connectedPairs)
 
-    void ConnectMeshSprings_Triangles(MeshFilter[] meshFilters)
     {
         Dictionary<Vector3, MassPoint> pointLookup = new Dictionary<Vector3, MassPoint>();
         foreach (var mp in allPoints)
@@ -444,7 +489,7 @@ public class SpringMassSystem : MonoBehaviour
             pointLookup[mp.position] = mp;
         }
 
-        int connections = 0;
+        //int connections = 0;
 
         foreach (MeshFilter mf in meshFilters)
         {
@@ -473,35 +518,36 @@ public class SpringMassSystem : MonoBehaviour
             MassPoint p1 = pointLookup[a];
             MassPoint p2 = pointLookup[b];
 
-            if (p1 != null && p2 != null && p1 != p2)
-            {
-                springs.Add(new Spring(p1, p2, springStiffness, springDamping, transform, springLineMaterial));
-                connections++;
-            }
+            int i1 = allPoints.IndexOf(p1);
+            int i2 = allPoints.IndexOf(p2);
+            if (i1 == -1 || i2 == -1) return;
+
+            var key = (Mathf.Min(i1, i2), Mathf.Max(i1, i2));
+            if (connectedPairs.Contains(key)) return;
+
+            springs.Add(new Spring(p1, p2, springStiffness, springDamping, transform, springLineMaterial));
+            connectedPairs.Add(key);
         }
+
 
     }
 
     void ConnectMeshSprings_Hybrid(int k)
     {
-        // Clear previous springs first if needed
         springs.Clear();
+        var connectedPairs = new HashSet<(int, int)>();
 
-        // Connect triangle edges for surface cohesion
+        // Surface springs
         MeshFilter[] meshFilters = meshSourceObject.GetComponentsInChildren<MeshFilter>();
-        ConnectMeshSprings_Triangles(meshFilters);
+        ConnectMeshSprings_Triangles(meshFilters, connectedPairs);
 
-        // Connect KNN springs for volume/internal tension
-        ConnectMeshSprings_KNN(k);
-
+        // Volume/internal springs
+        ConnectMeshSprings_KNN(k, connectedPairs);
     }
 
-
-    void ConnectMeshSprings_KNN(int k)
+    void ConnectMeshSprings_KNN(int k, HashSet<(int, int)> connectedPairs)
     {
         int n = allPoints.Count;
-        HashSet<(int, int)> connectedPairs = new HashSet<(int, int)>();
-
         if (n == 0) return;
 
         // Estimate cell size roughly as average nearest distance
@@ -545,7 +591,7 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
 
-        
+
     }
 
     // Estimate average nearest neighbor distance (same as in your commented code)
@@ -569,5 +615,103 @@ public class SpringMassSystem : MonoBehaviour
 
         return (totalNearest / count) * 1.2f; // small buffer
     }
+
+    void GenerateVoxelPointsInsideMesh(GameObject meshObject, int resolution)
+    {
+        MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
+        if (meshFilters.Length == 0)
+        {
+            Debug.LogError("No MeshFilters found for voxel filling!");
+            return;
+        }
+
+        // Step 1: Compute combined world-space AABB
+        Bounds worldBounds = new Bounds(Vector3.zero, Vector3.zero);
+        bool boundsInitialized = false;
+
+        foreach (var mf in meshFilters)
+        {
+            if (mf.sharedMesh == null) continue;
+
+            var meshBounds = mf.sharedMesh.bounds;
+            Matrix4x4 localToWorld = mf.transform.localToWorldMatrix;
+
+            Vector3[] corners = new Vector3[]
+            {
+            meshBounds.min,
+            meshBounds.max,
+            new Vector3(meshBounds.min.x, meshBounds.min.y, meshBounds.max.z),
+            new Vector3(meshBounds.min.x, meshBounds.max.y, meshBounds.min.z),
+            new Vector3(meshBounds.max.x, meshBounds.min.y, meshBounds.min.z),
+            new Vector3(meshBounds.max.x, meshBounds.max.y, meshBounds.min.z),
+            new Vector3(meshBounds.min.x, meshBounds.max.y, meshBounds.max.z),
+            new Vector3(meshBounds.max.x, meshBounds.min.y, meshBounds.max.z)
+            };
+
+            foreach (var c in corners)
+            {
+                Vector3 worldCorner = localToWorld.MultiplyPoint3x4(c);
+                if (!boundsInitialized)
+                {
+                    worldBounds = new Bounds(worldCorner, Vector3.zero);
+                    boundsInitialized = true;
+                }
+                else
+                {
+                    worldBounds.Encapsulate(worldCorner);
+                }
+            }
+        }
+
+        Vector3 worldSize = worldBounds.size;
+        Vector3 start = worldBounds.min;
+
+        // Step 2: Choose voxel size
+        float voxelSize = Mathf.Min(worldSize.x, worldSize.y, worldSize.z) / resolution;
+        int countX = Mathf.CeilToInt(worldSize.x / voxelSize);
+        int countY = Mathf.CeilToInt(worldSize.y / voxelSize);
+        int countZ = Mathf.CeilToInt(worldSize.z / voxelSize);
+
+        MeshInsideChecker insideChecker = new MeshInsideChecker(meshObject);
+
+        int pointCount = 0;
+
+        for (int x = 0; x < countX; x++)
+        {
+            for (int y = 0; y < countY; y++)
+            {
+                for (int z = 0; z < countZ; z++)
+                {
+                    Vector3 p = start + new Vector3(x * voxelSize, y * voxelSize, z * voxelSize);
+
+                    if (insideChecker.IsPointInside(p))
+                    {
+                        pointCount++;
+
+                        GameObject go = Instantiate(pointPrefab, p, Quaternion.identity, transform);
+                        go.transform.localScale = Vector3.one * 0.05f;
+
+                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+                        var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
+                        go.AddComponent<CollisionBody>();
+
+                        MassPoint mp = new MassPoint(p, po);
+                        controller.Initialize(mp);
+                        allPoints.Add(mp);
+
+                        Debug.DrawRay(p, Vector3.up * 0.1f, Color.green, 10f); // Optional: visualize
+                    }
+                    else
+                    {
+                        Debug.DrawRay(p, Vector3.up * 0.1f, Color.red, 2f); // Optional: visualize
+                    }
+                }
+            }
+        }
+
+        Debug.Log($"[Voxel Fill] Filled points: {pointCount}");
+    }
+
+
 
 }
