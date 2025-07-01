@@ -138,7 +138,7 @@ public class CollisionManager : MonoBehaviour
     {
         var handler = FindObjectOfType<CollisionHandler>();
         if (handler != null)
-            handler.HandleCollision(a, b, normal);
+            handler.HandleCollision(a, b);
     }
 
 }
