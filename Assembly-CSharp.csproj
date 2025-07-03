@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{79444BC4-5431-98FB-9E4D-B3F96D250B2E}</ProjectGuid>
+    <ProjectGuid>{2F2764ED-A2F8-D572-92C2-9FA1581332AE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -64,6 +64,7 @@
     <Compile Include="Assets\scripts\springMassSystem\DuplicateDetector.cs" />
     <Compile Include="Assets\objects\ObjLoader.cs" />
     <Compile Include="Assets\scripts\FEM\3- stiffness matrix\ElementStiffnessCalculator.cs" />
+    <Compile Include="Assets\scripts\springMassSystem\SpringMassSystem.cs" />
     <Compile Include="Assets\scripts\PhysicalObject.cs" />
     <Compile Include="Assets\scripts\FEM\6- Solve ( Ku = f ) (Linear System)\Assemble Mass Matrix.cs" />
     <Compile Include="Assets\scripts\FEM\2- Shape Functions\ShapeFunction.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="Assets\scripts\springMassSystem\MassPoint.cs" />
     <Compile Include="Assets\scripts\springMassSystem\MassPointController.cs" />
     <Compile Include="Assets\scripts\FEM\6- Solve ( Ku = f ) (Linear System)\FEM Dynamics.cs" />
-    <Compile Include="Assets\scripts\springMassSystem\SpringMassObject.cs" />
+    <Compile Include="Assets\scripts\materials\PhysicalMaterial2.cs" />
     <Compile Include="Assets\Materials\PhysicalMaterial.cs" />
     <Compile Include="Assets\scripts\SimulationEnvironment.cs" />
     <Compile Include="Assets\scripts\FEM\6- Solve ( Ku = f ) (Linear System)\GravityForceGenerator.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="Assets\scripts\FEM\2- Shape Functions\ShapeFunctionCalculator.cs" />
     <Compile Include="Assets\scripts\springMassSystem\MeshIntersectionTester.cs" />
     <Compile Include="Assets\scripts\springMassSystem\MeshInsideChecker.cs" />
-    <Compile Include="Assets\scripts\materials\PhysicalMaterial.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
