@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewPhysicalMaterial", menuName = "Physics/Physical Material")]
-public class PhysicalMaterial : ScriptableObject
+[CreateAssetMenu(fileName = "NewPhysicalMaterial2", menuName = "Physics/Physical Material")]
+public class PhysicalMaterial2 : ScriptableObject
 {
     public string materialName;
     public float Density = 1f;
