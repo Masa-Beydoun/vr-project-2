@@ -33,8 +33,8 @@ public class CollisionHandler : MonoBehaviour
 
         if (velAlongNormal > 0) return; // they're separating
 
-        float invMassA = 1f / a.Mass;
-        float invMassB = 1f / b.Mass;
+        float invMassA = 1f / a.mass;
+        float invMassB = 1f / b.mass;
 
         float impulseMag = -(1 + restitution) * velAlongNormal / (invMassA + invMassB);
         Vector3 impulse = impulseMag * normal;
@@ -50,7 +50,7 @@ public class CollisionHandler : MonoBehaviour
 
     private void HandleDeformation(MassPoint a, MassPoint b, Vector3 normal)
     {
-        float impactForce = (b.velocity - a.velocity).magnitude * 0.5f * (a.Mass + b.Mass);
+        float impactForce = (b.velocity - a.velocity).magnitude * 0.5f * (a.mass + b.mass);
 
         if (impactForce >= deformationThreshold)
         {

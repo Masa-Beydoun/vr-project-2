@@ -1,7 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
-
 
 [CustomEditor(typeof(SpringMassSystem))]
 public class SpringMassSystemEditor : Editor
@@ -12,7 +10,9 @@ public class SpringMassSystemEditor : Editor
 
         EditorGUILayout.LabelField("Spring Mass System Settings", EditorStyles.boldLabel);
 
-        system.shapeType = (MassShapeType)EditorGUILayout.EnumPopup("Shape Type", system.shapeType);
+        // Show shape type enum selector so user can pick shape
+        system.massShapeType = (MassShapeType)EditorGUILayout.EnumPopup("Shape Type", system.massShapeType);
+
         system.resolution = EditorGUILayout.IntField("Resolution", system.resolution);
 
         EditorGUILayout.Space();
@@ -41,47 +41,32 @@ public class SpringMassSystemEditor : Editor
             }
         }
 
+        system.isCreated = EditorGUILayout.Toggle("Is Created", system.isCreated);
+
         system.pointPrefab = (GameObject)EditorGUILayout.ObjectField("Point Prefab", system.pointPrefab, typeof(GameObject), false);
         system.springLineMaterial = (Material)EditorGUILayout.ObjectField("Spring Line Material", system.springLineMaterial, typeof(Material), false);
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Shape Dimensions", EditorStyles.boldLabel);
 
-        switch (system.shapeType)
+        // Debug display current shape type
+        EditorGUILayout.LabelField("Current Shape Type: " + system.massShapeType.ToString());
+
+        // Show extra mesh options ONLY if shapeType is Other
+        if (system.massShapeType == MassShapeType.Other)
         {
-            case MassShapeType.Cube:
-                system.width = EditorGUILayout.FloatField("Width", system.width);
-                system.height = EditorGUILayout.FloatField("Height", system.height);
-                system.depth = EditorGUILayout.FloatField("Depth", system.depth);
-                break;
+            system.useVoxelFilling = EditorGUILayout.Toggle("Use Voxel Filling", system.useVoxelFilling);
 
-            case MassShapeType.Sphere:
-                system.radius = EditorGUILayout.FloatField("Radius", system.radius);
-                break;
+            system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
 
-            case MassShapeType.Cylinder:
-            case MassShapeType.Capsule:
-                system.radius = EditorGUILayout.FloatField("Radius", system.radius);
-                system.height = EditorGUILayout.FloatField("Height", system.height);
-                break;
+            if (system.meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
+            {
+                system.k = EditorGUILayout.IntField("K Nearest Neighbors", system.k);
+            }
+            
 
-            case MassShapeType.Other:
-                system.meshSourceObject = (GameObject)EditorGUILayout.ObjectField("Mesh Source Object", system.meshSourceObject, typeof(GameObject), true);
-
-                system.useVoxelFilling = EditorGUILayout.Toggle("Use Voxel Filling", system.useVoxelFilling);
-
-                system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
-
-                if (system.meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
-                {
-                    system.k = EditorGUILayout.IntField("K Nearest Neighbors", system.k);
-                }
-                system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
-
-                break;
-
-
+            system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
         }
+
 
         if (GUI.changed)
         {

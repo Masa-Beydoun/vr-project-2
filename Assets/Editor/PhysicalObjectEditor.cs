@@ -1,41 +1,49 @@
-//using UnityEditor;
-//using UnityEngine;
+using UnityEditor;
+using UnityEngine;
 
-//[CustomEditor(typeof(PhysicalObject))]
-//public class PhysicalObjectEditor : Editor
-//{
-//    public override void OnInspectorGUI()
-//    {
-//        PhysicalObject obj = (PhysicalObject)target;
+[CustomEditor(typeof(PhysicalObject))]
+public class PhysicalObjectEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        PhysicalObject po = (PhysicalObject)target;
 
-//        obj.algorithm = (SimulationAlgorithm)EditorGUILayout.EnumPopup("Simulation Algorithm", obj.algorithm);
-//        obj.shapeType = (MassShapeType)EditorGUILayout.EnumPopup("Shape Type", obj.shapeType);
+        po.materialPreset = (PhysicalMaterial)EditorGUILayout.ObjectField("Material Preset", po.materialPreset, typeof(PhysicalMaterial), false);
+        po.mass = EditorGUILayout.FloatField("Mass", po.mass);
 
-//        switch (obj.shapeType)
-//        {
-//            case MassShapeType.Cube:
-//                obj.width = EditorGUILayout.FloatField("Width", obj.width);
-//                obj.height = EditorGUILayout.FloatField("Height", obj.height);
-//                obj.depth = EditorGUILayout.FloatField("Depth", obj.depth);
-//                break;
-//            case MassShapeType.Sphere:
-//                obj.radius = EditorGUILayout.FloatField("Radius", obj.radius);
-//                break;
-//            case MassShapeType.Cylinder:
-//            case MassShapeType.Capsule:
-//                obj.radius = EditorGUILayout.FloatField("Radius", obj.radius);
-//                obj.height = EditorGUILayout.FloatField("Height", obj.height);
-//                break;
-//        }
+        po.shapeType = (ShapeType)EditorGUILayout.EnumPopup("Shape Type", po.shapeType);
+        po.massShapeType = (MassShapeType)EditorGUILayout.EnumPopup("Mass Shape Type", po.massShapeType);
 
-//        obj.resolution = EditorGUILayout.IntField("Resolution", obj.resolution);
-//        obj.k = EditorGUILayout.IntField("K Nearest Neighbors (Mesh)", obj.k);
-//        obj.pointPrefab = (GameObject)EditorGUILayout.ObjectField("Point Prefab", obj.pointPrefab, typeof(GameObject), false);
-//        obj.springLineMaterial = (Material)EditorGUILayout.ObjectField("Spring Line Material", obj.springLineMaterial, typeof(Material), false);
+        EditorGUILayout.LabelField("Shape Dimensions", EditorStyles.boldLabel);
 
-//        if (GUI.changed)
-//        {
-//            EditorUtility.SetDirty(obj);
-//        }
-//    }
-//}
+        switch (po.massShapeType)
+        {
+            case MassShapeType.Cube:
+                po.width = EditorGUILayout.FloatField("Width", po.width);
+                po.height = EditorGUILayout.FloatField("Height", po.height);
+                po.depth = EditorGUILayout.FloatField("Depth", po.depth);
+                break;
+
+            case MassShapeType.Sphere:
+                po.radius = EditorGUILayout.FloatField("Radius", po.radius);
+                break;
+
+            case MassShapeType.Cylinder:
+            case MassShapeType.Capsule:
+                po.radius = EditorGUILayout.FloatField("Radius", po.radius);
+                po.height = EditorGUILayout.FloatField("Height", po.height);
+                break;
+
+            case MassShapeType.Other:
+                po.meshSourceObject = (GameObject)EditorGUILayout.ObjectField("Mesh Source Object", po.meshSourceObject, typeof(GameObject), true);
+                break;
+        }
+
+        po.isStatic = EditorGUILayout.Toggle("Is Static", po.isStatic);
+
+        if (GUI.changed)
+        {
+            EditorUtility.SetDirty(po);
+        }
+    }
+}
