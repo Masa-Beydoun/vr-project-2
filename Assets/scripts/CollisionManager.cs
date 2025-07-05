@@ -27,13 +27,13 @@ public class CollisionManager : MonoBehaviour
 
     bool IsColliding(PhysicalObject a, PhysicalObject b)
     {
-        if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.Sphere)
+        if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
         {
             float distance = Vector3.Distance(a.transform.position, b.transform.position);
             return distance < (a.radius + b.radius);
         }
 
-        if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.AABB)
+        if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.AABB)
         {
             Vector3 aHalfSize = a.transform.localScale / 2;
             Vector3 bHalfSize = b.transform.localScale / 2;
@@ -49,12 +49,12 @@ public class CollisionManager : MonoBehaviour
         }
 
         // Sphere vs AABB
-        if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.AABB)
+        if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.AABB)
         {
             return SphereAABBCollision(a, b);
         }
 
-        if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.Sphere)
+        if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.Sphere)
         {
             return SphereAABBCollision(b, a); 
         }
@@ -105,7 +105,7 @@ public class CollisionManager : MonoBehaviour
             b.velocity += impulse * invMassB;
 
         
-        if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.Sphere)
+        if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
         {
             float penetrationDepth = (a.radius + b.radius) - Vector3.Distance(a.transform.position, b.transform.position);
             Vector3 correction = normal * penetrationDepth / (invMassA + invMassB);

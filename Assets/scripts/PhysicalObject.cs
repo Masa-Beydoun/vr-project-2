@@ -1,19 +1,32 @@
 using UnityEngine;
-
+public enum ShapeType { Sphere, AABB }
+public enum MassShapeType
+{
+    Cube,
+    Sphere,
+    Cylinder,
+    Capsule,
+    Other
+}
 public class PhysicalObject : MonoBehaviour
 {
     public PhysicalMaterial materialPreset;
 
+    public MassShapeType massShapeType = MassShapeType.Cube;
     public float mass = 1f;
-    public float radius = 0.1f;     // Used for spheres
-    public Vector3 size = Vector3.one * 0.1f; // Used for cubes
+
+    [Header("Shape Dimensions")]
+    public float radius = 0.5f;   // Sphere, Cylinder, Capsule
+    public float height = 1.0f;   // Cylinder, Capsule
+    public float width = 1.0f;    // Cube width
+    public float depth = 1.0f;    // Cube depth
+
+    public GameObject meshSourceObject; // For Other shape
 
     public Vector3 velocity;
     public Vector3 forceAccumulator;
 
-    public enum ShapeType { Sphere, AABB }
-    public ShapeType shape;
-
+    public ShapeType shapeType = ShapeType.AABB;
     private float dragCoefficient;
     public bool isStatic = false;
 
@@ -22,14 +35,19 @@ public class PhysicalObject : MonoBehaviour
         dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
     }
 
+
     void FixedUpdate()
     {
         if (isStatic) return;
+
+        // Skip force-based integration if this object is driven by a MassPoint
+        if (GetComponent<MassPointController>() != null) return;
 
         ApplyGravity();
         ApplyAirResistance();
         transform.position += velocity * Time.fixedDeltaTime;
     }
+
 
     private void ApplyGravity()
     {
@@ -47,7 +65,7 @@ public class PhysicalObject : MonoBehaviour
     private void ApplyAirResistance()
     {
         float airDensity = SimulationEnvironment.Instance.GetAirDensity();
-        float area = size.x * size.z; // assume cube front face
+        float area = width * height; // assume cube front face
         float speed = velocity.magnitude;
 
         if (speed <= 0.01f) return;

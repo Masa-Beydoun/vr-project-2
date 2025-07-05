@@ -30,6 +30,7 @@ public enum MeshConnectionMode
 
 public class SpringMassSystem : MonoBehaviour
 {
+<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
 
     [HideInInspector] public PhysicalObject physicalObject;
     [HideInInspector] public float width, height, depth, radius;
@@ -41,6 +42,13 @@ public class SpringMassSystem : MonoBehaviour
     [HideInInspector] public float springStiffness = 500f;
     [HideInInspector] public float springDamping = 2f;
     
+=======
+    public int resolution = 5;
+    public float springStiffness = 500f;
+    public float springDamping = 2f;
+    public GameObject pointPrefab;
+    public Material springLineMaterial;
+>>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
 
     private MassPoint[,,] cubeGrid;
     private List<MassPoint> allPoints = new List<MassPoint>();
@@ -48,11 +56,21 @@ public class SpringMassSystem : MonoBehaviour
 
     private float connectionRadius;
 
+<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
     [HideInInspector]  public int k;
 
     //[Header("Spring Settings")]
     [HideInInspector] public bool useCustomSpringProperties = true;
     [HideInInspector] public PhysicalMaterial materialPreset;
+=======
+    public PhysicalObject prototypePhysicalObject;
+
+    public int k;
+
+    [Header("Spring Settings")]
+    public bool useCustomSpringProperties = true;
+    public PhysicalMaterial materialPreset;
+>>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
 
 
     //[Header("Mesh Connection Settings")]
@@ -66,9 +84,32 @@ public class SpringMassSystem : MonoBehaviour
     [HideInInspector] public MeshPointGenerationMode generationMode = MeshPointGenerationMode.UseMeshVertices;
 
 
+<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
     public void InitializeFromPhysicalObject()
-    {
+=======
+    public bool isCreated = false;
+    private bool previousIsCreated = false;
+    private bool isStatic=false;
+    private float mass;
+    private float radius;
+    private float height;
+    private float width;
+    private float depth;
+    private GameObject meshSourceObject;
+    [HideInInspector]
+    public MassShapeType massShapeType;
 
+
+    void Start()
+>>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
+    {
+        if (isCreated)
+        {
+            CreateSystem();
+        }
+    }
+
+<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
         if (physicalObject == null)
         {
             Debug.LogError("PhysicalObject not assigned!");
@@ -88,12 +129,41 @@ public class SpringMassSystem : MonoBehaviour
 
         k = physicalObject.k;
 
+=======
+
+    public void CreateSystem()
+    {
+        if (!isCreated) return;
+        PhysicalObject po = GetComponent<PhysicalObject>();
+        if (po != null)
+        {
+            radius = po.radius;
+            height = po.height;
+            width = po.width;
+            depth = po.depth;
+            meshSourceObject = po.meshSourceObject;
+            massShapeType = po.massShapeType;
+            isStatic = po.isStatic;
+            mass = po.mass;
+        }
+        else
+        {
+            Debug.LogWarning("No PhysicalObject found on the same GameObject.");
+        }
+
+        allPoints.Clear();
+        springs.Clear();
+>>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
         if (!useCustomSpringProperties && materialPreset != null)
         {
             springStiffness = materialPreset.stiffness;
             springDamping = 2f; // Optional: you can add damping to the material class if needed
         }
+<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
         switch (physicalObject.massShapeType)
+=======
+        switch (massShapeType)
+>>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
         {
             case MassShapeType.Cube:
                 GenerateCubePoints();
@@ -182,6 +252,21 @@ public class SpringMassSystem : MonoBehaviour
                 }
                 break;
         }
+        // Distribute mass equally across all points
+        if (allPoints.Count > 0 && prototypePhysicalObject != null)
+        {
+            float massPerPoint = mass / allPoints.Count;
+            foreach (var mp in allPoints)
+            {
+                if (mp.physicalObject != null)
+                {
+                    mp.physicalObject.mass = massPerPoint;
+                }
+            }
+        }
+
+        foreach (var s in springs)
+            s.UpdateLine();
 
     }
 
@@ -190,15 +275,30 @@ public class SpringMassSystem : MonoBehaviour
         Debug.Log($"Object: {gameObject.name} | Algorithm used: {algorithmName} | " +
                   $"Mass points: {allPoints.Count} | Springs: {springs.Count}");
     }
+    void Update()
+    {
+        PhysicalObject po = GetComponent<PhysicalObject>();
+        if (po != null){
+            isStatic = po.isStatic;
+        }
+        if (isCreated && !previousIsCreated)
+        {
+            CreateSystem();
+        }
+        previousIsCreated = isCreated;
+    }
 
     void FixedUpdate()
     {
+        if (isStatic) return;
         float dt = Time.fixedDeltaTime;
         Vector3 gravity = SimulationEnvironment.Instance.GetGravity();
 
         foreach (var p in allPoints)
-            p.ApplyForce(gravity * p.Mass, dt);
-
+        {
+            p.ApplyForce(gravity * p.mass, dt);
+            Debug.Log(" gravity " + (gravity * p.mass, dt));
+        }
         foreach (var s in springs)
             s.ApplyForce(dt);
 
@@ -319,6 +419,7 @@ public class SpringMassSystem : MonoBehaviour
                         go.transform.localScale = Vector3.one * 0.05f;  // fixed size, ignore parent scale
 
                         var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
                         go.AddComponent<CollisionBody>();
                         MassPoint mp = new MassPoint(worldPos, po);
@@ -382,6 +483,7 @@ public class SpringMassSystem : MonoBehaviour
                         );
 
                         var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
                         go.AddComponent<CollisionBody>();
 
