@@ -365,7 +365,7 @@ GameObject:
   m_Component:
   - component: {fileID: 187059674}
   - component: {fileID: 187059673}
-  - component: {fileID: 187059672}
+  - component: {fileID: 187059675}
   m_Layer: 0
   m_Name: ground22
   m_TagString: Untagged
@@ -373,32 +373,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &187059672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 187059671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 6
-  springStiffness: 500
-  springDamping: 10
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 0
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 0
-  useVoxelFilling: 1
-  generationMode: 0
-  isCreated: 0
-  massShapeType: 0
 --- !u!114 &187059673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,7 +387,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 0
-  mass: 1000
+  mass: 100
   radius: 0
   height: 0.2
   width: 1
@@ -422,7 +396,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   shapeType: 1
-  isStatic: 1
+  _isStatic: 1
 --- !u!4 &187059674
 Transform:
   m_ObjectHideFlags: 0
@@ -438,6 +412,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &187059675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 187059671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff47506ab995b8648b20d36ef3cf4107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCreated: 0
+  previousIsCreated: 0
+  connectionRadius: 0
+  resolution: 5
+  springStiffness: 500
+  springDamping: 2
+  massShapeType: 0
+  physicalObject: {fileID: 0}
+  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
+  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
+  k: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!1 &374413069
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,7 +526,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   shapeType: 1
-  isStatic: 1
+  _isStatic: 1
 --- !u!23 &381229238
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -757,7 +759,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &625630965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -784,9 +786,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 11400000, guid: 91de10dd8b88a5847bd048e3ff0704d7, type: 2}
-  massShapeType: 0
+  massShapeType: 1
   mass: 20
-  radius: 2
+  radius: 1
   height: 1
   width: 1
   depth: 1
@@ -794,7 +796,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   shapeType: 1
-  isStatic: 0
+  _isStatic: 1
 --- !u!4 &625630967
 Transform:
   m_ObjectHideFlags: 0
@@ -805,7 +807,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2, y: 15, z: -3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -819,23 +821,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 625630963}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
+  m_Script: {fileID: 11500000, guid: ff47506ab995b8648b20d36ef3cf4107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCreated: 0
+  previousIsCreated: 0
+  connectionRadius: 0
   resolution: 5
   springStiffness: 500
   springDamping: 2
+  massShapeType: 0
+  physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 0
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
   meshConnectionMode: 0
+  k: 0
   useVoxelFilling: 1
   generationMode: 0
-  isCreated: 0
-  massShapeType: 0
+--- !u!1 &682467906 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
+  m_PrefabInstance: {fileID: 1963660750}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &951317344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1060,7 +1069,6 @@ GameObject:
   - component: {fileID: 1430292136}
   - component: {fileID: 1430292135}
   - component: {fileID: 1430292134}
-  - component: {fileID: 1430292133}
   m_Layer: 0
   m_Name: cube
   m_TagString: Untagged
@@ -1068,32 +1076,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1430292133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430292132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 4
-  springStiffness: 500
-  springDamping: 7
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 0
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 0
-  useVoxelFilling: 1
-  generationMode: 0
-  isCreated: 0
-  massShapeType: 0
 --- !u!114 &1430292134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1130,7 +1112,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   shapeType: 1
-  isStatic: 0
+  _isStatic: 1
 --- !u!4 &1430292136
 Transform:
   m_ObjectHideFlags: 0
@@ -1155,7 +1137,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1495567082}
-  - component: {fileID: 1495567081}
   m_Layer: 0
   m_Name: chair
   m_TagString: Untagged
@@ -1163,32 +1144,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1495567081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1495567080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 60
-  springStiffness: 500
-  springDamping: 2
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 4
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 2
-  useVoxelFilling: 1
-  generationMode: 5
-  isCreated: 0
-  massShapeType: 0
 --- !u!4 &1495567082
 Transform:
   m_ObjectHideFlags: 0
@@ -1213,7 +1168,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1551921919}
-  - component: {fileID: 1551921918}
   m_Layer: 0
   m_Name: bottle
   m_TagString: Untagged
@@ -1221,32 +1175,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1551921918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1551921917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 20
-  springStiffness: 500
-  springDamping: 2
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 3
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 0
-  useVoxelFilling: 1
-  generationMode: 0
-  isCreated: 0
-  massShapeType: 0
 --- !u!4 &1551921919
 Transform:
   m_ObjectHideFlags: 0
@@ -1271,6 +1199,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1715684846}
+  - component: {fileID: 1715684848}
   - component: {fileID: 1715684847}
   m_Layer: 0
   m_Name: Stone_2
@@ -1303,23 +1232,49 @@ MonoBehaviour:
   m_GameObject: {fileID: 1715684845}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
+  m_Script: {fileID: 11500000, guid: ff47506ab995b8648b20d36ef3cf4107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 30
+  isCreated: 0
+  previousIsCreated: 0
+  connectionRadius: 0
+  resolution: 5
   springStiffness: 500
   springDamping: 2
+  massShapeType: 0
+  physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 4
   useCustomSpringProperties: 1
   materialPreset: {fileID: 0}
-  meshConnectionMode: 2
-  useVoxelFilling: 0
+  meshConnectionMode: 0
+  k: 0
+  useVoxelFilling: 1
   generationMode: 0
-  isCreated: 0
-  massShapeType: 0
+--- !u!114 &1715684848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715684845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  materialPreset: {fileID: 0}
+  massShapeType: 4
+  mass: 100
+  radius: 0.5
+  height: 1
+  width: 1
+  depth: 1
+  meshSourceObject: {fileID: 682467906}
+  velocity: {x: 0, y: 0, z: 0}
+  forceAccumulator: {x: 0, y: 0, z: 0}
+  shapeType: 1
+  _isStatic: 1
 --- !u!1001 &1730889384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1399,7 +1354,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1890435890}
   - component: {fileID: 1890435889}
-  - component: {fileID: 1890435888}
   m_Layer: 0
   m_Name: capsule
   m_TagString: Untagged
@@ -1407,32 +1361,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1890435888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1890435887}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 7
-  springStiffness: 100
-  springDamping: 2
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 0
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 0
-  useVoxelFilling: 1
-  generationMode: 0
-  isCreated: 0
-  massShapeType: 0
 --- !u!114 &1890435889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1456,7 +1384,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   shapeType: 1
-  isStatic: 0
+  _isStatic: 1
 --- !u!4 &1890435890
 Transform:
   m_ObjectHideFlags: 0
@@ -1501,7 +1429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 551809566b9096d4989dbf376d60b5af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityStrength: 0
+  gravityStrength: 10
   airTemperature: 20
   airPressure: 101325
   gasConstant: 287.05
@@ -1530,7 +1458,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1941609705}
   - component: {fileID: 1941609704}
-  - component: {fileID: 1941609703}
   m_Layer: 0
   m_Name: cylinder
   m_TagString: Untagged
@@ -1538,32 +1465,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1941609703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1941609702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 7
-  springStiffness: 100
-  springDamping: 2
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 0
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 0
-  useVoxelFilling: 1
-  generationMode: 0
-  isCreated: 0
-  massShapeType: 0
 --- !u!114 &1941609704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1587,7 +1488,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   shapeType: 1
-  isStatic: 0
+  _isStatic: 1
 --- !u!4 &1941609705
 Transform:
   m_ObjectHideFlags: 0
@@ -1669,7 +1570,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1975818544}
-  - component: {fileID: 1975818545}
   m_Layer: 0
   m_Name: car
   m_TagString: Untagged
@@ -1692,32 +1592,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1975818545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1975818543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 20
-  springStiffness: 500
-  springDamping: 2
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 4
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 0
-  useVoxelFilling: 1
-  generationMode: 0
-  isCreated: 0
-  massShapeType: 0
 --- !u!1 &2050290691
 GameObject:
   m_ObjectHideFlags: 0
@@ -1727,7 +1601,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2050290693}
-  - component: {fileID: 2050290692}
   m_Layer: 0
   m_Name: violen
   m_TagString: Untagged
@@ -1735,32 +1608,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &2050290692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050290691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 20
-  springStiffness: 500
-  springDamping: 2
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 4
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
-  meshConnectionMode: 0
-  useVoxelFilling: 1
-  generationMode: 0
-  isCreated: 0
-  massShapeType: 0
 --- !u!4 &2050290693
 Transform:
   m_ObjectHideFlags: 0
@@ -1785,8 +1632,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2094849916}
-  - component: {fileID: 2094849917}
   - component: {fileID: 2094849918}
+  - component: {fileID: 2094849919}
   m_Layer: 0
   m_Name: Stone_1
   m_TagString: Untagged
@@ -1809,32 +1656,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2094849917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094849915}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a5f6fac3bae99f44b39f90ccb1c0281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: 3
-  springStiffness: 500
-  springDamping: 2
-  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
-  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  prototypePhysicalObject: {fileID: 0}
-  k: 4
-  useCustomSpringProperties: 0
-  materialPreset: {fileID: 11400000, guid: 9db27100363fa3743962a20a6886730d, type: 2}
-  meshConnectionMode: 2
-  useVoxelFilling: 1
-  generationMode: 7
-  isCreated: 0
-  massShapeType: 4
 --- !u!114 &2094849918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1858,7 +1679,35 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   shapeType: 1
-  isStatic: 0
+  _isStatic: 1
+--- !u!114 &2094849919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094849915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff47506ab995b8648b20d36ef3cf4107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCreated: 0
+  previousIsCreated: 0
+  connectionRadius: 0
+  resolution: 5
+  springStiffness: 500
+  springDamping: 2
+  massShapeType: 0
+  physicalObject: {fileID: 0}
+  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
+  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
+  k: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

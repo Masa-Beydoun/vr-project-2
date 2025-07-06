@@ -10,9 +10,6 @@ public class SpringMassSystemEditor : Editor
 
         EditorGUILayout.LabelField("Spring Mass System Settings", EditorStyles.boldLabel);
 
-        // Show shape type enum selector so user can pick shape
-        system.massShapeType = (MassShapeType)EditorGUILayout.EnumPopup("Shape Type", system.massShapeType);
-
         system.resolution = EditorGUILayout.IntField("Resolution", system.resolution);
 
         EditorGUILayout.Space();
@@ -48,23 +45,22 @@ public class SpringMassSystemEditor : Editor
 
         EditorGUILayout.Space();
 
-        // Debug display current shape type
-        EditorGUILayout.LabelField("Current Shape Type: " + system.massShapeType.ToString());
 
         // Show extra mesh options ONLY if shapeType is Other
-        if (system.massShapeType == MassShapeType.Other)
+        if (system.physicalObject != null && system.physicalObject.massShapeType == MassShapeType.Other)
         {
+                system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
             system.useVoxelFilling = EditorGUILayout.Toggle("Use Voxel Filling", system.useVoxelFilling);
 
             system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
 
-            if (system.meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
+            if (system.meshConnectionMode != MeshConnectionMode.TriangleEdges)
             {
                 system.k = EditorGUILayout.IntField("K Nearest Neighbors", system.k);
             }
             
 
-            system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
+            
         }
 
 

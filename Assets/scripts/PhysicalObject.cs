@@ -28,7 +28,18 @@ public class PhysicalObject : MonoBehaviour
 
     public ShapeType shapeType = ShapeType.AABB;
     private float dragCoefficient;
-    public bool isStatic = false;
+    public bool isStatic
+    {
+        get => _isStatic;
+        set
+        {
+            //Debug.LogWarning($"{name}: isStatic set to {value} at runtime");
+            _isStatic = value;
+        }
+    }
+
+    [SerializeField]
+    private bool _isStatic = true;
 
     void Start()
     {

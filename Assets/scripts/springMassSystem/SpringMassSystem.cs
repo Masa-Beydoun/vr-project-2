@@ -30,140 +30,72 @@ public enum MeshConnectionMode
 
 public class SpringMassSystem : MonoBehaviour
 {
-<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
-
-    [HideInInspector] public PhysicalObject physicalObject;
-    [HideInInspector] public float width, height, depth, radius;
-    [HideInInspector] public int resolution;
-    [HideInInspector] public GameObject meshSourceObject;
-    [HideInInspector] public GameObject pointPrefab;
-    [HideInInspector] public Material springLineMaterial;
-
-    [HideInInspector] public float springStiffness = 500f;
-    [HideInInspector] public float springDamping = 2f;
-    
-=======
+    public bool isCreated = false, previousIsCreated = false;
+    public float connectionRadius;
     public int resolution = 5;
     public float springStiffness = 500f;
     public float springDamping = 2f;
+    public MassShapeType massShapeType = MassShapeType.Cube;
+
+    public PhysicalObject physicalObject;
+    
     public GameObject pointPrefab;
     public Material springLineMaterial;
->>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
 
     private MassPoint[,,] cubeGrid;
     private List<MassPoint> allPoints = new List<MassPoint>();
     private List<Spring> springs = new List<Spring>();
 
-    private float connectionRadius;
-
-<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
-    [HideInInspector]  public int k;
-
-    //[Header("Spring Settings")]
-    [HideInInspector] public bool useCustomSpringProperties = true;
-    [HideInInspector] public PhysicalMaterial materialPreset;
-=======
-    public PhysicalObject prototypePhysicalObject;
-
-    public int k;
-
     [Header("Spring Settings")]
     public bool useCustomSpringProperties = true;
     public PhysicalMaterial materialPreset;
->>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
+   
 
+    [Header("Mesh Connection Settings")]
+    public MeshConnectionMode meshConnectionMode = MeshConnectionMode.KNearestNeighbors;
+    public int k;
+    [Header("Voxel Settings")]
+    public bool useVoxelFilling = true;
 
-    //[Header("Mesh Connection Settings")]
-    [HideInInspector]  public MeshConnectionMode meshConnectionMode = MeshConnectionMode.KNearestNeighbors;
+    [Header("Mesh Point Generation")]
+    public MeshPointGenerationMode generationMode = MeshPointGenerationMode.UseMeshVertices;
 
-
-    //[Header("Voxel Settings")]
-    [HideInInspector] public bool useVoxelFilling = true;
-
-    //[Header("Mesh Point Generation")]
-    [HideInInspector] public MeshPointGenerationMode generationMode = MeshPointGenerationMode.UseMeshVertices;
-
-
-<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
-    public void InitializeFromPhysicalObject()
-=======
-    public bool isCreated = false;
-    private bool previousIsCreated = false;
-    private bool isStatic=false;
-    private float mass;
-    private float radius;
-    private float height;
-    private float width;
-    private float depth;
-    private GameObject meshSourceObject;
-    [HideInInspector]
-    public MassShapeType massShapeType;
+    void Awake()
+    {
+        if (physicalObject == null)
+            physicalObject = GetComponent<PhysicalObject>();
+    }
 
 
     void Start()
->>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
     {
+        Debug.Log($"Start: isStatic = {physicalObject.isStatic}");
+        //dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
         if (isCreated)
         {
             CreateSystem();
         }
     }
 
-<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
+    public void CreateSystem()
+    {
+        
         if (physicalObject == null)
         {
             Debug.LogError("PhysicalObject not assigned!");
             return;
         }
-
-        width = physicalObject.width;
-        height = physicalObject.height;
-        depth = physicalObject.depth;
-        radius = physicalObject.radius;
-        resolution = physicalObject.resolution;
-        meshSourceObject = physicalObject.meshSource;
-        pointPrefab = Resources.Load<GameObject>("PointPrefab");
-        springLineMaterial = Resources.Load<Material>("SpringLineMaterial");
-        springStiffness = physicalObject.springStiffness;
-        springDamping = physicalObject.springDamping;
-
-        k = physicalObject.k;
-
-=======
-
-    public void CreateSystem()
-    {
         if (!isCreated) return;
-        PhysicalObject po = GetComponent<PhysicalObject>();
-        if (po != null)
-        {
-            radius = po.radius;
-            height = po.height;
-            width = po.width;
-            depth = po.depth;
-            meshSourceObject = po.meshSourceObject;
-            massShapeType = po.massShapeType;
-            isStatic = po.isStatic;
-            mass = po.mass;
-        }
-        else
-        {
-            Debug.LogWarning("No PhysicalObject found on the same GameObject.");
-        }
+        massShapeType = physicalObject.massShapeType;
 
         allPoints.Clear();
         springs.Clear();
->>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
         if (!useCustomSpringProperties && materialPreset != null)
         {
             springStiffness = materialPreset.stiffness;
             springDamping = 2f; // Optional: you can add damping to the material class if needed
         }
-<<<<<<< HEAD:Assets/scripts/springMassSystem/SpringMassSystem.cs
-        switch (physicalObject.massShapeType)
-=======
         switch (massShapeType)
->>>>>>> mass-temp:Assets/scripts/springMassSystem/SpringMassObject.cs
         {
             case MassShapeType.Cube:
                 GenerateCubePoints();
@@ -182,7 +114,7 @@ public class SpringMassSystem : MonoBehaviour
                 ConnectSphereSprings();
                 break;
             case MassShapeType.Other:
-                if (meshSourceObject != null)
+                if (physicalObject.meshSourceObject != null)
                 {
                     // Use a HashSet to avoid duplicate points
                     HashSet<MassPoint> uniquePoints = new HashSet<MassPoint>();
@@ -192,37 +124,37 @@ public class SpringMassSystem : MonoBehaviour
                         generationMode == MeshPointGenerationMode.MeshVerticesAndBounds ||
                         generationMode == MeshPointGenerationMode.MeshVerticesAndVolume)
                     {
-                        GenerateMeshPoints(meshSourceObject, uniquePoints);
+                        GenerateMeshPoints(physicalObject.meshSourceObject, uniquePoints);
                     }
 
                     if (generationMode == MeshPointGenerationMode.FillUsingBounds ||
                         generationMode == MeshPointGenerationMode.MeshVerticesAndBounds)
                     {
-                        VoxelFiller.FillUsingBounds(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                        VoxelFiller.FillUsingBounds(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
                     }
 
                     if (generationMode == MeshPointGenerationMode.FillUsingVolumeSampling ||
                         generationMode == MeshPointGenerationMode.MeshVerticesAndVolume)
                     {
-                        VoxelFiller.FillUsingVolumeSampling(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                        VoxelFiller.FillUsingVolumeSampling(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
                     }
 
                     if (generationMode == MeshPointGenerationMode.FillUsingFloodFill)
                     {
-                        VoxelFiller.FillUsingFloodFill(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                        VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
 
                     }
                     if (generationMode == MeshPointGenerationMode.FillUsingOctreeBasic)
                     {
-                        VoxelFiller.FillUsingOctreeBasic(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                        VoxelFiller.FillUsingOctreeBasic(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
                     }
                     else if (generationMode == MeshPointGenerationMode.FillUsingOctreeAdvanced)
                     {
-                        VoxelFiller.FillUsingOctreeAdvanced(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                        VoxelFiller.FillUsingOctreeAdvanced(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
                     }
                     else if (generationMode == MeshPointGenerationMode.FillUsingSDFDistanceOnly)
                     {
-                        VoxelFiller.FillUsingSDFDistanceOnly(meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                        VoxelFiller.FillUsingSDFDistanceOnly(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
                     }
 
                     // Copy uniquePoints into allPoints list
@@ -231,18 +163,18 @@ public class SpringMassSystem : MonoBehaviour
                     // Connect springs
                     if (meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
                     {
-                        ConnectMeshSprings_KNN(k, new HashSet<(int, int)>());
+                        ConnectMeshSprings_KNN(new HashSet<(int, int)>());
                         LogConnectionSummary("Accelerated KNN");
                     }
                     else if (meshConnectionMode == MeshConnectionMode.TriangleEdges)
                     {
-                        var meshFilters = meshSourceObject.GetComponentsInChildren<MeshFilter>();
+                        var meshFilters = physicalObject.meshSourceObject.GetComponentsInChildren<MeshFilter>();
                         ConnectMeshSprings_Triangles(meshFilters, new HashSet<(int, int)>());
                         LogConnectionSummary("Triangle Edges");
                     }
                     else if (meshConnectionMode == MeshConnectionMode.Hybrid)
                     {
-                        ConnectMeshSprings_Hybrid(k);
+                        ConnectMeshSprings_Hybrid();
                         LogConnectionSummary("Hybrid (Triangles + KNN)");
                     }
                 }
@@ -253,9 +185,9 @@ public class SpringMassSystem : MonoBehaviour
                 break;
         }
         // Distribute mass equally across all points
-        if (allPoints.Count > 0 && prototypePhysicalObject != null)
+        if (allPoints.Count > 0 && physicalObject != null)
         {
-            float massPerPoint = mass / allPoints.Count;
+            float massPerPoint = physicalObject.mass / allPoints.Count;
             foreach (var mp in allPoints)
             {
                 if (mp.physicalObject != null)
@@ -275,12 +207,9 @@ public class SpringMassSystem : MonoBehaviour
         Debug.Log($"Object: {gameObject.name} | Algorithm used: {algorithmName} | " +
                   $"Mass points: {allPoints.Count} | Springs: {springs.Count}");
     }
+
     void Update()
     {
-        PhysicalObject po = GetComponent<PhysicalObject>();
-        if (po != null){
-            isStatic = po.isStatic;
-        }
         if (isCreated && !previousIsCreated)
         {
             CreateSystem();
@@ -290,14 +219,14 @@ public class SpringMassSystem : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isStatic) return;
+        if (!isCreated) return;
+        if (physicalObject.isStatic) return;
         float dt = Time.fixedDeltaTime;
         Vector3 gravity = SimulationEnvironment.Instance.GetGravity();
 
         foreach (var p in allPoints)
         {
             p.ApplyForce(gravity * p.mass, dt);
-            Debug.Log(" gravity " + (gravity * p.mass, dt));
         }
         foreach (var s in springs)
             s.ApplyForce(dt);
@@ -318,12 +247,11 @@ public class SpringMassSystem : MonoBehaviour
     {
         
 
-        float dx = width / (resolution - 1);
-        float dy = height / (resolution - 1);
-        float dz = depth / (resolution - 1);
-        Vector3 origin = transform.position - new Vector3(width, height, depth) / 2f;
+        float dx = physicalObject.width / (resolution - 1);
+        float dy = physicalObject.height / (resolution - 1);
+        float dz = physicalObject.depth / (resolution - 1);
+        Vector3 origin = transform.position - new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth) / 2f;
 
-        Debug.Log($"[Cube] Connection Radius: {connectionRadius}, dx={dx}, dy={dy}, dz={dz}");
 
         cubeGrid = new MassPoint[resolution, resolution, resolution];
 
@@ -333,17 +261,14 @@ public class SpringMassSystem : MonoBehaviour
             {
                 for (int z = 0; z < resolution; z++)
                 {
-                    Debug.Log("points");
-
                     Vector3 localPos = new Vector3(x * dx, y * dy, z * dz);
                     Vector3 worldPos = origin + localPos;
 
                     GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
                     go.transform.localScale = Vector3.one * 0.05f;
 
-                    var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                     var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    MassPoint mp = new MassPoint(worldPos, po);
+                    MassPoint mp = new MassPoint(worldPos, physicalObject);
                     controller.Initialize(mp);
                     cubeGrid[x, y, z] = mp;
                     allPoints.Add(mp);
@@ -355,9 +280,9 @@ public class SpringMassSystem : MonoBehaviour
 
     void ConnectCubeSprings()
     {
-        float dx = width / (resolution - 1);
-        float dy = height / (resolution - 1);
-        float dz = depth / (resolution - 1);
+        float dx = physicalObject.width / (resolution - 1);
+        float dy = physicalObject.height / (resolution - 1);
+        float dz = physicalObject.depth / (resolution - 1);
         connectionRadius = Mathf.Sqrt(dx * dx + dy * dy + dz * dz) * 1.1f; // Slightly over nearest-neighbor distance
 
         for (int x = 0; x < resolution; x++)
@@ -372,13 +297,13 @@ public class SpringMassSystem : MonoBehaviour
                     {
                         for (int j = -1; j <= 1; j++)
                         {
-                            for (int k = -1; k <= 1; k++)
+                            for (int jj = -1; jj <= 1; jj++)
                             {
-                                if (i == 0 && j == 0 && k == 0) continue;
+                                if (i == 0 && j == 0 && jj == 0) continue;
 
                                 int nx = x + i;
                                 int ny = y + j;
-                                int nz = z + k;
+                                int nz = z + jj;
 
                                 if (nx >= 0 && nx < resolution && ny >= 0 && ny < resolution && nz >= 0 && nz < resolution)
                                 {
@@ -400,7 +325,7 @@ public class SpringMassSystem : MonoBehaviour
 
     void GenerateSpherePoints()
     {
-        float r = radius;
+        float r = physicalObject.radius;
         float step = (2f * r) / (resolution - 1);
         connectionRadius = step * Mathf.Sqrt(3);
         Vector3 center = transform.position;
@@ -411,18 +336,17 @@ public class SpringMassSystem : MonoBehaviour
             {
                 for (int z = 0; z < resolution; z++)
                 {
-                    Vector3 offset = new Vector3(x * step - radius, y * step - radius, z * step - radius);
-                    if (offset.magnitude <= radius)
+                    Vector3 offset = new Vector3(x * step - physicalObject.radius, y * step - physicalObject.radius, z * step - physicalObject.radius);
+                    if (offset.magnitude <= physicalObject.radius)
                     {
                         Vector3 worldPos = center + offset;
                         GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
                         go.transform.localScale = Vector3.one * 0.05f;  // fixed size, ignore parent scale
 
-                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
 
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
                         go.AddComponent<CollisionBody>();
-                        MassPoint mp = new MassPoint(worldPos, po);
+                        MassPoint mp = new MassPoint(worldPos, physicalObject);
                         controller.Initialize(mp);
                         allPoints.Add(mp);
                     }
@@ -447,8 +371,8 @@ public class SpringMassSystem : MonoBehaviour
 
     void GenerateCylinderPoints()
     {
-        float r = radius;
-        float h = height;
+        float r = physicalObject.radius;
+        float h = physicalObject.height;
 
         float stepXZ = (2f * r) / (resolution - 1); // step for X and Z
         float stepY = h / (resolution - 1);         // step for Y
@@ -482,12 +406,10 @@ public class SpringMassSystem : MonoBehaviour
                             0.1f / parentScale.z
                         );
 
-                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
-
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
                         go.AddComponent<CollisionBody>();
 
-                        MassPoint mp = new MassPoint(worldPos, po);
+                        MassPoint mp = new MassPoint(worldPos, physicalObject);
                         controller.Initialize(mp);
                         allPoints.Add(mp);
                     }
@@ -498,8 +420,8 @@ public class SpringMassSystem : MonoBehaviour
 
     void GenerateCapsulePoints()
     {
-        float r = radius;
-        float h = height;
+        float r = physicalObject.radius;
+        float h = physicalObject.height;
         float cylinderHeight = h - 2f * r;
         if (cylinderHeight < 0f) cylinderHeight = 0f; // Prevent negative height
 
@@ -543,11 +465,10 @@ public class SpringMassSystem : MonoBehaviour
                             0.1f / parentScale.z
                         );
 
-                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
                         go.AddComponent<CollisionBody>();
 
-                        MassPoint mp = new MassPoint(worldPos, po);
+                        MassPoint mp = new MassPoint(worldPos, physicalObject);
                         controller.Initialize(mp);
                         allPoints.Add(mp);
                     }
@@ -578,17 +499,17 @@ public class SpringMassSystem : MonoBehaviour
                 Vector3 worldPos = mf.transform.TransformPoint(localPos);
 
                 // Skip duplicates based on HashSet
-                MassPoint candidate = new MassPoint(worldPos, null);
+                MassPoint candidate = new MassPoint(worldPos, physicalObject);  // Set physicalObject here!
                 if (uniquePoints.Contains(candidate)) continue;
+
 
                 GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
                 go.transform.localScale = Vector3.one * 0.1f;
 
-                var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                 var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
                 go.AddComponent<CollisionBody>();
 
-                MassPoint mp = new MassPoint(worldPos, po);
+                MassPoint mp = new MassPoint(worldPos, physicalObject);
                 controller.Initialize(mp);
 
                 uniquePoints.Add(mp);
@@ -629,10 +550,10 @@ public class SpringMassSystem : MonoBehaviour
 
         void TryAddSpring(Vector3 a, Vector3 b)
         {
-            if (!pointLookup.ContainsKey(a) || !pointLookup.ContainsKey(b)) return;
+            MassPoint p1 = FindClosestMassPoint(a);
+            MassPoint p2 = FindClosestMassPoint(b);
+            if (p1 == null || p2 == null) return;
 
-            MassPoint p1 = pointLookup[a];
-            MassPoint p2 = pointLookup[b];
 
             int i1 = allPoints.IndexOf(p1);
             int i2 = allPoints.IndexOf(p2);
@@ -648,20 +569,20 @@ public class SpringMassSystem : MonoBehaviour
 
     }
 
-    void ConnectMeshSprings_Hybrid(int k)
+    void ConnectMeshSprings_Hybrid()
     {
         springs.Clear();
         var connectedPairs = new HashSet<(int, int)>();
 
         // Surface springs
-        MeshFilter[] meshFilters = meshSourceObject.GetComponentsInChildren<MeshFilter>();
+        MeshFilter[] meshFilters = physicalObject.meshSourceObject.GetComponentsInChildren<MeshFilter>();
         ConnectMeshSprings_Triangles(meshFilters, connectedPairs);
 
         // Volume/internal springs
-        ConnectMeshSprings_KNN(k, connectedPairs);
+        ConnectMeshSprings_KNN(connectedPairs);
     }
 
-    void ConnectMeshSprings_KNN(int k, HashSet<(int, int)> connectedPairs)
+    void ConnectMeshSprings_KNN(HashSet<(int, int)> connectedPairs)
     {
         int n = allPoints.Count;
         if (n == 0) return;
@@ -730,6 +651,22 @@ public class SpringMassSystem : MonoBehaviour
         }
 
         return (totalNearest / count) * 1.2f; // small buffer
+    }
+
+    MassPoint FindClosestMassPoint(Vector3 pos, float maxDistance = 0.01f)
+    {
+        MassPoint closest = null;
+        float minDist = float.MaxValue;
+        foreach (var p in allPoints)
+        {
+            float dist = Vector3.Distance(p.position, pos);
+            if (dist < minDist && dist <= maxDistance)
+            {
+                minDist = dist;
+                closest = p;
+            }
+        }
+        return closest;
     }
 
 
