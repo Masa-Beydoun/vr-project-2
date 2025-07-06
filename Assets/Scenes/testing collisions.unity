@@ -259,6 +259,11 @@ MonoBehaviour:
   depth: 1
   meshSourceObject: {fileID: 0}
   k: 0
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
+  useVoxelFilling: 1
+  generationMode: 0
 --- !u!114 &161813945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,7 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialPreset: {fileID: 11400000, guid: 91de10dd8b88a5847bd048e3ff0704d7, type: 2}
+  materialPreset: {fileID: 0}
   mass: 10
   radius: 0
   size: {x: 1, y: 1, z: 1}
