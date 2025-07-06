@@ -9,12 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d178d4fbaf9a324abc23fb70de86977, type: 3}
+  m_Script: {fileID: 11500000, guid: 40e8d963f7b720a4ebeaa6f1c63305cb, type: 3}
   m_Name: Wood
   m_EditorClassIdentifier: 
-  materialName: Wood
-  Density: 0.6
-  dragCoefficient: 0.4
-  bounciness: 0.2
-  stiffness: 600
-  fractureThreshold: 4000
+  materialName: wood
+  Density: 1
+  dragCoefficient: 1
+  bounciness: 0.3
+  stiffness: 1000
+  fractureThreshold: 10000
+  youngsModulus: 200000
+  poissonRatio: 0.3

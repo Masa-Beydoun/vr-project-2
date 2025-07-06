@@ -66,50 +66,49 @@ public class CollisionManager : MonoBehaviour
 
     static bool IsColliding(PhysicalObject a, PhysicalObject b, out Vector3 mtv)
     {
-<<<<<<< HEAD
-        if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
-        {
-            float distance = Vector3.Distance(a.transform.position, b.transform.position);
-            return distance < (a.radius + b.radius);
-        }
+        //if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
+        //{
+        //    float distance = Vector3.Distance(a.transform.position, b.transform.position);
+        //    return distance < (a.radius + b.radius);
+        //}
 
-        if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.AABB)
-        {
-            Vector3 aHalfSize = a.transform.localScale / 2;
-            Vector3 bHalfSize = b.transform.localScale / 2;
+        //if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.AABB)
+        //{
+        //    Vector3 aHalfSize = a.transform.localScale / 2;
+        //    Vector3 bHalfSize = b.transform.localScale / 2;
 
-            Vector3 aMin = a.transform.position - aHalfSize;
-            Vector3 aMax = a.transform.position + aHalfSize;
-            Vector3 bMin = b.transform.position - bHalfSize;
-            Vector3 bMax = b.transform.position + bHalfSize;
+        //    Vector3 aMin = a.transform.position - aHalfSize;
+        //    Vector3 aMax = a.transform.position + aHalfSize;
+        //    Vector3 bMin = b.transform.position - bHalfSize;
+        //    Vector3 bMax = b.transform.position + bHalfSize;
 
-            return (aMin.x <= bMax.x && aMax.x >= bMin.x) &&
-                   (aMin.y <= bMax.y && aMax.y >= bMin.y) &&
-                   (aMin.z <= bMax.z && aMax.z >= bMin.z);
-        }
+        //    return (aMin.x <= bMax.x && aMax.x >= bMin.x) &&
+        //           (aMin.y <= bMax.y && aMax.y >= bMin.y) &&
+        //           (aMin.z <= bMax.z && aMax.z >= bMin.z);
+        //}
 
-        // Sphere vs AABB
-        if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.AABB)
-        {
-            return SphereAABBCollision(a, b);
-        }
+        //// Sphere vs AABB
+        //if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.AABB)
+        //{
+        //    return SphereAABBCollision(a, b);
+        //}
 
-        if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.Sphere)
-        {
-            return SphereAABBCollision(b, a); 
-=======
+        //if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.Sphere)
+        //{
+        //    return SphereAABBCollision(b, a); 
+
         mtv = Vector3.zero;
         bool collided = false;
 
-        if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.Sphere)
+        if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
             collided = SAT.SphereSphereCollisionWithMTV(a, b, out mtv);
-        else if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.AABB)
+        else if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.AABB)
             collided = SAT.AABBAABBCollisionWithMTV(a, b, out mtv);
-        else if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.AABB)
+        else if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.AABB)
             collided = SAT.SphereOBBCollisionWithMTV(a, b, out mtv);
-        else if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.Sphere)
+        else if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.Sphere)
             collided = SAT.SphereOBBCollisionWithMTV(b, a, out mtv);
-        else if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.AABB)
+        else if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.AABB)
             collided = SAT.OBBOBBCollisionWithMTV(a, b, out mtv);
 
         if (collided)
@@ -117,7 +116,6 @@ public class CollisionManager : MonoBehaviour
             if (!a.isStatic) a.transform.position -= mtv * 0.5f;
             if (!b.isStatic) b.transform.position += mtv * 0.5f;
             return true;
->>>>>>> 0e1295122ebe31296514cedd4ab4eea4a889611c
         }
 
         return false;
@@ -126,13 +124,13 @@ public class CollisionManager : MonoBehaviour
 
     //bool IsColliding(PhysicalObject a, PhysicalObject b)
     //{
-    //    if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.Sphere)
+    //    if (a.shape == ShapeType.Sphere && b.shape == ShapeType.Sphere)
     //    {
     //        float distance = Vector3.Distance(a.transform.position, b.transform.position);
     //        return distance < (a.radius + b.radius);
     //    }
 
-    //    if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.AABB)
+    //    if (a.shape == ShapeType.AABB && b.shape == ShapeType.AABB)
     //    {
     //        Vector3 aHalfSize = a.transform.localScale / 2;
     //        Vector3 bHalfSize = b.transform.localScale / 2;
@@ -148,12 +146,12 @@ public class CollisionManager : MonoBehaviour
     //    }
 
     //    // Sphere vs AABB
-    //    if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.AABB)
+    //    if (a.shape == ShapeType.Sphere && b.shape == ShapeType.AABB)
     //    {
     //        return SphereAABBCollision(a, b);
     //    }
 
-    //    if (a.shape == PhysicalObject.ShapeType.AABB && b.shape == PhysicalObject.ShapeType.Sphere)
+    //    if (a.shape == ShapeType.AABB && b.shape == ShapeType.Sphere)
     //    {
     //        return SphereAABBCollision(b, a);
     //    }
@@ -203,13 +201,8 @@ public class CollisionManager : MonoBehaviour
         if (!b.isStatic)
             b.velocity += impulse * invMassB;
 
-<<<<<<< HEAD
         
         if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
-=======
-
-        if (a.shape == PhysicalObject.ShapeType.Sphere && b.shape == PhysicalObject.ShapeType.Sphere)
->>>>>>> 0e1295122ebe31296514cedd4ab4eea4a889611c
         {
             float penetrationDepth = (a.radius + b.radius) - Vector3.Distance(a.transform.position, b.transform.position);
             Vector3 correction = normal * penetrationDepth / (invMassA + invMassB);
