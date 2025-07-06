@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/objects.meta
 guid: 7336403a91a528f42ab14f6d4c9db02e
+========
+guid: 73b997b96fce6a84a8fbdc86b5d4ecc8
+>>>>>>>> mass-temp:Assets/scripts/FEM.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

@@ -16,5 +16,5 @@ public class CollisionBody : MonoBehaviour
     public float Mass => physicalObject.mass;
     public float Radius => physicalObject.radius;
     public Vector3 Size => physicalObject.transform.localScale;
-    public PhysicalObject.ShapeType Shape => physicalObject.shape;
+    public ShapeType Shape => physicalObject.shapeType;
 }

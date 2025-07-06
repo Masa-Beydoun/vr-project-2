@@ -6,8 +6,8 @@ public class MassPoint
     public Vector3 velocity;
     public PhysicalObject physicalObject;
     public bool isPinned = false;
-
-    public float signedDistance;  // <-- Add this
+    public float mass = 1.0f;
+    public float signedDistance;  
 
     public MassPoint(Vector3 position, PhysicalObject physicalObject)
     {
@@ -16,12 +16,11 @@ public class MassPoint
         this.physicalObject = physicalObject;
     }
 
-    public float Mass => physicalObject != null ? physicalObject.mass : 1f;
 
     public void ApplyForce(Vector3 force, float deltaTime)
     {
         if (isPinned) return;
-        Vector3 acceleration = force / Mass;
+        Vector3 acceleration = force / mass;
         velocity += acceleration * deltaTime;
     }
 
