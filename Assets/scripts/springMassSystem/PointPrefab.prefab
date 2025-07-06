@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 3583112418067279404}
   - component: {fileID: 5842271571042963842}
   - component: {fileID: 3893743106211349466}
-  - component: {fileID: 6292599043929915422}
-  - component: {fileID: 8525151706135609279}
   m_Layer: 0
   m_Name: PointPrefab
   m_TagString: Untagged
@@ -85,36 +83,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6292599043929915422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7450203313149778480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  materialPreset: {fileID: 0}
-  mass: 1
-  radius: 0
-  size: {x: 0.1, y: 0.1, z: 0.1}
-  velocity: {x: 0, y: 0, z: 0}
-  forceAccumulator: {x: 0, y: 0, z: 0}
-  shape: 1
-  isStatic: 0
---- !u!114 &8525151706135609279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7450203313149778480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cecd7c3d8539b314f98514c35f8c8587, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  physicalObject: {fileID: 6292599043929915422}

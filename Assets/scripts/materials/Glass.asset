@@ -9,12 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d178d4fbaf9a324abc23fb70de86977, type: 3}
+  m_Script: {fileID: 11500000, guid: 40e8d963f7b720a4ebeaa6f1c63305cb, type: 3}
   m_Name: Glass
   m_EditorClassIdentifier: 
   materialName: glass
-  Density: 2.5
-  dragCoefficient: 0.47
-  bounciness: 0.05
-  stiffness: 3000
-  fractureThreshold: 2000
+  Density: 1
+  dragCoefficient: 1
+  bounciness: 0.3
+  stiffness: 1000
+  fractureThreshold: 10000
+  youngsModulus: 200000
+  poissonRatio: 0.3

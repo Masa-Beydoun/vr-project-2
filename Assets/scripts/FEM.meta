@@ -1,5 +1,17 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<<< HEAD:Assets/scripts/FEM.meta
 guid: 593d6dd819b788e48966360e12da1cdb
+========
+guid: e6166fc9fc10f0b4ca99c289aa681961
+>>>>>>>> mass-temp:Assets/scripts/FEM/5- Boundary Conditions.meta
+=======
+<<<<<<<< HEAD:Assets/objects.meta
+guid: 7336403a91a528f42ab14f6d4c9db02e
+========
+guid: 73b997b96fce6a84a8fbdc86b5d4ecc8
+>>>>>>>> mass-temp:Assets/scripts/FEM.meta
+>>>>>>> mass-temp
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

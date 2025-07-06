@@ -1,7 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
-
 
 [CustomEditor(typeof(SpringMassSystem))]
 public class SpringMassSystemEditor : Editor
@@ -12,7 +10,6 @@ public class SpringMassSystemEditor : Editor
 
         EditorGUILayout.LabelField("Spring Mass System Settings", EditorStyles.boldLabel);
 
-        system.shapeType = (MassShapeType)EditorGUILayout.EnumPopup("Shape Type", system.shapeType);
         system.resolution = EditorGUILayout.IntField("Resolution", system.resolution);
 
         EditorGUILayout.Space();
@@ -41,47 +38,31 @@ public class SpringMassSystemEditor : Editor
             }
         }
 
+        system.isCreated = EditorGUILayout.Toggle("Is Created", system.isCreated);
+
         system.pointPrefab = (GameObject)EditorGUILayout.ObjectField("Point Prefab", system.pointPrefab, typeof(GameObject), false);
         system.springLineMaterial = (Material)EditorGUILayout.ObjectField("Spring Line Material", system.springLineMaterial, typeof(Material), false);
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Shape Dimensions", EditorStyles.boldLabel);
 
-        switch (system.shapeType)
+
+        // Show extra mesh options ONLY if shapeType is Other
+        if (system.physicalObject != null && system.physicalObject.massShapeType == MassShapeType.Other)
         {
-            case MassShapeType.Cube:
-                system.width = EditorGUILayout.FloatField("Width", system.width);
-                system.height = EditorGUILayout.FloatField("Height", system.height);
-                system.depth = EditorGUILayout.FloatField("Depth", system.depth);
-                break;
-
-            case MassShapeType.Sphere:
-                system.radius = EditorGUILayout.FloatField("Radius", system.radius);
-                break;
-
-            case MassShapeType.Cylinder:
-            case MassShapeType.Capsule:
-                system.radius = EditorGUILayout.FloatField("Radius", system.radius);
-                system.height = EditorGUILayout.FloatField("Height", system.height);
-                break;
-
-            case MassShapeType.Other:
-                system.meshSourceObject = (GameObject)EditorGUILayout.ObjectField("Mesh Source Object", system.meshSourceObject, typeof(GameObject), true);
-
-                system.useVoxelFilling = EditorGUILayout.Toggle("Use Voxel Filling", system.useVoxelFilling);
-
-                system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
-
-                if (system.meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
-                {
-                    system.k = EditorGUILayout.IntField("K Nearest Neighbors", system.k);
-                }
                 system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
+            system.useVoxelFilling = EditorGUILayout.Toggle("Use Voxel Filling", system.useVoxelFilling);
 
-                break;
+            system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
 
+            if (system.meshConnectionMode != MeshConnectionMode.TriangleEdges)
+            {
+                system.k = EditorGUILayout.IntField("K Nearest Neighbors", system.k);
+            }
+            
 
+            
         }
+
 
         if (GUI.changed)
         {

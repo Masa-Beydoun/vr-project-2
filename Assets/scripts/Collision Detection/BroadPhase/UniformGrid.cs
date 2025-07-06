@@ -45,7 +45,7 @@ public class UniformGrid : IBroadPhase
         {
             Vector3 min, max;
 
-            if (obj.shape == PhysicalObject.ShapeType.Sphere)
+            if (obj.shapeType == ShapeType.Sphere)
             {
                 Vector3 rVec = Vector3.one * obj.radius;
                 min = obj.transform.position - rVec;
