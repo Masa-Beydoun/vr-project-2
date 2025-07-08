@@ -27,7 +27,7 @@ public class PhysicalObject : MonoBehaviour
     public Vector3 velocity;
     public Vector3 forceAccumulator;
 
-    public ShapeType shapeType = ShapeType.AABB;
+    public ShapeType shapeType = ShapeType.Sphere;
     private float dragCoefficient;
     public bool isStatic
     {
@@ -45,6 +45,9 @@ public class PhysicalObject : MonoBehaviour
     void Start()
     {
         dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
+
+
+       
     }
 
 
@@ -88,4 +91,5 @@ public class PhysicalObject : MonoBehaviour
 
         ApplyForce(dragForce);
     }
+
 }

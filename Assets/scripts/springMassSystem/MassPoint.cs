@@ -2,18 +2,25 @@
 
 public class MassPoint
 {
+    private static int globalIDCounter = 0;
+    public int id;  // Unique ID for debugging
+
     public Vector3 position;
     public Vector3 velocity;
     public PhysicalObject physicalObject;
     public bool isPinned = false;
     public float mass = 1.0f;
-    public float signedDistance;  
+    public float signedDistance;
+    public string sourceName;
 
-    public MassPoint(Vector3 position, PhysicalObject physicalObject)
+
+    public MassPoint(Vector3 position, PhysicalObject physicalObject,string name)
     {
+        this.id = globalIDCounter++;
         this.position = position;
         this.velocity = Vector3.zero;
         this.physicalObject = physicalObject;
+        this.sourceName = name;
     }
 
 

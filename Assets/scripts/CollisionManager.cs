@@ -7,6 +7,8 @@ public class CollisionManager : MonoBehaviour
     private PhysicalObject[] physicalObjects;
     public const BroadPhaseMethod broadPhaseMethod = BroadPhaseMethod.SweepAndPrune;
     IBroadPhase broadPhase;
+    [SerializeField] private CollisionHandler collisionHandler;
+
 
     void Start()
     {
@@ -26,78 +28,56 @@ public class CollisionManager : MonoBehaviour
     }
     void FixedUpdate()
     {
-        physicalObjects = FindObjectsOfType<PhysicalObject>();
+        //physicalObjects = FindObjectsOfType<PhysicalObject>();
 
-        //BroadPhaseMethod broadPhaseMethod = BroadPhaseMethod.SweepAndPrune;
-        //broadPhase = new SweepAndPrune();
-        //float start = Time.realtimeSinceStartup;
-        //var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
-        //float end = Time.realtimeSinceStartup;
-        //Debug.Log($"[{broadPhaseMethod}] Time: {(end - start) * 1000f} ms - Pairs: {candidatePairs.Count}");
+        var massPointControllers = FindObjectsOfType<MassPointController>();
+        List<PhysicalObject> massPointObjects = new List<PhysicalObject>();
 
-        //broadPhaseMethod = BroadPhaseMethod.UniformGrid;
-        //float cellSize = 3.0f;
-        //broadPhase = new UniformGrid(cellSize: cellSize);
-        //start = Time.realtimeSinceStartup;
-        //candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
-        //end = Time.realtimeSinceStartup;
-        //Debug.Log($"[{broadPhaseMethod}] Time: {(end - start) * 1000f} ms - Pairs: {candidatePairs.Count}");
+        foreach (var controller in massPointControllers)
+        {
+            var obj = controller.GetComponent<PhysicalObject>();
+            if (obj != null)
+                massPointObjects.Add(obj); // Only mass points
+        }
 
-        //broadPhaseMethod = BroadPhaseMethod.Octree;
-        //broadPhase = new Octree(new Bounds(Vector3.zero, Vector3.one * 10000));
-        //start = Time.realtimeSinceStartup;
-        //candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
-        //end = Time.realtimeSinceStartup;
-        //Debug.Log($"[{broadPhaseMethod}] Time: {(end - start) * 1000f} ms - Pairs: {candidatePairs.Count}");
 
-        var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
+
+        var candidatePairs = broadPhase.GetCollisionPairs(massPointObjects.ToArray());
+
         List<(PhysicalObject, PhysicalObject,Vector3)> realCollidedPairs = new List<(PhysicalObject, PhysicalObject, Vector3)>();
         foreach (var (a, b) in candidatePairs)
         {
             Vector3 mtv = Vector3.zero;
             if (IsColliding(a, b, out mtv))
             {
-                Debug.Log($"Collision Detected between {a.name} and {b.name} mtv = {mtv}");
-                realCollidedPairs.Add((a, b, mtv));
-                ResolveCollision(a, b);
+                MassPoint m1 = a.GetComponent<MassPointController>()?.point;
+                MassPoint m2 = b.GetComponent<MassPointController>()?.point;
+                //if (mtv.magnitude < 0.01f) // adjust as needed
+                //    continue;
+                if (m1 != null && m2 != null)
+                {
+                    //Debug.Log($"Checking {a.name} (Shape={a.shapeType}) vs {b.name} (Shape={b.shapeType})");
+
+                    if (m1.sourceName == m2.sourceName) continue;
+                    Debug.Log(
+                        $"MassPoint 1  ID: {m1.GetHashCode()}, Source: {m1.sourceName}, Pos: {m1.position}\n" +
+                        $"MassPoint 2  ID: {m2.GetHashCode()}, Source: {m2.sourceName}, Pos: {m2.position}\n" +
+                        $"MTV: {mtv}"
+                    );
+                    //Debug.Log($"Checking collision between {a.name} ({a.shapeType}) and {b.name} ({b.shapeType})");
+
+                }
+                //if (a.name.Contains("SpringLine") || b.name.Contains("SpringLine"))
+                //    continue;
+
+                //Debug.Log($"Collision Detected between {a.name} and {b.name} mtv = {mtv}");
+                //ResolveCollision(a, b); // fallback for rigid body 
             }
         }
     }
 
     static bool IsColliding(PhysicalObject a, PhysicalObject b, out Vector3 mtv)
-    {
-        //if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
-        //{
-        //    float distance = Vector3.Distance(a.transform.position, b.transform.position);
-        //    return distance < (a.radius + b.radius);
-        //}
-
-        //if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.AABB)
-        //{
-        //    Vector3 aHalfSize = a.transform.localScale / 2;
-        //    Vector3 bHalfSize = b.transform.localScale / 2;
-
-        //    Vector3 aMin = a.transform.position - aHalfSize;
-        //    Vector3 aMax = a.transform.position + aHalfSize;
-        //    Vector3 bMin = b.transform.position - bHalfSize;
-        //    Vector3 bMax = b.transform.position + bHalfSize;
-
-        //    return (aMin.x <= bMax.x && aMax.x >= bMin.x) &&
-        //           (aMin.y <= bMax.y && aMax.y >= bMin.y) &&
-        //           (aMin.z <= bMax.z && aMax.z >= bMin.z);
-        //}
-
-        //// Sphere vs AABB
-        //if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.AABB)
-        //{
-        //    return SphereAABBCollision(a, b);
-        //}
-
-        //if (a.shapeType == ShapeType.AABB && b.shapeType == ShapeType.Sphere)
-        //{
-        //    return SphereAABBCollision(b, a); 
-
-        mtv = Vector3.zero;
+    {   mtv = Vector3.zero;
         bool collided = false;
 
         if (a.shapeType == ShapeType.Sphere && b.shapeType == ShapeType.Sphere)
@@ -122,42 +102,7 @@ public class CollisionManager : MonoBehaviour
 
     }
 
-    //bool IsColliding(PhysicalObject a, PhysicalObject b)
-    //{
-    //    if (a.shape == ShapeType.Sphere && b.shape == ShapeType.Sphere)
-    //    {
-    //        float distance = Vector3.Distance(a.transform.position, b.transform.position);
-    //        return distance < (a.radius + b.radius);
-    //    }
 
-    //    if (a.shape == ShapeType.AABB && b.shape == ShapeType.AABB)
-    //    {
-    //        Vector3 aHalfSize = a.transform.localScale / 2;
-    //        Vector3 bHalfSize = b.transform.localScale / 2;
-
-    //        Vector3 aMin = a.transform.position - aHalfSize;
-    //        Vector3 aMax = a.transform.position + aHalfSize;
-    //        Vector3 bMin = b.transform.position - bHalfSize;
-    //        Vector3 bMax = b.transform.position + bHalfSize;
-
-    //        return (aMin.x <= bMax.x && aMax.x >= bMin.x) &&
-    //               (aMin.y <= bMax.y && aMax.y >= bMin.y) &&
-    //               (aMin.z <= bMax.z && aMax.z >= bMin.z);
-    //    }
-
-    //    // Sphere vs AABB
-    //    if (a.shape == ShapeType.Sphere && b.shape == ShapeType.AABB)
-    //    {
-    //        return SphereAABBCollision(a, b);
-    //    }
-
-    //    if (a.shape == ShapeType.AABB && b.shape == ShapeType.Sphere)
-    //    {
-    //        return SphereAABBCollision(b, a);
-    //    }
-
-    //    return false;
-    //}
 
     bool SphereAABBCollision(PhysicalObject sphere, PhysicalObject aabb)
     {

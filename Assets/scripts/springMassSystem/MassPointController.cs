@@ -3,7 +3,7 @@ using UnityEngine;
 public class MassPointController : MonoBehaviour
 {
     public bool isPinned = false; // Visible in Inspector at runtime
-    private MassPoint point;
+    [HideInInspector]public MassPoint point;
 
     public void Initialize(MassPoint point)
     {

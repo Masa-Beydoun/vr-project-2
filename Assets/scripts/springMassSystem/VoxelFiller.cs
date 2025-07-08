@@ -30,7 +30,8 @@ public static class VoxelFiller
                     Vector3 p = new Vector3(x, y, z);
                     if (checker.IsPointInside(p))
                     {
-                        MassPoint candidate = new MassPoint(p, null);
+                   
+                        MassPoint candidate = new MassPoint(p, null, parent.name);
                         if (uniquePoints.Contains(candidate))
                             continue;
 
@@ -39,9 +40,10 @@ public static class VoxelFiller
 
                         var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        go.AddComponent<CollisionBody>();
+                        //go.AddComponent<CollisionBody>();
 
-                        MassPoint mp = new MassPoint(p, po);
+
+                        MassPoint mp = new MassPoint(p, po,parent.name);
                         controller.Initialize(mp);
                         uniquePoints.Add(mp);
                         count++;
@@ -117,7 +119,7 @@ public static class VoxelFiller
 
             if (!checker.IsPointInside(worldPos)) continue;
 
-            MassPoint candidate = new MassPoint(worldPos, null);
+            MassPoint candidate = new MassPoint(worldPos, null, parent.name);
             if (!uniquePoints.Contains(candidate))
             {
                 GameObject go = Object.Instantiate(pointPrefab, worldPos, Quaternion.identity, parent);
@@ -125,9 +127,9 @@ public static class VoxelFiller
 
                 var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                 var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                go.AddComponent<CollisionBody>();
+                //go.AddComponent<CollisionBody>();
 
-                MassPoint mp = new MassPoint(worldPos, po);
+                MassPoint mp = new MassPoint(worldPos, po, parent.name);
                 controller.Initialize(mp);
                 uniquePoints.Add(mp);
                 count++;
@@ -201,9 +203,9 @@ public static class VoxelFiller
 
                     var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                     var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    go.AddComponent<CollisionBody>();
+                    //go.AddComponent<CollisionBody>();
 
-                    MassPoint mp = new MassPoint(spawnPos, po);
+                    MassPoint mp = new MassPoint(spawnPos, po, parent.name);
                     controller.Initialize(mp);
                     uniquePoints.Add(mp);
 
@@ -319,9 +321,9 @@ public static class VoxelFiller
 
                     var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                     var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    go.AddComponent<CollisionBody>();
+                    //go.AddComponent<CollisionBody>();
 
-                    MassPoint mp = new MassPoint(center, po);
+                    MassPoint mp = new MassPoint(center, po, parent.name);
                     controller.Initialize(mp);
                     uniquePoints.Add(mp);
 
@@ -409,9 +411,9 @@ public static class VoxelFiller
 
                     var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                     var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    go.AddComponent<CollisionBody>();
+                    //go.AddComponent<CollisionBody>();
 
-                    MassPoint mp = new MassPoint(p, po);
+                    MassPoint mp = new MassPoint(p, po, parent.name);
                     mp.signedDistance = minDist; // You can store this in MassPoint if needed
                     controller.Initialize(mp);
                     uniquePoints.Add(mp);

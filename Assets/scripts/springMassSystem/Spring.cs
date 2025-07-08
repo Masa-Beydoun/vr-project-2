@@ -11,6 +11,7 @@ public class Spring
     public LineRenderer lineRenderer;
     private float currentForceMagnitude = 0f;
     private static float observedMaxForce = 1f;
+    public string objectName="spring";
 
     [HideInInspector] public float springStiffness;
     [HideInInspector] public float springDamping;

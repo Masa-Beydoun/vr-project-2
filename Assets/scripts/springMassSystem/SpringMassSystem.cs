@@ -53,7 +53,7 @@ public class SpringMassSystem : MonoBehaviour
 
     [Header("Mesh Connection Settings")]
     public MeshConnectionMode meshConnectionMode = MeshConnectionMode.KNearestNeighbors;
-    public int k;
+    public int k=4;
     [Header("Voxel Settings")]
     public bool useVoxelFilling = true;
 
@@ -69,7 +69,7 @@ public class SpringMassSystem : MonoBehaviour
 
     void Start()
     {
-        Debug.Log($"Start: isStatic = {physicalObject.isStatic}");
+        //Debug.Log($"Start: isStatic = {physicalObject.isStatic}");
         //dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
         if (isCreated)
         {
@@ -268,13 +268,35 @@ public class SpringMassSystem : MonoBehaviour
                     go.transform.localScale = Vector3.one * 0.05f;
 
                     var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    MassPoint mp = new MassPoint(worldPos, physicalObject);
+                    string source = gameObject.name;
+                    MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                     controller.Initialize(mp);
                     cubeGrid[x, y, z] = mp;
                     allPoints.Add(mp);
                 }
             }
         }
+
+        //Debug.Log($"[{this}] contains {allPoints.Count} MassPoint(s)");
+
+        //foreach (var mp in allPoints)
+        //{
+        //    PhysicalObject po = mp.physicalObject;
+
+        //    string log = $"Point: {po.name} | Pos: {mp?.position}";
+
+        //    if (po == null)
+        //        log += " |  No PhysicalObject";
+        //    else
+        //        log += $" |  ShapeType: {po.shapeType}";
+
+        //    if (mp == null)
+        //        log += " |  No MassPoint reference";
+        //    else
+        //        log += $" | Source: {mp.sourceName}";
+
+        //    Debug.Log(log);
+        //}
 
     }
 
@@ -345,8 +367,9 @@ public class SpringMassSystem : MonoBehaviour
 
 
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        go.AddComponent<CollisionBody>();
-                        MassPoint mp = new MassPoint(worldPos, physicalObject);
+                        //go.AddComponent<CollisionBody>();
+                        string source = gameObject.name;
+                        MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                         controller.Initialize(mp);
                         allPoints.Add(mp);
                     }
@@ -407,9 +430,10 @@ public class SpringMassSystem : MonoBehaviour
                         );
 
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        go.AddComponent<CollisionBody>();
+                        //go.AddComponent<CollisionBody>();
 
-                        MassPoint mp = new MassPoint(worldPos, physicalObject);
+                        string source = gameObject.name;
+                        MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                         controller.Initialize(mp);
                         allPoints.Add(mp);
                     }
@@ -466,9 +490,10 @@ public class SpringMassSystem : MonoBehaviour
                         );
 
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        go.AddComponent<CollisionBody>();
+                        //go.AddComponent<CollisionBody>();
 
-                        MassPoint mp = new MassPoint(worldPos, physicalObject);
+                        string source = gameObject.name;
+                        MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                         controller.Initialize(mp);
                         allPoints.Add(mp);
                     }
@@ -499,7 +524,8 @@ public class SpringMassSystem : MonoBehaviour
                 Vector3 worldPos = mf.transform.TransformPoint(localPos);
 
                 // Skip duplicates based on HashSet
-                MassPoint candidate = new MassPoint(worldPos, physicalObject);  // Set physicalObject here!
+                string source = gameObject.name;
+                MassPoint candidate = new MassPoint(worldPos, physicalObject, source);
                 if (uniquePoints.Contains(candidate)) continue;
 
 
@@ -507,9 +533,9 @@ public class SpringMassSystem : MonoBehaviour
                 go.transform.localScale = Vector3.one * 0.1f;
 
                 var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                go.AddComponent<CollisionBody>();
+                //go.AddComponent<CollisionBody>();
 
-                MassPoint mp = new MassPoint(worldPos, physicalObject);
+                MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                 controller.Initialize(mp);
 
                 uniquePoints.Add(mp);
