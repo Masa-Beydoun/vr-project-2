@@ -154,14 +154,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 0
-  mass: 100
   radius: 0
   height: 0.1
   width: 0.5
   depth: 0.5
   meshSourceObject: {fileID: 0}
+  mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 0
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!4 &187059674
@@ -194,7 +198,7 @@ MonoBehaviour:
   isCreated: 0
   previousIsCreated: 0
   connectionRadius: 0
-  resolution: 10
+  resolution: 20
   springStiffness: 500
   springDamping: 2
   massShapeType: 0
@@ -375,23 +379,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.92387956
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.38268343
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -580,14 +584,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 4
-  mass: 100
   radius: 0.5
   height: 1
   width: 1
   depth: 1
   meshSourceObject: {fileID: 682467906}
+  mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 0
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!1 &1896529659
@@ -742,14 +750,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 4
-  mass: 1
   radius: 0.5
   height: 1
   width: 1
   depth: 1
   meshSourceObject: {fileID: 1298921294}
+  mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 0
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!114 &2094849919

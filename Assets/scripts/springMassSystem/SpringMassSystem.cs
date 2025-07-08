@@ -49,7 +49,6 @@ public class SpringMassSystem : MonoBehaviour
     [Header("Spring Settings")]
     public bool useCustomSpringProperties = true;
     public PhysicalMaterial materialPreset;
-   
 
     [Header("Mesh Connection Settings")]
     public MeshConnectionMode meshConnectionMode = MeshConnectionMode.KNearestNeighbors;
@@ -99,7 +98,6 @@ public class SpringMassSystem : MonoBehaviour
         {
             case MassShapeType.Cube:
                 GenerateCubePoints();
-                ConnectCubeSprings();
                 break;
             case MassShapeType.Sphere:
                 GenerateSpherePoints();
@@ -245,24 +243,28 @@ public class SpringMassSystem : MonoBehaviour
 
     void GenerateCubePoints()
     {
-        
+        int pointsX = Mathf.CeilToInt(physicalObject.width * resolution) + 1;
+        int pointsY = Mathf.CeilToInt(physicalObject.height * resolution) + 1;
+        int pointsZ = Mathf.CeilToInt(physicalObject.depth * resolution) + 1;
 
-        float dx = physicalObject.width / (resolution - 1);
-        float dy = physicalObject.height / (resolution - 1);
-        float dz = physicalObject.depth / (resolution - 1);
+        float dx = physicalObject.width / (pointsX - 1);
+        float dy = physicalObject.height / (pointsY - 1);
+        float dz = physicalObject.depth / (pointsZ - 1);
+
         Vector3 origin = transform.position - new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth) / 2f;
 
+        Quaternion rotation = Quaternion.Euler(physicalObject.rotationEuler);
 
-        cubeGrid = new MassPoint[resolution, resolution, resolution];
+        cubeGrid = new MassPoint[pointsX, pointsY, pointsZ];
 
-        for (int x = 0; x < resolution; x++)
+        for (int x = 0; x < pointsX; x++)
         {
-            for (int y = 0; y < resolution; y++)
+            for (int y = 0; y < pointsY; y++)
             {
-                for (int z = 0; z < resolution; z++)
+                for (int z = 0; z < pointsZ; z++)
                 {
                     Vector3 localPos = new Vector3(x * dx, y * dy, z * dz);
-                    Vector3 worldPos = origin + localPos;
+                    Vector3 worldPos = origin + rotation * localPos;
 
                     GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
                     go.transform.localScale = Vector3.one * 0.05f;
@@ -277,41 +279,20 @@ public class SpringMassSystem : MonoBehaviour
             }
         }
 
-        //Debug.Log($"[{this}] contains {allPoints.Count} MassPoint(s)");
-
-        //foreach (var mp in allPoints)
-        //{
-        //    PhysicalObject po = mp.physicalObject;
-
-        //    string log = $"Point: {po.name} | Pos: {mp?.position}";
-
-        //    if (po == null)
-        //        log += " |  No PhysicalObject";
-        //    else
-        //        log += $" |  ShapeType: {po.shapeType}";
-
-        //    if (mp == null)
-        //        log += " |  No MassPoint reference";
-        //    else
-        //        log += $" | Source: {mp.sourceName}";
-
-        //    Debug.Log(log);
-        //}
+        Debug.Log($"Generated {allPoints.Count} cube mass points with resolution {resolution} points/unit");
+        ConnectCubeSprings(pointsX, pointsY, pointsZ, dx, dy, dz);
 
     }
 
-    void ConnectCubeSprings()
+    void ConnectCubeSprings(int pointsX, int pointsY, int pointsZ, float dx, float dy, float dz)
     {
-        float dx = physicalObject.width / (resolution - 1);
-        float dy = physicalObject.height / (resolution - 1);
-        float dz = physicalObject.depth / (resolution - 1);
         connectionRadius = Mathf.Sqrt(dx * dx + dy * dy + dz * dz) * 1.1f; // Slightly over nearest-neighbor distance
 
-        for (int x = 0; x < resolution; x++)
+        for (int x = 0; x < pointsX; x++)
         {
-            for (int y = 0; y < resolution; y++)
+            for (int y = 0; y < pointsY; y++)
             {
-                for (int z = 0; z < resolution; z++)
+                for (int z = 0; z < pointsZ; z++)
                 {
                     var current = cubeGrid[x, y, z];
 
@@ -319,15 +300,15 @@ public class SpringMassSystem : MonoBehaviour
                     {
                         for (int j = -1; j <= 1; j++)
                         {
-                            for (int jj = -1; jj <= 1; jj++)
+                            for (int k = -1; k <= 1; k++)
                             {
-                                if (i == 0 && j == 0 && jj == 0) continue;
+                                if (i == 0 && j == 0 && k == 0) continue;
 
                                 int nx = x + i;
                                 int ny = y + j;
-                                int nz = z + jj;
+                                int nz = z + k;
 
-                                if (nx >= 0 && nx < resolution && ny >= 0 && ny < resolution && nz >= 0 && nz < resolution)
+                                if (nx >= 0 && nx < pointsX && ny >= 0 && ny < pointsY && nz >= 0 && nz < pointsZ)
                                 {
                                     var neighbor = cubeGrid[nx, ny, nz];
                                     float distance = Vector3.Distance(current.position, neighbor.position);
@@ -345,29 +326,30 @@ public class SpringMassSystem : MonoBehaviour
         }
     }
 
+
     void GenerateSpherePoints()
     {
         float r = physicalObject.radius;
-        float step = (2f * r) / (resolution - 1);
+        float diameter = 2f * r;
+        int steps = Mathf.Max(2, Mathf.RoundToInt(diameter * resolution));
+        float step = diameter / (steps - 1);
         connectionRadius = step * Mathf.Sqrt(3);
         Vector3 center = transform.position;
 
-        for (int x = 0; x < resolution; x++)
+        for (int x = 0; x < steps; x++)
         {
-            for (int y = 0; y < resolution; y++)
+            for (int y = 0; y < steps; y++)
             {
-                for (int z = 0; z < resolution; z++)
+                for (int z = 0; z < steps; z++)
                 {
-                    Vector3 offset = new Vector3(x * step - physicalObject.radius, y * step - physicalObject.radius, z * step - physicalObject.radius);
-                    if (offset.magnitude <= physicalObject.radius)
+                    Vector3 offset = new Vector3(x * step - r, y * step - r, z * step - r);
+                    if (offset.magnitude <= r)
                     {
                         Vector3 worldPos = center + offset;
                         GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
-                        go.transform.localScale = Vector3.one * 0.05f;  // fixed size, ignore parent scale
-
+                        go.transform.localScale = Vector3.one * 0.05f;
 
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        //go.AddComponent<CollisionBody>();
                         string source = gameObject.name;
                         MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                         controller.Initialize(mp);
@@ -397,17 +379,20 @@ public class SpringMassSystem : MonoBehaviour
         float r = physicalObject.radius;
         float h = physicalObject.height;
 
-        float stepXZ = (2f * r) / (resolution - 1); // step for X and Z
-        float stepY = h / (resolution - 1);         // step for Y
+        int stepsXZ = Mathf.Max(2, Mathf.RoundToInt(2f * r * resolution));
+        int stepsY = Mathf.Max(2, Mathf.RoundToInt(h * resolution));
+
+        float stepXZ = (2f * r) / (stepsXZ - 1);
+        float stepY = h / (stepsY - 1);
 
         connectionRadius = Mathf.Max(stepXZ, stepY) * Mathf.Sqrt(3);
         Vector3 center = transform.position;
 
-        for (int x = 0; x < resolution; x++)
+        for (int x = 0; x < stepsXZ; x++)
         {
-            for (int y = 0; y < resolution; y++)
+            for (int y = 0; y < stepsY; y++)
             {
-                for (int z = 0; z < resolution; z++)
+                for (int z = 0; z < stepsXZ; z++)
                 {
                     Vector3 offset = new Vector3(
                         x * stepXZ - r,
@@ -415,23 +400,14 @@ public class SpringMassSystem : MonoBehaviour
                         z * stepXZ - r
                     );
 
-                    // Only allow points within the vertical cylinder
                     Vector2 horizontal = new Vector2(offset.x, offset.z);
                     if (horizontal.magnitude <= r)
                     {
                         Vector3 worldPos = center + offset;
                         GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
-
-                        Vector3 parentScale = transform.lossyScale;
-                        go.transform.localScale = new Vector3(
-                            0.1f / parentScale.x,
-                            0.1f / parentScale.y,
-                            0.1f / parentScale.z
-                        );
+                        go.transform.localScale = Vector3.one * 0.05f;
 
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        //go.AddComponent<CollisionBody>();
-
                         string source = gameObject.name;
                         MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                         controller.Initialize(mp);
@@ -446,19 +422,22 @@ public class SpringMassSystem : MonoBehaviour
     {
         float r = physicalObject.radius;
         float h = physicalObject.height;
-        float cylinderHeight = h - 2f * r;
-        if (cylinderHeight < 0f) cylinderHeight = 0f; // Prevent negative height
+        float cylinderHeight = Mathf.Max(0f, h - 2f * r);
 
-        float stepXZ = (2f * r) / (resolution - 1);      // horizontal step
-        float stepY = h / (resolution - 1);              // vertical step
+        int stepsXZ = Mathf.Max(2, Mathf.RoundToInt(2f * r * resolution));
+        int stepsY = Mathf.Max(2, Mathf.RoundToInt(h * resolution));
+
+        float stepXZ = (2f * r) / (stepsXZ - 1);
+        float stepY = h / (stepsY - 1);
+
         connectionRadius = Mathf.Max(stepXZ, stepY) * Mathf.Sqrt(3);
         Vector3 center = transform.position;
 
-        for (int x = 0; x < resolution; x++)
+        for (int x = 0; x < stepsXZ; x++)
         {
-            for (int y = 0; y < resolution; y++)
+            for (int y = 0; y < stepsY; y++)
             {
-                for (int z = 0; z < resolution; z++)
+                for (int z = 0; z < stepsXZ; z++)
                 {
                     float offsetY = y * stepY - h / 2f;
                     Vector3 offset = new Vector3(
@@ -470,28 +449,17 @@ public class SpringMassSystem : MonoBehaviour
                     Vector2 horizontal = new Vector2(offset.x, offset.z);
                     float vert = offset.y;
 
-                    // Inside middle cylinder section
                     bool insideCylinder = Mathf.Abs(vert) <= cylinderHeight / 2f && horizontal.sqrMagnitude <= r * r;
-
-                    // Inside hemispherical caps
                     float capY = Mathf.Abs(vert) - cylinderHeight / 2f;
-                    bool insideCaps = (capY >= 0) && (horizontal.sqrMagnitude + capY * capY <= r * r);
+                    bool insideCaps = capY >= 0 && (horizontal.sqrMagnitude + capY * capY <= r * r);
 
                     if (insideCylinder || insideCaps)
                     {
                         Vector3 worldPos = center + offset;
                         GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
-
-                        Vector3 parentScale = transform.lossyScale;
-                        go.transform.localScale = new Vector3(
-                            0.1f / parentScale.x,
-                            0.1f / parentScale.y,
-                            0.1f / parentScale.z
-                        );
+                        go.transform.localScale = Vector3.one * 0.05f;
 
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        //go.AddComponent<CollisionBody>();
-
                         string source = gameObject.name;
                         MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                         controller.Initialize(mp);
@@ -694,6 +662,5 @@ public class SpringMassSystem : MonoBehaviour
         }
         return closest;
     }
-
 
 }

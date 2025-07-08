@@ -14,7 +14,7 @@ public class PhysicalObject : MonoBehaviour
     public PhysicalMaterial materialPreset;
 
     public MassShapeType massShapeType = MassShapeType.Cube;
-    public float mass = 1f;
+    
 
     [Header("Shape Dimensions")]
     public float radius = 0.5f;   // Sphere, Cylinder, Capsule
@@ -24,11 +24,20 @@ public class PhysicalObject : MonoBehaviour
 
     public GameObject meshSourceObject; // For Other shape
 
-    public Vector3 velocity;
-    public Vector3 forceAccumulator;
+    public float mass = 1f;
+    [HideInInspector] public Vector3 velocity;
+    [HideInInspector] public Vector3 forceAccumulator;
+
+    [Header("Physics Properties")]
+    public Vector3 initialVelocity;
+    public Vector3 initialForce;
+    public float dragCoefficient = 1f;
+
+    [Header("Rotation")]
+    public Vector3 rotationEuler = Vector3.zero;  // Not linked to transform.rotation
+
 
     public ShapeType shapeType = ShapeType.Sphere;
-    private float dragCoefficient;
     public bool isStatic
     {
         get => _isStatic;
@@ -44,12 +53,19 @@ public class PhysicalObject : MonoBehaviour
 
     void Start()
     {
-        dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
-
-
-       
+        dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : dragCoefficient;
+        velocity = initialVelocity;
+        forceAccumulator = initialForce;
     }
 
+    void Update()
+    {
+        // Apply rotation if not static
+        if (!isStatic)
+        {
+            transform.rotation = Quaternion.Euler(rotationEuler);
+        }
+    }
 
     void FixedUpdate()
     {

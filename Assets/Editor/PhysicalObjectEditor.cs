@@ -40,6 +40,15 @@ public class PhysicalObjectEditor : Editor
         }
 
         po.isStatic = EditorGUILayout.Toggle("Is Static", po.isStatic);
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField("Physics Properties", EditorStyles.boldLabel);
+        po.initialVelocity = EditorGUILayout.Vector3Field("Initial Velocity", po.initialVelocity);
+        po.initialForce = EditorGUILayout.Vector3Field("Initial Force", po.initialForce);
+        po.dragCoefficient = EditorGUILayout.FloatField("Drag Coefficient", po.dragCoefficient);
+
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField("Rotation", EditorStyles.boldLabel);
+        po.rotationEuler = EditorGUILayout.Vector3Field("Rotation (Euler)", po.rotationEuler);
 
         if (GUI.changed)
         {
