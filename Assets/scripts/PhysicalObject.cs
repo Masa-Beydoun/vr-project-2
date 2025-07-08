@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-public enum ShapeType { Sphere, AABB }
+public enum BoundingShapeType { None , Sphere, AABB }
 public enum MassShapeType
 {
     Cube,
@@ -8,6 +8,11 @@ public enum MassShapeType
     Cylinder,
     Capsule,
     Other
+}
+public struct BoundingSphere
+{
+    public Vector3 center;
+    public float radius;
 }
 public class PhysicalObject : MonoBehaviour
 {
@@ -21,6 +26,10 @@ public class PhysicalObject : MonoBehaviour
     public float height = 1.0f;   // Cylinder, Capsule
     public float width = 1.0f;    // Cube width
     public float depth = 1.0f;    // Cube depth
+
+    public BoundingShapeType boundingShapeType = BoundingShapeType.None;
+    public Bounds? boundingBox = null;
+    public BoundingSphere? boundingSphere = null;
 
     public GameObject meshSourceObject; // For Other shape
 
@@ -37,7 +46,7 @@ public class PhysicalObject : MonoBehaviour
     public Vector3 rotationEuler = Vector3.zero;  // Not linked to transform.rotation
 
 
-    public ShapeType shapeType = ShapeType.Sphere;
+    public BoundingShapeType shapeType = BoundingShapeType.Sphere;
     public bool isStatic
     {
         get => _isStatic;
@@ -107,5 +116,29 @@ public class PhysicalObject : MonoBehaviour
 
         ApplyForce(dragForce);
     }
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.green;
+
+    //    if (shapeType == ShapeType.Sphere)
+    //    {
+    //        float r = radius;
+    //        Gizmos.DrawWireCube(transform.position, Vector3.one * r * 2f);
+    //    }
+    //    else if (shapeType == ShapeType.AABB)
+    //    {
+    //        Vector3 center = transform.position;
+    //        Vector3 halfExtents = new Vector3(width / 2f, height / 2f, depth / 2f);
+    //        Quaternion rotation = Quaternion.Euler(rotationEuler);
+
+    //        Matrix4x4 oldMatrix = Gizmos.matrix;
+    //        Gizmos.matrix = Matrix4x4.TRS(center, rotation, Vector3.one);
+    //        Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
+    //        Gizmos.matrix = oldMatrix;
+    //    }
+    //}
+
+
 
 }
+

@@ -13,7 +13,7 @@ public class BoundingProjection
         this.obj = obj;
         Vector3 center = obj.transform.position;
 
-        Vector3 halfSize = obj.shapeType == ShapeType.Sphere
+        Vector3 halfSize = obj.shapeType == BoundingShapeType.Sphere
             ? Vector3.one * obj.radius
             : obj.transform.localScale / 2;
 

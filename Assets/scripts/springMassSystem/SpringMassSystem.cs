@@ -197,6 +197,7 @@ public class SpringMassSystem : MonoBehaviour
 
         foreach (var s in springs)
             s.UpdateLine();
+        DrawBoundingBox();
 
     }
 
@@ -662,5 +663,68 @@ public class SpringMassSystem : MonoBehaviour
         }
         return closest;
     }
+
+    void DrawBoundingBox()
+    {
+#if UNITY_EDITOR
+    if (allPoints.Count == 0) return;
+
+    GameObject box = new GameObject("SpringMass_BoundingShape");
+    box.transform.SetParent(transform);
+
+    var boxDrawer = box.AddComponent<BoundingBoxDrawer>();
+
+    if (physicalObject.shapeType == BoundingShapeType.Sphere)
+    {
+        // 1. Compute center as average
+        Vector3 center = Vector3.zero;
+        foreach (var p in allPoints)
+            center += p.position;
+        center /= allPoints.Count;
+
+        // 2. Compute max distance to get radius
+        float radius = 0f;
+        foreach (var p in allPoints)
+            radius = Mathf.Max(radius, Vector3.Distance(center, p.position));
+
+        // Draw
+        box.transform.position = center;
+        boxDrawer.size = Vector3.one * radius * 2f;
+        boxDrawer.isSphere = true;
+
+        // ✅Store in PhysicalObject
+        physicalObject.boundingShapeType = BoundingShapeType.Sphere;
+        physicalObject.boundingSphere = new BoundingSphere { center = center, radius = radius };
+        physicalObject.boundingBox = null;
+    }
+    else
+    {
+        // Compute AABB from allPoints
+        Vector3 min = allPoints[0].position;
+        Vector3 max = allPoints[0].position;
+
+        foreach (var p in allPoints)
+        {
+            min = Vector3.Min(min, p.position);
+            max = Vector3.Max(max, p.position);
+        }
+
+        Vector3 center = (min + max) / 2f;
+        Vector3 size = max - min;
+
+        // Draw
+        box.transform.position = center;
+        boxDrawer.size = size;
+        boxDrawer.isSphere = false;
+
+        //  Store in PhysicalObject
+        physicalObject.boundingShapeType = BoundingShapeType.AABB;
+        physicalObject.boundingBox = new Bounds(center, size);
+        physicalObject.boundingSphere = null;
+    }
+#endif
+    }
+
+
 
 }

@@ -98,7 +98,7 @@ public class OctreeNode
 
     private Bounds GetBounds(PhysicalObject obj)
     {
-        Vector3 halfSize = obj.shapeType == ShapeType.Sphere
+        Vector3 halfSize = obj.shapeType == BoundingShapeType.Sphere
             ? Vector3.one * obj.radius
             : obj.transform.localScale / 2;
 

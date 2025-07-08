@@ -11,7 +11,7 @@ public class PhysicalObjectEditor : Editor
         po.materialPreset = (PhysicalMaterial)EditorGUILayout.ObjectField("Material Preset", po.materialPreset, typeof(PhysicalMaterial), false);
         po.mass = EditorGUILayout.FloatField("Mass", po.mass);
 
-        po.shapeType = (ShapeType)EditorGUILayout.EnumPopup("Shape Type", po.shapeType);
+        po.shapeType = (BoundingShapeType)EditorGUILayout.EnumPopup("Bounding Shape Type", po.shapeType);
         po.massShapeType = (MassShapeType)EditorGUILayout.EnumPopup("Mass Shape Type", po.massShapeType);
 
         EditorGUILayout.LabelField("Shape Dimensions", EditorStyles.boldLabel);
