@@ -16,6 +16,11 @@ public struct BoundingSphere
 }
 public class PhysicalObject : MonoBehaviour
 {
+    #if UNITY_EDITOR
+    [HideInInspector] public BoundingBoxDrawer boundingBoxDrawer;
+    #endif
+
+
     public PhysicalMaterial materialPreset;
 
     public MassShapeType massShapeType = MassShapeType.Cube;
@@ -116,29 +121,7 @@ public class PhysicalObject : MonoBehaviour
 
         ApplyForce(dragForce);
     }
-    //void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.green;
-
-    //    if (shapeType == ShapeType.Sphere)
-    //    {
-    //        float r = radius;
-    //        Gizmos.DrawWireCube(transform.position, Vector3.one * r * 2f);
-    //    }
-    //    else if (shapeType == ShapeType.AABB)
-    //    {
-    //        Vector3 center = transform.position;
-    //        Vector3 halfExtents = new Vector3(width / 2f, height / 2f, depth / 2f);
-    //        Quaternion rotation = Quaternion.Euler(rotationEuler);
-
-    //        Matrix4x4 oldMatrix = Gizmos.matrix;
-    //        Gizmos.matrix = Matrix4x4.TRS(center, rotation, Vector3.one);
-    //        Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
-    //        Gizmos.matrix = oldMatrix;
-    //    }
-    //}
-
-
+ 
 
 }
 
