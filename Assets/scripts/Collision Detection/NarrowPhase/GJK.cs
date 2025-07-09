@@ -1,166 +1,175 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public interface IConvexCollider
+public static class GJK
 {
-    Vector3 GetFurthestPointInDirection(Vector3 direction);
-    Vector3 GetCenter();
-}
-
-public class GJK
-{
-    const int MaxIterations = 30;
-
-    public static bool CheckCollision(IConvexCollider a, IConvexCollider b)
+    public static bool Detect(SpringMassSystem a, SpringMassSystem b, List<Vector3> simplex)
     {
-        Vector3 direction = b.GetCenter() - a.GetCenter();
-        if (direction == Vector3.zero) direction = Vector3.right;
+        Vector3 direction = a.transform.position - b.transform.position;
+        if (direction == Vector3.zero)
+            direction = Vector3.right;
 
-        List<Vector3> simplex = new List<Vector3>();
-        Vector3 point = Support(a, b, direction);
-        simplex.Add(point);
-        direction = -point;
+        Vector3 support = Support(a, b, direction);
+        simplex.Clear();
+        simplex.Add(support);
 
-        for (int i = 0; i < MaxIterations; i++)
+        direction = -support;
+
+        for (int iteration = 0; iteration < 30; iteration++)
         {
-            point = Support(a, b, direction);
+            support = Support(a, b, direction);
 
-            if (Vector3.Dot(point, direction) <= 0)
+            if (Vector3.Dot(support, direction) < 0)
                 return false;
 
-            simplex.Add(point);
+            simplex.Add(support);
 
-            if (HandleSimplex(ref simplex, ref direction))
+            if (HandleSimplex(simplex, ref direction))
                 return true;
         }
 
         return false;
     }
 
-    private static Vector3 Support(IConvexCollider a, IConvexCollider b, Vector3 direction)
+    private static Vector3 Support(SpringMassSystem a, SpringMassSystem b, Vector3 direction)
     {
-        Vector3 pointA = a.GetFurthestPointInDirection(direction);
-        Vector3 pointB = b.GetFurthestPointInDirection(-direction);
-        return pointA - pointB;
+        Vector3 p1 = GetFarthestPoint(a.GetMassPoints(), direction);
+        Vector3 p2 = GetFarthestPoint(b.GetMassPoints(), -direction);
+        return p1 - p2;
     }
 
-    private static bool HandleSimplex(ref List<Vector3> simplex, ref Vector3 direction)
+    private static Vector3 GetFarthestPoint(List<MassPoint> points, Vector3 direction)
+    {
+        float maxDot = float.MinValue;
+        Vector3 best = points[0].position;
+
+        foreach (var p in points)
+        {
+            float dot = Vector3.Dot(p.position, direction);
+            if (dot > maxDot)
+            {
+                maxDot = dot;
+                best = p.position;
+            }
+        }
+        return best;
+    }
+
+    private static bool HandleSimplex(List<Vector3> simplex, ref Vector3 direction)
     {
         if (simplex.Count == 2)
-            return Line(ref simplex, ref direction);
-        else if (simplex.Count == 3)
-            return Triangle(ref simplex, ref direction);
-        else
-            return Tetrahedron(ref simplex, ref direction);
-    }
-
-    private static bool Line(ref List<Vector3> simplex, ref Vector3 direction)
-    {
-        Vector3 A = simplex[1];
-        Vector3 B = simplex[0];
-        Vector3 AB = B - A;
-        Vector3 AO = -A;
-
-        if (Vector3.Dot(AB, AO) > 0)
         {
-            direction = Vector3.Cross(Vector3.Cross(AB, AO), AB);
+            return HandleLine(simplex, ref direction);
         }
-        else
+        else if (simplex.Count == 3)
         {
-            simplex.RemoveAt(0);
-            direction = AO;
+            return HandleTriangle(simplex, ref direction);
+        }
+        else if (simplex.Count == 4)
+        {
+            return HandleTetrahedron(simplex, ref direction);
         }
 
         return false;
     }
 
-    private static bool Triangle(ref List<Vector3> simplex, ref Vector3 direction)
+    private static bool HandleLine(List<Vector3> simplex, ref Vector3 direction)
     {
-        Vector3 A = simplex[2];
-        Vector3 B = simplex[1];
-        Vector3 C = simplex[0];
+        Vector3 a = simplex[1];
+        Vector3 b = simplex[0];
+        Vector3 ab = b - a;
+        Vector3 ao = -a;
 
-        Vector3 AB = B - A;
-        Vector3 AC = C - A;
-        Vector3 AO = -A;
+        direction = Vector3.Cross(Vector3.Cross(ab, ao), ab);
+        return false;
+    }
 
-        Vector3 ABC = Vector3.Cross(AB, AC);
+    private static bool HandleTriangle(List<Vector3> simplex, ref Vector3 direction)
+    {
+        Vector3 a = simplex[2];
+        Vector3 b = simplex[1];
+        Vector3 c = simplex[0];
 
-        if (Vector3.Dot(Vector3.Cross(ABC, AC), AO) > 0)
+        Vector3 ab = b - a;
+        Vector3 ac = c - a;
+        Vector3 ao = -a;
+
+        Vector3 abc = Vector3.Cross(ab, ac);
+
+        if (Vector3.Dot(Vector3.Cross(abc, ac), ao) > 0)
         {
-            if (Vector3.Dot(AC, AO) > 0)
+            if (Vector3.Dot(ac, ao) > 0)
             {
-                simplex.RemoveAt(1); // remove B
-                direction = Vector3.Cross(Vector3.Cross(AC, AO), AC);
+                simplex.RemoveAt(1); // remove b
+                direction = Vector3.Cross(Vector3.Cross(ac, ao), ac);
             }
             else
             {
-                return Line(ref simplex, ref direction);
+                return HandleLine(new List<Vector3> { b, a }, ref direction);
             }
         }
         else
         {
-            if (Vector3.Dot(Vector3.Cross(AB, ABC), AO) > 0)
+            if (Vector3.Dot(Vector3.Cross(ab, abc), ao) > 0)
             {
-                return Line(ref simplex, ref direction);
+                return HandleLine(new List<Vector3> { b, a }, ref direction);
             }
             else
             {
-                if (Vector3.Dot(ABC, AO) > 0)
+                if (Vector3.Dot(abc, ao) > 0)
                 {
-                    direction = ABC;
+                    direction = abc;
                 }
                 else
                 {
                     Vector3 temp = simplex[0];
                     simplex[0] = simplex[1];
                     simplex[1] = temp;
-                    direction = -ABC;
+                    direction = -abc;
                 }
             }
         }
-
         return false;
     }
 
-    private static bool Tetrahedron(ref List<Vector3> simplex, ref Vector3 direction)
+    private static bool HandleTetrahedron(List<Vector3> simplex, ref Vector3 direction)
     {
-        Vector3 A = simplex[3];
-        Vector3 B = simplex[2];
-        Vector3 C = simplex[1];
-        Vector3 D = simplex[0];
+        Vector3 a = simplex[3];
+        Vector3 b = simplex[2];
+        Vector3 c = simplex[1];
+        Vector3 d = simplex[0];
 
-        Vector3 AO = -A;
+        Vector3 ao = -a;
 
-        Vector3 AB = B - A;
-        Vector3 AC = C - A;
-        Vector3 AD = D - A;
+        Vector3 ab = b - a;
+        Vector3 ac = c - a;
+        Vector3 ad = d - a;
 
-        Vector3 ABC = Vector3.Cross(AB, AC);
-        Vector3 ACD = Vector3.Cross(AC, AD);
-        Vector3 ADB = Vector3.Cross(AD, AB);
+        Vector3 abc = Vector3.Cross(ab, ac);
+        Vector3 acd = Vector3.Cross(ac, ad);
+        Vector3 adb = Vector3.Cross(ad, ab);
 
-        if (Vector3.Dot(ABC, AO) > 0)
+        if (Vector3.Dot(abc, ao) > 0)
         {
-            simplex.RemoveAt(0); // remove D
-            direction = ABC;
+            simplex.RemoveAt(0); // remove d
+            direction = abc;
             return false;
         }
 
-        if (Vector3.Dot(ACD, AO) > 0)
+        if (Vector3.Dot(acd, ao) > 0)
         {
-            simplex.RemoveAt(2); // remove B
-            direction = ACD;
+            simplex.RemoveAt(2); // remove b
+            direction = acd;
             return false;
         }
 
-        if (Vector3.Dot(ADB, AO) > 0)
+        if (Vector3.Dot(adb, ao) > 0)
         {
-            simplex.RemoveAt(1); // remove C
-            direction = ADB;
+            simplex.RemoveAt(1); // remove c
+            direction = adb;
             return false;
         }
 
-        return true; // collision confirmed
+        return true; // Origin is inside tetrahedron
     }
 }

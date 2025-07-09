@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Assets",
+    "\\Assets\\scripts",
+    "\\Assets\\scripts\\Collision Detection",
+    "\\Assets\\scripts\\Collision Detection\\NarrowPhase",
+    "\\Assets\\scripts\\springMassSystem"
+  ],
+  "SelectedNode": "\\Assets\\scripts\\Collision Detection\\CollisionDetector.cs",
+  "PreviewInSolutionExplorer": false
+}

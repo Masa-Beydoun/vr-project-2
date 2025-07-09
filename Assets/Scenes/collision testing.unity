@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 0
   radius: 0
@@ -200,7 +201,7 @@ MonoBehaviour:
   previousIsCreated: 0
   connectionRadius: 0
   resolution: 20
-  springStiffness: 500
+  springStiffness: 50
   springDamping: 2
   massShapeType: 0
   physicalObject: {fileID: 0}
@@ -540,7 +541,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialPreset: {fileID: 11400000, guid: c6aaf7e49eb7a3d4b9d3377d6d32c809, type: 2}
+  boundingBoxDrawer: {fileID: 0}
+  materialPreset: {fileID: 0}
   massShapeType: 1
   radius: 0.5
   height: 1
@@ -555,7 +557,7 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
-  shapeType: 0
+  shapeType: 1
   _isStatic: 1
 --- !u!114 &1500751872
 MonoBehaviour:
@@ -673,6 +675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 4
   radius: 0.5
@@ -930,6 +933,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 4
   radius: 0.5
@@ -941,7 +945,7 @@ MonoBehaviour:
   mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
-  initialVelocity: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 10, y: 0, z: 0}
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 0
   rotationEuler: {x: 0, y: 0, z: 0}

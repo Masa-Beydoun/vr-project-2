@@ -387,14 +387,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 0
-  mass: 100
   radius: 0
   height: 0.2
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!4 &187059674
@@ -518,14 +523,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 0
-  mass: 1000
   radius: 0
   height: 0.2
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  mass: 1000
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!23 &381229238
@@ -603,15 +613,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 072878da096e7734da22d6780257a8f6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -77.08325
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 072878da096e7734da22d6780257a8f6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.281
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 072878da096e7734da22d6780257a8f6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 70.69187
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 072878da096e7734da22d6780257a8f6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -787,14 +797,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 11400000, guid: 91de10dd8b88a5847bd048e3ff0704d7, type: 2}
   massShapeType: 1
-  mass: 20
   radius: 1
   height: 1
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  mass: 20
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!4 &625630967
@@ -1102,14 +1117,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 11400000, guid: 91de10dd8b88a5847bd048e3ff0704d7, type: 2}
   massShapeType: 0
-  mass: 10
   radius: 0
   height: 1
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  mass: 10
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!4 &1430292136
@@ -1154,7 +1174,7 @@ Transform:
   m_GameObject: {fileID: 1495567080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 1, y: 0, z: 1}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1174,14 +1194,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 4
-  mass: 1
   radius: 0.5
   height: 1
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 1723450733}
+  mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!114 &1495567084
@@ -1199,7 +1224,7 @@ MonoBehaviour:
   isCreated: 0
   previousIsCreated: 0
   connectionRadius: 0
-  resolution: 50
+  resolution: 70
   springStiffness: 500
   springDamping: 2
   massShapeType: 0
@@ -1318,14 +1343,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 4
-  mass: 100
   radius: 0.5
   height: 1
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 682467906}
+  mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!1 &1723450733 stripped
@@ -1433,14 +1463,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 0
-  mass: 1
   radius: 0.1
   height: 1
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!4 &1890435890
@@ -1537,14 +1572,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 0
-  mass: 1
   radius: 0.1
   height: 1
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!4 &1941609705
@@ -1728,14 +1768,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialPreset: {fileID: 0}
   massShapeType: 4
-  mass: 100
   radius: 0.5
   height: 1
   width: 1
   depth: 1
+  boundingShapeType: 0
   meshSourceObject: {fileID: 1298921294}
+  mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
   shapeType: 1
   _isStatic: 1
 --- !u!114 &2094849919
