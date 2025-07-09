@@ -163,6 +163,220 @@ public class Mesh3D
         Elements = tets.ToArray();
     }
 
+
+
+
+    // Cylinder mesh generation
+    public void GenerateCylinderMesh(float radius, float height, float resolution, Vector3 center)
+    {
+        float spacing = resolution;
+        List<Node> nodes = new();
+        Dictionary<(int, int, int), int> indexMap = new();
+
+        // Calculate grid divisions
+        int radialDivisions = Mathf.CeilToInt(radius * 2 / spacing);
+        int heightDivisions = Mathf.CeilToInt(height / spacing);
+
+        // Generate nodes in a rectangular grid, then filter for cylinder shape
+        for (int x = -radialDivisions; x <= radialDivisions; x++)
+        {
+            for (int y = -heightDivisions/2; y <= heightDivisions/2; y++)
+            {
+                for (int z = -radialDivisions; z <= radialDivisions; z++)
+                {
+                    Vector3 pos = new Vector3(x * spacing, y * spacing, z * spacing) + center;
+                    
+                    // Check if point is inside cylinder (distance from Y-axis <= radius, within height bounds)
+                    float distFromYAxis = Mathf.Sqrt(pos.x * pos.x + pos.z * pos.z);
+                    float relativeY = pos.y - center.y;
+                    
+                    if (distFromYAxis <= radius && Mathf.Abs(relativeY) <= height / 2)
+                    {
+                        int id = nodes.Count;
+                        var node = new Node(pos, id);
+
+                        // Mark boundary nodes (on cylindrical surface or top/bottom faces)
+                        bool onCylindricalSurface = Mathf.Abs(distFromYAxis - radius) < spacing * 0.5f;
+                        bool onTopBottomFace = (Mathf.Abs(relativeY - height/2) < spacing * 0.5f || 
+                                            Mathf.Abs(relativeY + height/2) < spacing * 0.5f) && 
+                                            distFromYAxis <= radius;
+                        
+                        if (onCylindricalSurface || onTopBottomFace)
+                            node.IsBoundary = true;
+
+                        nodes.Add(node);
+                        indexMap[(x, y, z)] = id;
+                    }
+                }
+            }
+        }
+
+        List<Tetrahedron> tets = new();
+        int idx(int i, int j, int k) => indexMap.ContainsKey((i, j, k)) ? indexMap[(i, j, k)] : -1;
+
+        // Generate tetrahedrons using 5-tet decomposition
+        for (int x = -radialDivisions; x < radialDivisions; x++)
+        {
+            for (int y = -heightDivisions/2; y < heightDivisions/2; y++)
+            {
+                for (int z = -radialDivisions; z < radialDivisions; z++)
+                {
+                    int[] v = new int[8]
+                    {
+                        idx(x, y, z),
+                        idx(x+1, y, z),
+                        idx(x, y+1, z),
+                        idx(x+1, y+1, z),
+                        idx(x, y, z+1),
+                        idx(x+1, y, z+1),
+                        idx(x, y+1, z+1),
+                        idx(x+1, y+1, z+1)
+                    };
+
+                    // Skip if any vertex is outside the cylinder
+                    if (Array.Exists(v, id => id == -1)) continue;
+
+                    // Create 5 tetrahedrons
+                    tets.Add(new Tetrahedron(v[0], v[1], v[2], v[4]));
+                    tets.Add(new Tetrahedron(v[1], v[2], v[3], v[7]));
+                    tets.Add(new Tetrahedron(v[2], v[4], v[6], v[7]));
+                    tets.Add(new Tetrahedron(v[1], v[4], v[5], v[7]));
+                    tets.Add(new Tetrahedron(v[4], v[2], v[1], v[7]));
+                }
+            }
+        }
+
+        Nodes = nodes.ToArray();
+        Elements = tets.ToArray();
+    }
+
+    // Capsule mesh generation (cylinder with hemispherical ends)
+    public void GenerateCapsuleMesh(float radius, float height, float resolution, Vector3 center)
+    {
+        float spacing = resolution;
+        List<Node> nodes = new();
+        Dictionary<(int, int, int), int> indexMap = new();
+
+        // Calculate grid divisions
+        int radialDivisions = Mathf.CeilToInt(radius * 2 / spacing);
+        int heightDivisions = Mathf.CeilToInt(height / spacing);
+        int totalHeightDivisions = heightDivisions + 2 * radialDivisions; // Add space for hemispheres
+
+        // Generate nodes in a rectangular grid, then filter for capsule shape
+        for (int x = -radialDivisions; x <= radialDivisions; x++)
+        {
+            for (int y = -totalHeightDivisions/2; y <= totalHeightDivisions/2; y++)
+            {
+                for (int z = -radialDivisions; z <= radialDivisions; z++)
+                {
+                    Vector3 pos = new Vector3(x * spacing, y * spacing, z * spacing) + center;
+                    
+                    float distFromYAxis = Mathf.Sqrt(pos.x * pos.x + pos.z * pos.z);
+                    float relativeY = pos.y - center.y;
+                    
+                    bool isInsideCapsule = false;
+                    
+                    // Check cylindrical middle section
+                    if (Mathf.Abs(relativeY) <= height / 2 && distFromYAxis <= radius)
+                    {
+                        isInsideCapsule = true;
+                    }
+                    // Check top hemisphere
+                    else if (relativeY > height / 2)
+                    {
+                        Vector3 topSphereCenter = center + Vector3.up * (height / 2);
+                        float distFromTopCenter = (pos - topSphereCenter).magnitude;
+                        if (distFromTopCenter <= radius)
+                            isInsideCapsule = true;
+                    }
+                    // Check bottom hemisphere
+                    else if (relativeY < -height / 2)
+                    {
+                        Vector3 bottomSphereCenter = center - Vector3.up * (height / 2);
+                        float distFromBottomCenter = (pos - bottomSphereCenter).magnitude;
+                        if (distFromBottomCenter <= radius)
+                            isInsideCapsule = true;
+                    }
+                    
+                    if (isInsideCapsule)
+                    {
+                        int id = nodes.Count;
+                        var node = new Node(pos, id);
+
+                        // Mark boundary nodes
+                        bool isBoundary = false;
+                        
+                        // Cylindrical surface boundary
+                        if (Mathf.Abs(relativeY) <= height / 2 && 
+                            Mathf.Abs(distFromYAxis - radius) < spacing * 0.5f)
+                        {
+                            isBoundary = true;
+                        }
+                        // Top hemisphere boundary
+                        else if (relativeY > height / 2)
+                        {
+                            Vector3 topSphereCenter = center + Vector3.up * (height / 2);
+                            float distFromTopCenter = (pos - topSphereCenter).magnitude;
+                            if (Mathf.Abs(distFromTopCenter - radius) < spacing * 0.5f)
+                                isBoundary = true;
+                        }
+                        // Bottom hemisphere boundary
+                        else if (relativeY < -height / 2)
+                        {
+                            Vector3 bottomSphereCenter = center - Vector3.up * (height / 2);
+                            float distFromBottomCenter = (pos - bottomSphereCenter).magnitude;
+                            if (Mathf.Abs(distFromBottomCenter - radius) < spacing * 0.5f)
+                                isBoundary = true;
+                        }
+                        
+                        node.IsBoundary = isBoundary;
+                        nodes.Add(node);
+                        indexMap[(x, y, z)] = id;
+                    }
+                }
+            }
+        }
+
+        List<Tetrahedron> tets = new();
+        int idx(int i, int j, int k) => indexMap.ContainsKey((i, j, k)) ? indexMap[(i, j, k)] : -1;
+
+        // Generate tetrahedrons using 5-tet decomposition
+        for (int x = -radialDivisions; x < radialDivisions; x++)
+        {
+            for (int y = -totalHeightDivisions/2; y < totalHeightDivisions/2; y++)
+            {
+                for (int z = -radialDivisions; z < radialDivisions; z++)
+                {
+                    int[] v = new int[8]
+                    {
+                        idx(x, y, z),
+                        idx(x+1, y, z),
+                        idx(x, y+1, z),
+                        idx(x+1, y+1, z),
+                        idx(x, y, z+1),
+                        idx(x+1, y, z+1),
+                        idx(x, y+1, z+1),
+                        idx(x+1, y+1, z+1)
+                    };
+
+                    // Skip if any vertex is outside the capsule
+                    if (Array.Exists(v, id => id == -1)) continue;
+
+                    // Create 5 tetrahedrons
+                    tets.Add(new Tetrahedron(v[0], v[1], v[2], v[4]));
+                    tets.Add(new Tetrahedron(v[1], v[2], v[3], v[7]));
+                    tets.Add(new Tetrahedron(v[2], v[4], v[6], v[7]));
+                    tets.Add(new Tetrahedron(v[1], v[4], v[5], v[7]));
+                    tets.Add(new Tetrahedron(v[4], v[2], v[1], v[7]));
+                }
+            }
+        }
+
+        Nodes = nodes.ToArray();
+        Elements = tets.ToArray();
+    }
+
+
     
     // using it in stiff matrix 
     public Vector3[] GetTetCorners(Tetrahedron tet)

@@ -798,6 +798,96 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
+--- !u!1 &1991648979
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1991648982}
+  - component: {fileID: 1991648981}
+  - component: {fileID: 1991648980}
+  m_Layer: 0
+  m_Name: hiba
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1991648980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991648979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff47506ab995b8648b20d36ef3cf4107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCreated: 1
+  previousIsCreated: 0
+  connectionRadius: 0
+  resolution: 5
+  springStiffness: 500
+  springDamping: 2
+  massShapeType: 0
+  physicalObject: {fileID: 0}
+  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
+  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
+  useCustomSpringProperties: 1
+  materialPreset: {fileID: 0}
+  meshConnectionMode: 0
+  k: 4
+  useVoxelFilling: 1
+  generationMode: 0
+--- !u!114 &1991648981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991648979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  materialPreset: {fileID: 11400000, guid: c6aaf7e49eb7a3d4b9d3377d6d32c809, type: 2}
+  massShapeType: 0
+  radius: 0.5
+  height: 1
+  width: 1
+  depth: 1
+  boundingShapeType: 0
+  meshSourceObject: {fileID: 0}
+  mass: 1
+  velocity: {x: 0, y: 0, z: 0}
+  forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 1
+  rotationEuler: {x: 0, y: 0, z: 0}
+  shapeType: 1
+  _isStatic: 1
+--- !u!4 &1991648982
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991648979}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.96363926, y: -0.25620174, z: 2.3281813}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2094849915
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,3 +993,4 @@ SceneRoots:
   - {fileID: 1963660750}
   - {fileID: 1715684846}
   - {fileID: 1500751873}
+  - {fileID: 1991648982}
