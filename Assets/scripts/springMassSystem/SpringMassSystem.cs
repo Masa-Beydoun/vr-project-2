@@ -197,7 +197,9 @@ public class SpringMassSystem : MonoBehaviour
 
         foreach (var s in springs)
             s.UpdateLine();
-        DrawBoundingBox();
+        CreateBoundingDrawer(); // One-time drawer object
+        UpdateBoundingShape();  // Draw the initial shape
+
 
     }
 
@@ -214,6 +216,9 @@ public class SpringMassSystem : MonoBehaviour
             CreateSystem();
         }
         previousIsCreated = isCreated;
+        #if UNITY_EDITOR
+            UpdateBoundingShape(); // Update drawer position + size
+        #endif
     }
 
     void FixedUpdate()
@@ -241,6 +246,21 @@ public class SpringMassSystem : MonoBehaviour
         foreach (var s in springs)
             s.UpdateLine();
     }
+    static readonly Vector3Int[] StructuralOffsets = {
+    new Vector3Int(1, 0, 0), new Vector3Int(0, 1, 0), new Vector3Int(0, 0, 1),
+    new Vector3Int(-1, 0, 0), new Vector3Int(0, -1, 0), new Vector3Int(0, 0, -1),
+};
+
+    static readonly Vector3Int[] ShearOffsets = {
+    new Vector3Int(1, 1, 0), new Vector3Int(1, -1, 0), new Vector3Int(-1, 1, 0), new Vector3Int(-1, -1, 0),
+    new Vector3Int(0, 1, 1), new Vector3Int(0, -1, 1), new Vector3Int(0, 1, -1), new Vector3Int(0, -1, -1),
+    new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1), new Vector3Int(-1, 0, -1)
+};
+
+    static readonly Vector3Int[] BendOffsets = {
+    new Vector3Int(2, 0, 0), new Vector3Int(0, 2, 0), new Vector3Int(0, 0, 2),
+    new Vector3Int(-2, 0, 0), new Vector3Int(0, -2, 0), new Vector3Int(0, 0, -2)
+};
 
     void GenerateCubePoints()
     {
@@ -287,8 +307,13 @@ public class SpringMassSystem : MonoBehaviour
 
     void ConnectCubeSprings(int pointsX, int pointsY, int pointsZ, float dx, float dy, float dz)
     {
-        connectionRadius = Mathf.Sqrt(dx * dx + dy * dy + dz * dz) * 1.1f; // Slightly over nearest-neighbor distance
+        AddSpringsWithOffsets(pointsX, pointsY, pointsZ, StructuralOffsets);
+        AddSpringsWithOffsets(pointsX, pointsY, pointsZ, ShearOffsets);
+        AddSpringsWithOffsets(pointsX, pointsY, pointsZ, BendOffsets);
+    }
 
+    void AddSpringsWithOffsets(int pointsX, int pointsY, int pointsZ, Vector3Int[] offsets)
+    {
         for (int x = 0; x < pointsX; x++)
         {
             for (int y = 0; y < pointsY; y++)
@@ -297,29 +322,16 @@ public class SpringMassSystem : MonoBehaviour
                 {
                     var current = cubeGrid[x, y, z];
 
-                    for (int i = -1; i <= 1; i++)
+                    foreach (var offset in offsets)
                     {
-                        for (int j = -1; j <= 1; j++)
+                        int nx = x + offset.x;
+                        int ny = y + offset.y;
+                        int nz = z + offset.z;
+
+                        if (nx >= 0 && nx < pointsX && ny >= 0 && ny < pointsY && nz >= 0 && nz < pointsZ)
                         {
-                            for (int k = -1; k <= 1; k++)
-                            {
-                                if (i == 0 && j == 0 && k == 0) continue;
-
-                                int nx = x + i;
-                                int ny = y + j;
-                                int nz = z + k;
-
-                                if (nx >= 0 && nx < pointsX && ny >= 0 && ny < pointsY && nz >= 0 && nz < pointsZ)
-                                {
-                                    var neighbor = cubeGrid[nx, ny, nz];
-                                    float distance = Vector3.Distance(current.position, neighbor.position);
-
-                                    if (distance <= connectionRadius)
-                                    {
-                                        springs.Add(new Spring(current, neighbor, springStiffness, springDamping, transform, springLineMaterial));
-                                    }
-                                }
-                            }
+                            var neighbor = cubeGrid[nx, ny, nz];
+                            springs.Add(new Spring(current, neighbor, springStiffness, springDamping, transform, springLineMaterial));
                         }
                     }
                 }
@@ -664,7 +676,9 @@ public class SpringMassSystem : MonoBehaviour
         return closest;
     }
 
-    void DrawBoundingBox()
+
+
+    void CreateBoundingDrawer()
     {
 #if UNITY_EDITOR
     if (allPoints.Count == 0) return;
@@ -673,33 +687,41 @@ public class SpringMassSystem : MonoBehaviour
     box.transform.SetParent(transform);
 
     var boxDrawer = box.AddComponent<BoundingBoxDrawer>();
+    physicalObject.boundingBoxDrawer = boxDrawer; // ✅ Save reference
+#endif
+    }
+
+
+
+
+    void UpdateBoundingShape()
+    {
+#if UNITY_EDITOR
+    if (allPoints.Count == 0 || physicalObject.boundingBoxDrawer == null) return;
+
+    var boxDrawer = physicalObject.boundingBoxDrawer;
 
     if (physicalObject.shapeType == BoundingShapeType.Sphere)
     {
-        // 1. Compute center as average
         Vector3 center = Vector3.zero;
         foreach (var p in allPoints)
             center += p.position;
         center /= allPoints.Count;
 
-        // 2. Compute max distance to get radius
         float radius = 0f;
         foreach (var p in allPoints)
             radius = Mathf.Max(radius, Vector3.Distance(center, p.position));
 
-        // Draw
-        box.transform.position = center;
+        boxDrawer.transform.position = center;
         boxDrawer.size = Vector3.one * radius * 2f;
         boxDrawer.isSphere = true;
 
-        // ✅Store in PhysicalObject
         physicalObject.boundingShapeType = BoundingShapeType.Sphere;
         physicalObject.boundingSphere = new BoundingSphere { center = center, radius = radius };
         physicalObject.boundingBox = null;
     }
     else
     {
-        // Compute AABB from allPoints
         Vector3 min = allPoints[0].position;
         Vector3 max = allPoints[0].position;
 
@@ -712,19 +734,16 @@ public class SpringMassSystem : MonoBehaviour
         Vector3 center = (min + max) / 2f;
         Vector3 size = max - min;
 
-        // Draw
-        box.transform.position = center;
+        boxDrawer.transform.position = center;
         boxDrawer.size = size;
         boxDrawer.isSphere = false;
 
-        //  Store in PhysicalObject
         physicalObject.boundingShapeType = BoundingShapeType.AABB;
         physicalObject.boundingBox = new Bounds(center, size);
         physicalObject.boundingSphere = null;
     }
 #endif
     }
-
 
 
 }
