@@ -725,6 +725,17 @@ public class SpringMassSystem : MonoBehaviour
 #endif
     }
 
+    public List<Vector3> GetPositions()
+    {
+        List<Vector3> positions = new List<Vector3>();
+        foreach (var p in allPoints)
+            positions.Add(p.position);
+        return positions;
+    }
 
+    public List<MassPoint> GetMassPoints()
+    {
+        return allPoints;
+    }
 
 }
