@@ -13,7 +13,7 @@ public class Mesh3D
     // cube generate 
     public void GenerateCubeMesh(Vector3 size, Vector3 center)
     {
-        float desiredElementSize = 0.5f;
+        float desiredElementSize = 0.1f;
 
 
         // Calculates the number of divisions in each direction based on the volume of the cube //

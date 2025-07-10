@@ -32,7 +32,6 @@ public class CollisionManager : MonoBehaviour
 
         var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
 
-        List<(PhysicalObject, PhysicalObject, Vector3)> realCollidedPairs = new List<(PhysicalObject, PhysicalObject, Vector3)>();
         foreach (var (a, b) in candidatePairs)
         {
             //Vector3 mtv = Vector3.zero;
@@ -81,20 +80,44 @@ public class CollisionManager : MonoBehaviour
             //    }
 
             //}
-            SpringMassSystem aSystem = a.GetComponentInParent<SpringMassSystem>();
-            SpringMassSystem bSystem = b.GetComponentInParent<SpringMassSystem>();
-
-            var result = CollisionDetector.CheckCollision(aSystem, bSystem);
-            if (result.collided)
+            if (a.transform != null && b.transform != null)
             {
-                Debug.Log("Collision Detected!");
-                Debug.Log($"Contact Point: {result.contactPoint}");
-                Debug.Log($"Normal: {result.normal}, Depth: {result.penetrationDepth}");
-                Debug.Log($"Colliding Points: {result.pointA.sourceName}[{result.pointA.id}] <-> {result.pointB.sourceName}[{result.pointB.id}]");
+                SpringMassSystem aSystem = a.GetComponentInParent<SpringMassSystem>();
+                SpringMassSystem bSystem = b.GetComponentInParent<SpringMassSystem>();
 
-                Debug.DrawLine(result.pointA.position, result.pointB.position, Color.green, 5f);
+                if (aSystem.transform != null && bSystem.transform != null && aSystem.GetMassPoints().Count > 0 && bSystem.GetMassPoints().Count > 0)
+                {
+                    List<CollisionResult> collisions = CollisionDetector.CheckCollision(aSystem, bSystem);
+                    foreach (var result in collisions)
+                    {
+                        Debug.Log("Collision Detected!");
+                        Debug.Log($"Contact Point: {result.contactPoint}");
+                        Debug.Log($"Normal: {result.normal}, Depth: {result.penetrationDepth}");
+                        Debug.Log($"Colliding Points: {result.pointA.sourceName}[{result.pointA.id}] <-> {result.pointB.sourceName}[{result.pointB.id}]");
+
+                        Debug.DrawLine(result.pointA.position, result.pointB.position, Color.green, 5f);
+                    }
+                }
+                else
+                {
+                    FEMController aController = a.GetComponentInParent<FEMController>();
+                    FEMController bController = b.GetComponentInParent<FEMController>();
+
+                    if (aController.transform != null && bController.transform != null && aController.GetAllNodes().Length > 0 && bController.GetAllNodes().Length > 0)
+                    {
+                        List<CollisionResult_FEM> collisions = CollisionDetector_FEM.CheckCollision(aController, bController);
+                        foreach (var collision in collisions)
+                        {
+                            Debug.Log("Collision Detected!");
+                            Debug.Log($"Contact Point: {collision.contactPoint}");
+                            Debug.Log($"Normal: {collision.normal}, Depth: {collision.penetrationDepth}");
+                            Debug.Log($"Colliding Points: {aController.gameObject.name}[{collision.pointA.ID}] <-> {bController.gameObject.name}[{collision.pointB.ID}]");
+
+                            Debug.DrawLine(collision.pointA.Position, collision.pointB.Position, Color.red, 5f);
+                        }
+                    }
+                }
             }
-
         }
     }
 

@@ -180,6 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 11400000, guid: 2e758c231a707774285d07d70d3dae5c, type: 2}
   massShapeType: 3
   radius: 0.5
@@ -448,6 +449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 11400000, guid: 2e758c231a707774285d07d70d3dae5c, type: 2}
   massShapeType: 1
   radius: 0.7
@@ -480,6 +482,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2002574840
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2002574842}
+  - component: {fileID: 2002574841}
+  m_Layer: 0
+  m_Name: CollisionManger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2002574841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2002574840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82a9c341011e1cc4d8a2a0a71b3a7a33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionHandler: {fileID: 0}
+--- !u!4 &2002574842
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2002574840}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.273982, y: 32.444622, z: -2.707159}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -488,3 +535,4 @@ SceneRoots:
   - {fileID: 627191961}
   - {fileID: 1673265743}
   - {fileID: 89855985}
+  - {fileID: 2002574842}

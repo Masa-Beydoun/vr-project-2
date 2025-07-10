@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class FEMController : MonoBehaviour
@@ -65,13 +65,13 @@ public class FEMController : MonoBehaviour
                 isCreated = false; // Reset if can't initialize
             }
         }
-        
+
         // Update previous state for next frame
         previousIsCreated = isCreated;
 
         // Only run simulation if created
         if (!isCreated) return;
-        
+
         // Run FEM simulation
         if (dynamics != null && solver != null)
         {
@@ -87,7 +87,7 @@ public class FEMController : MonoBehaviour
     {
         // Prevent reinitialization if already created
         if (solver != null && dynamics != null) return;
-        
+
         // Only proceed if isCreated is true
         if (!isCreated) return;
 
@@ -151,7 +151,7 @@ public class FEMController : MonoBehaviour
         PrintMassMatrixSummary(solver.GlobalMassMatrix);
         PrintExpectedMass(solver.Nodes, solver.Tetrahedra, physicalObject.materialPreset);
 
-        SetupBoundingBox();
+        // SetupBoundingBox();
 
         Debug.Log("FEM System initialized successfully!");
     }
@@ -167,21 +167,21 @@ public class FEMController : MonoBehaviour
                 Vector3 cubeSize = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
                 mesh.GenerateCubeMesh(cubeSize, transform.position);
                 break;
-                
+
             case MassShapeType.Sphere:
                 mesh.GenerateSphereMesh(physicalObject.radius, SphereResolution, transform.position);
                 break;
-                
+
             case MassShapeType.Cylinder:
                 // Now using proper cylinder mesh generation
                 mesh.GenerateCylinderMesh(physicalObject.radius, physicalObject.height, CylinderResolution, transform.position);
                 break;
-                
+
             case MassShapeType.Capsule:
                 // Now using proper capsule mesh generation
                 mesh.GenerateCapsuleMesh(physicalObject.radius, physicalObject.height, CapsuleResolution, transform.position);
                 break;
-                
+
             case MassShapeType.Other:
                 // For custom meshes, you might need to extract mesh data from meshSourceObject
                 if (physicalObject.meshSourceObject != null)
@@ -245,7 +245,7 @@ public class FEMController : MonoBehaviour
 
         // Apply initial force to all nodes
         Vector3 forcePerNode = physicalObject.initialForce / solver.Nodes.Length;
-        
+
         for (int i = 0; i < solver.Nodes.Length; i++)
         {
             int baseIndex = i * 3;
@@ -255,36 +255,36 @@ public class FEMController : MonoBehaviour
         }
     }
 
-    void SetupBoundingBox()
-    {
-        BoundingBoxDrawer bbox = gameObject.GetComponent<BoundingBoxDrawer>();
-        if (bbox == null)
-            bbox = gameObject.AddComponent<BoundingBoxDrawer>();
+    // void SetupBoundingBox()
+    // {
+    //     BoundingBoxDrawer bbox = gameObject.GetComponent<BoundingBoxDrawer>();
+    //     if (bbox == null)
+    //         bbox = gameObject.AddComponent<BoundingBoxDrawer>();
 
-        switch (physicalObject.massShapeType)
-        {
-            case MassShapeType.Cube:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
-                break;
-            case MassShapeType.Sphere:
-                bbox.isSphere = true;
-                bbox.size = Vector3.one * physicalObject.radius * 2f;
-                break;
-            case MassShapeType.Cylinder:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
-                break;
-            case MassShapeType.Capsule:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
-                break;
-            case MassShapeType.Other:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
-                break;
-        }
-    }
+    //     switch (physicalObject.massShapeType)
+    //     {
+    //         case MassShapeType.Cube:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+    //             break;
+    //         case MassShapeType.Sphere:
+    //             bbox.isSphere = true;
+    //             bbox.size = Vector3.one * physicalObject.radius * 2f;
+    //             break;
+    //         case MassShapeType.Cylinder:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
+    //             break;
+    //         case MassShapeType.Capsule:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
+    //             break;
+    //         case MassShapeType.Other:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+    //             break;
+    //     }
+    // }
 
     void VisualizeMesh()
     {
@@ -296,18 +296,25 @@ public class FEMController : MonoBehaviour
 
     void CreateNodeVisuals()
     {
+        // Destroy previous node visuals if they exist
         foreach (var node in nodeVisuals)
             if (node != null) Destroy(node);
         nodeVisuals.Clear();
 
+        // Create new node visuals
         foreach (var node in mesh.Nodes)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = node.Position;
             sphere.transform.localScale = Vector3.one * NodeScale;
+
+            // ✅ Set FEMController's GameObject as parent
+            sphere.transform.SetParent(this.transform);
+
             nodeVisuals.Add(sphere);
         }
     }
+
 
     void CreateWireframe()
     {
@@ -427,11 +434,11 @@ public class FEMController : MonoBehaviour
         wireframeEdges?.Clear();
 
         // Clean up visual objects
-        foreach (var obj in nodeVisuals) 
+        foreach (var obj in nodeVisuals)
             if (obj != null) Destroy(obj);
         nodeVisuals.Clear();
 
-        if (wireframeRenderer != null) 
+        if (wireframeRenderer != null)
         {
             Destroy(wireframeRenderer.gameObject);
             wireframeRenderer = null;
@@ -479,5 +486,26 @@ public class FEMController : MonoBehaviour
 
         float expectedMass = mat.Density * totalVolume;
         Debug.Log($"Expected mass = {expectedMass:F4} (Total volume = {totalVolume:F4})");
+    }
+
+    public Node[] GetAllNodes()
+    {
+        return this.mesh.Nodes;
+    }
+
+    public Vector3 Center
+    {
+        get
+        {
+            Node[] nodes = this.GetAllNodes();
+            if (nodes == null || nodes.Length == 0)
+                return transform.position;
+
+            Vector3 sum = Vector3.zero;
+            foreach (var node in nodes)
+                sum += node.Position;
+
+            return sum / nodes.Length;
+        }
     }
 }
