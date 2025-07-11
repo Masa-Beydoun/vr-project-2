@@ -151,17 +151,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 323524ebe4ed87440adfaa385ef224fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shape: 1
-  CubeSize: {x: 1, y: 1, z: 1}
-  CubeCenter: {x: 0, y: 0, z: 0}
-  SphereRadius: 1
-  SphereResolution: 0.1
-  initialVelocity: {x: 0, y: 0, z: 0}
+  isCreated: 0
   ShowNodes: 1
   NodeScale: 0.1
   LineColor: {r: 0, g: 1, b: 0, a: 1}
   LineWidth: 0.02
-  material: {fileID: 0}
+  SphereResolution: 0.1
+  CylinderResolution: 0.1
+  CapsuleResolution: 0.1
 --- !u!4 &196752619
 Transform:
   m_ObjectHideFlags: 0
@@ -298,17 +295,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 323524ebe4ed87440adfaa385ef224fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shape: 1
-  CubeSize: {x: 2, y: 1.5, z: 1}
-  CubeCenter: {x: 0, y: 0, z: 0}
-  SphereRadius: 0.5
-  SphereResolution: 0.1
-  initialVelocity: {x: 0, y: 0, z: 0}
+  isCreated: 0
   ShowNodes: 1
   NodeScale: 0.1
   LineColor: {r: 0, g: 1, b: 0, a: 1}
   LineWidth: 0.02
-  material: {fileID: 11400000, guid: d962fdfc6c65ae141bba3a0fd8280b69, type: 2}
+  SphereResolution: 0.1
+  CylinderResolution: 0.1
+  CapsuleResolution: 0.1
 --- !u!4 &649675627
 Transform:
   m_ObjectHideFlags: 0
