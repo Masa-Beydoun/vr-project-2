@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class FEMController : MonoBehaviour
@@ -64,6 +64,24 @@ public class FEMController : MonoBehaviour
                 Debug.LogWarning("Cannot initialize FEM: PhysicalObject or material not assigned.");
                 isCreated = false; // Reset if can't initialize
             }
+
+
+            if (isCreated && dynamics != null && solver != null)
+            {
+                // Update forces every frame before simulation step
+                UpdateTotalForce();
+
+                // Step simulation: input mass matrix, stiffness matrix, and force vector
+                dynamics.Step(solver.GlobalMassMatrix, solver.GlobalStiffnessMatrix, totalForce);
+
+                // Update node visuals to reflect new displacements
+                UpdateNodeVisuals();
+
+                if (wireframeRenderer != null)
+                    UpdateWireframeLines();
+            }
+
+            
         }
 
         // Update previous state for next frame
@@ -182,22 +200,27 @@ public class FEMController : MonoBehaviour
                 mesh.GenerateCapsuleMesh(physicalObject.radius, physicalObject.height, CapsuleResolution, transform.position);
                 break;
 
-            case MassShapeType.Other:
-                // For custom meshes, you might need to extract mesh data from meshSourceObject
-                if (physicalObject.meshSourceObject != null)
-                {
-                    // Default to cube for now, but you should implement custom mesh handling
-                    Vector3 defaultSize = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
-                    mesh.GenerateCubeMesh(defaultSize, transform.position);
-                    Debug.LogWarning("Custom mesh shape using cube approximation. Consider implementing custom mesh support.");
-                }
-                else
-                {
-                    Debug.LogError("Custom mesh selected but no meshSourceObject assigned.");
-                    Vector3 defaultSize = Vector3.one;
-                    mesh.GenerateCubeMesh(defaultSize, transform.position);
-                }
+             case MassShapeType.Other:
+                // Now using proper capsule mesh generation
+                mesh.GenerateConeMesh(physicalObject.radius, physicalObject.height, CapsuleResolution, transform.position);            
                 break;
+                
+            // case MassShapeType.Other:
+            //     // For custom meshes, you might need to extract mesh data from meshSourceObject
+            //     if (physicalObject.meshSourceObject != null)
+            //     {
+            //         // Default to cube for now, but you should implement custom mesh handling
+            //         Vector3 defaultSize = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+            //         mesh.GenerateCubeMesh(defaultSize, transform.position);
+            //         Debug.LogWarning("Custom mesh shape using cube approximation. Consider implementing custom mesh support.");
+            //     }
+            //     else
+            //     {
+            //         Debug.LogError("Custom mesh selected but no meshSourceObject assigned.");
+            //         Vector3 defaultSize = Vector3.one;
+            //         mesh.GenerateCubeMesh(defaultSize, transform.position);
+            //     }
+            //     break;
         }
 
         Debug.Log($"FEM Mesh: {mesh.Nodes.Length} nodes, {mesh.Elements.Length} tetrahedrons");
@@ -295,6 +318,25 @@ public class FEMController : MonoBehaviour
     }
 
     void CreateNodeVisuals()
+<<<<<<< Assets/scripts/FEM/FEMController.cs
+{
+    // Destroy previous node visuals if they exist
+    foreach (var node in nodeVisuals)
+        if (node != null) Destroy(node);
+    nodeVisuals.Clear();
+
+    // Create new node visuals
+    foreach (var node in mesh.Nodes)
+    {
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.position = node.Position;
+        sphere.transform.localScale = Vector3.one * NodeScale;
+
+        // ✅ Set FEMController's GameObject as parent
+        sphere.transform.SetParent(this.transform);
+
+        nodeVisuals.Add(sphere);
+=======
     {
         // Destroy previous node visuals if they exist
         foreach (var node in nodeVisuals)
@@ -313,7 +355,10 @@ public class FEMController : MonoBehaviour
 
             nodeVisuals.Add(sphere);
         }
+>>>>>>> Assets/scripts/FEM/FEMController.cs
     }
+}
+
 
 
     void CreateWireframe()
@@ -488,6 +533,24 @@ public class FEMController : MonoBehaviour
         Debug.Log($"Expected mass = {expectedMass:F4} (Total volume = {totalVolume:F4})");
     }
 
+<<<<<<< Assets/scripts/FEM/FEMController.cs
+
+    void UpdateTotalForce()
+    {
+        // Reset to gravity force (or zero if you want to customize)
+        Vector3 gravity = new Vector3(0, -9.81f, 0);  // For example
+        totalForce = GravityForceGenerator.ComputeGravityForce(
+            solver.Nodes,
+            solver.Tetrahedra,
+            physicalObject.materialPreset.Density,
+            gravity
+        );
+
+        // Add any other forces (e.g., user forces, springs, constraints) here:
+        ApplyInitialForce();  // Or rename to ApplyExternalForces() if you want to call this every frame
+    }
+
+=======
     public Node[] GetAllNodes()
     {
         return this.mesh.Nodes;
@@ -508,4 +571,5 @@ public class FEMController : MonoBehaviour
             return sum / nodes.Length;
         }
     }
+>>>>>>> Assets/scripts/FEM/FEMController.cs
 }
