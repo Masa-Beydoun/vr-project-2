@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 187059674}
   - component: {fileID: 187059673}
   - component: {fileID: 187059675}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ground22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff47506ab995b8648b20d36ef3cf4107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCreated: 1
+  isCreated: 0
   previousIsCreated: 0
   connectionRadius: 0
   resolution: 20
@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 580176830}
   - component: {fileID: 580176829}
   - component: {fileID: 580176828}
+  - component: {fileID: 580176831}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -356,6 +357,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &580176831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580176827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c6ef60731c929d4bb35b743e33f38a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  boostMultiplier: 2
+  selectableLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &682467906 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
@@ -390,10 +408,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f73e30cf136099944a2cb7710518302a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  responseType: 0
   restitution: 0.5
-  deformationThreshold: 10
-  minPenetrationCorrection: 0.01
+  friction: 0.2
 --- !u!4 &714976037
 Transform:
   m_ObjectHideFlags: 0
@@ -420,6 +436,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_Name
       value: Stone_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalPosition.x
@@ -560,6 +580,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1276577037
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1276577039}
+  - component: {fileID: 1276577038}
+  - component: {fileID: 1276577040}
+  m_Layer: 5
+  m_Name: UIDocument
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1276577038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276577037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 1a652c28aaa9efc4f8ae876b4aefc214, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+--- !u!4 &1276577039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276577037}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1276577040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276577037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c32876df88fde419a0f5836e536393, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1298921294 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
@@ -582,7 +663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1500751871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -819,6 +900,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone_2
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2
@@ -881,7 +966,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1991648980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -904,8 +989,6 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
   meshConnectionMode: 0
   k: 4
   useVoxelFilling: 1
@@ -922,6 +1005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 11400000, guid: c6aaf7e49eb7a3d4b9d3377d6d32c809, type: 2}
   massShapeType: 0
   radius: 0.5
@@ -930,6 +1014,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
   mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -937,6 +1022,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!4 &1991648982
@@ -965,7 +1057,7 @@ GameObject:
   - component: {fileID: 2094849916}
   - component: {fileID: 2094849918}
   - component: {fileID: 2094849919}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Stone_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1067,3 +1159,4 @@ SceneRoots:
   - {fileID: 1715684846}
   - {fileID: 1500751873}
   - {fileID: 1991648982}
+  - {fileID: 1276577039}

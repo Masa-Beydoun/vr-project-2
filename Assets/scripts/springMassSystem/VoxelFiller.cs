@@ -86,12 +86,15 @@ public static class VoxelFiller
         float voxelSize = 1f / resolution;
 
         MeshInsideChecker checker = new MeshInsideChecker(meshObject);
-        Vector3 start = bounds.center;
-        if (!checker.IsPointInside(start))
+        Vector3? maybeStart = FindInternalPoint(meshObject, bounds, resolution);
+        if (!maybeStart.HasValue)
         {
-            Debug.LogWarning("[FloodFill] Start point is not inside the mesh.");
+            Debug.LogWarning("[FloodFill] No valid internal point found.");
             return;
         }
+
+        Vector3 start = maybeStart.Value;
+
 
         HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
         Queue<Vector3Int> queue = new Queue<Vector3Int>();
@@ -350,7 +353,18 @@ public static class VoxelFiller
             }
         }
 
-        Subdivide(worldBounds, 0);
+        Vector3? internalPoint = FindInternalPoint(meshObject, worldBounds);
+        if (!internalPoint.HasValue)
+        {
+            Debug.LogWarning("[Octree Advanced] No internal point found. Aborting.");
+            return;
+        }
+
+        // Create a very small bounding cube around the point (leaf-sized)
+        float leafSize = worldBounds.size.x / Mathf.Pow(2, maxDepth);
+        Bounds startBounds = new Bounds(internalPoint.Value, Vector3.one * leafSize);
+        Subdivide(startBounds, 0);
+
         Debug.Log($"[Octree Advanced] Spawned {filledCount} adaptive points at depth {maxDepth}");
     }
 
@@ -468,5 +482,26 @@ public static class VoxelFiller
         return Mathf.Abs(Vector3.Dot(p - tri.v0, normal));
     }
 
+    public static Vector3? FindInternalPoint(GameObject meshObject, Bounds bounds, int resolution = 20, int maxTries = 500)
+    {
+        MeshInsideChecker checker = new MeshInsideChecker(meshObject);
+        float voxelSize = 1f / resolution;
+
+        for (int i = 0; i < maxTries; i++)
+        {
+            float x = Random.Range(bounds.min.x, bounds.max.x);
+            float y = Random.Range(bounds.min.y, bounds.max.y);
+            float z = Random.Range(bounds.min.z, bounds.max.z);
+
+            Vector3 point = new Vector3(x, y, z);
+            if (checker.IsPointInside(point))
+            {
+                return point;
+            }
+        }
+
+        Debug.LogWarning("[VoxelFiller] Couldn't find an internal seed point after maxTries.");
+        return null;
+    }
 
 }
