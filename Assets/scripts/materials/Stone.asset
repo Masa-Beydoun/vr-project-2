@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 40e8d963f7b720a4ebeaa6f1c63305cb, type: 3}
-  m_Name: Rubber
+  m_Name: Stone
   m_EditorClassIdentifier: 
-  materialName: rubber
-  Density: 11000.85
+  materialName: 
+  Density: 1
   dragCoefficient: 1
   bounciness: 0.3
   stiffness: 1000
-  fractureThreshold: 2000000
-  dampingCoefficient: 0.9
-  youngsModulus: 5000000
-  poissonRatio: 0.49
+  fractureThreshold: 10000
+  dampingCoefficient: 0.1
+  youngsModulus: 200000
+  poissonRatio: 0.3

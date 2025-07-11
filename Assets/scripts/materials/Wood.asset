@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Wood
   m_EditorClassIdentifier: 
   materialName: wood
-  Density: 1
-  dragCoefficient: 1
-  bounciness: 0.3
-  stiffness: 1000
-  fractureThreshold: 10000
-  youngsModulus: 200000
+  Density: 700
+  dragCoefficient: 0.6
+  bounciness: 0.45
+  stiffness: 5000
+  fractureThreshold: 40000000
+  dampingCoefficient: 0.5
+  youngsModulus: 1.1e+10
   poissonRatio: 0.3
