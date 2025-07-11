@@ -1,17 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class FEMController : MonoBehaviour
 {
-    public enum ShapeType { Cube, Sphere }
-
-    [Header("Mesh Settings")]
-    public ShapeType Shape = ShapeType.Cube;
-    public Vector3 CubeSize = Vector3.one;
-    public Vector3 CubeCenter = Vector3.zero;
-    public float SphereRadius = 0.5f;
-    public float SphereResolution = 0.1f;
-    public Vector3 initialVelocity = Vector3.zero;
+    [Header("Creation Control")]
+    public bool isCreated = false;
+    private bool previousIsCreated = false;
 
     [Header("Visualization")]
     public bool ShowNodes = true;
@@ -19,9 +13,12 @@ public class FEMController : MonoBehaviour
     public Color LineColor = Color.green;
     public float LineWidth = 0.02f;
 
-    [Header("Material Properties")]
-    public PhysicalMaterial material;
+    [Header("FEM-Specific Settings")]
+    public float SphereResolution = 0.1f;
+    public float CylinderResolution = 0.1f;
+    public float CapsuleResolution = 0.1f;
 
+    private PhysicalObject physicalObject;
     private Mesh3D mesh;
     private LineRenderer wireframeRenderer;
     private List<GameObject> nodeVisuals = new();
@@ -32,13 +29,81 @@ public class FEMController : MonoBehaviour
 
     private List<(int, int)> wireframeEdges = new();
 
-    public void Initialize()
+    void Start()
     {
-        if (material == null)
+        // Get the PhysicalObject component
+        physicalObject = GetComponent<PhysicalObject>();
+        if (physicalObject == null)
         {
-            Debug.LogError("PhysicalMaterial not assigned.");
+            Debug.LogError("FEMController requires a PhysicalObject component on the same GameObject.");
             return;
         }
+
+        // Only initialize if isCreated is true at startup
+        if (isCreated && physicalObject.materialPreset != null)
+        {
+            Initialize();
+        }
+        else if (physicalObject.materialPreset == null)
+        {
+            Debug.LogWarning("PhysicalObject material not assigned. Click 'Initialize FEM' in Inspector.");
+        }
+    }
+
+    void Update()
+    {
+        // Detect when isCreated changes from false to true
+        if (isCreated && !previousIsCreated)
+        {
+            if (physicalObject != null && physicalObject.materialPreset != null)
+            {
+                Initialize();
+            }
+            else
+            {
+                Debug.LogWarning("Cannot initialize FEM: PhysicalObject or material not assigned.");
+                isCreated = false; // Reset if can't initialize
+            }
+        }
+
+        // Update previous state for next frame
+        previousIsCreated = isCreated;
+
+        // Only run simulation if created
+        if (!isCreated) return;
+
+        // Run FEM simulation
+        if (dynamics != null && solver != null)
+        {
+            dynamics.Step(solver.GlobalMassMatrix, solver.GlobalStiffnessMatrix, totalForce);
+            UpdateNodeVisuals();
+
+            if (wireframeRenderer != null)
+                UpdateWireframeLines();
+        }
+    }
+
+    public void Initialize()
+    {
+        // Prevent reinitialization if already created
+        if (solver != null && dynamics != null) return;
+
+        // Only proceed if isCreated is true
+        if (!isCreated) return;
+
+        if (physicalObject == null)
+        {
+            Debug.LogError("PhysicalObject component not found.");
+            return;
+        }
+
+        if (physicalObject.materialPreset == null)
+        {
+            Debug.LogError("PhysicalMaterial not assigned to PhysicalObject.");
+            return;
+        }
+
+        Debug.Log("Initializing FEM System...");
 
         InitializeMesh();
 
@@ -49,18 +114,19 @@ public class FEMController : MonoBehaviour
         };
 
         ComputeLocalStiffness();
-        solver.AssembleGlobalStiffness(material);
+        solver.AssembleGlobalStiffness(physicalObject.materialPreset);
 
         solver.GlobalMassMatrix = MassMatrixAssembler.Assemble(
             solver.Nodes,
             solver.Tetrahedra,
-            material
+            physicalObject.materialPreset
         );
 
-        // Initialize dynamics BEFORE calling VisualizeMesh
         dynamics = new FEMDynamics();
         dynamics.Initialize(solver.Nodes.Length * 3);
 
+        // Use initial velocity from PhysicalObject
+        Vector3 initialVelocity = physicalObject.initialVelocity;
         for (int i = 0; i < solver.Nodes.Length; i++)
         {
             int baseIndex = i * 3;
@@ -73,36 +139,64 @@ public class FEMController : MonoBehaviour
         totalForce = GravityForceGenerator.ComputeGravityForce(
             solver.Nodes,
             solver.Tetrahedra,
-            material.Density,
+            physicalObject.materialPreset.Density,
             gravity
         );
 
-        // Now it's safe to visualize the mesh
+        // Apply initial force from PhysicalObject
+        ApplyInitialForce();
+
         VisualizeMesh();
 
         PrintMassMatrixSummary(solver.GlobalMassMatrix);
-        PrintExpectedMass(solver.Nodes, solver.Tetrahedra, material);
-    }
+        PrintExpectedMass(solver.Nodes, solver.Tetrahedra, physicalObject.materialPreset);
 
-    void Start()
-    {
-        if (material != null)
-            Initialize();
-        else
-            Debug.LogWarning("Material not assigned. Click 'Initialize FEM' in Inspector.");
+        // SetupBoundingBox();
+
+        Debug.Log("FEM System initialized successfully!");
     }
 
     void InitializeMesh()
     {
         mesh = new Mesh3D();
 
-        switch (Shape)
+        // Use shape information from PhysicalObject
+        switch (physicalObject.massShapeType)
         {
-            case ShapeType.Cube:
-                mesh.GenerateCubeMesh(CubeSize, transform.position);
+            case MassShapeType.Cube:
+                Vector3 cubeSize = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+                mesh.GenerateCubeMesh(cubeSize, transform.position);
                 break;
-            case ShapeType.Sphere:
-                mesh.GenerateSphereMesh(SphereRadius, SphereResolution, transform.position);
+
+            case MassShapeType.Sphere:
+                mesh.GenerateSphereMesh(physicalObject.radius, SphereResolution, transform.position);
+                break;
+
+            case MassShapeType.Cylinder:
+                // Now using proper cylinder mesh generation
+                mesh.GenerateCylinderMesh(physicalObject.radius, physicalObject.height, CylinderResolution, transform.position);
+                break;
+
+            case MassShapeType.Capsule:
+                // Now using proper capsule mesh generation
+                mesh.GenerateCapsuleMesh(physicalObject.radius, physicalObject.height, CapsuleResolution, transform.position);
+                break;
+
+            case MassShapeType.Other:
+                // For custom meshes, you might need to extract mesh data from meshSourceObject
+                if (physicalObject.meshSourceObject != null)
+                {
+                    // Default to cube for now, but you should implement custom mesh handling
+                    Vector3 defaultSize = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+                    mesh.GenerateCubeMesh(defaultSize, transform.position);
+                    Debug.LogWarning("Custom mesh shape using cube approximation. Consider implementing custom mesh support.");
+                }
+                else
+                {
+                    Debug.LogError("Custom mesh selected but no meshSourceObject assigned.");
+                    Vector3 defaultSize = Vector3.one;
+                    mesh.GenerateCubeMesh(defaultSize, transform.position);
+                }
                 break;
         }
 
@@ -117,7 +211,7 @@ public class FEMController : MonoBehaviour
         {
             var tet = mesh.Elements[i];
             Vector3[] vertices = mesh.GetTetCorners(tet);
-            float[,] ke = ElementStiffnessCalculator.ComputeLocalStiffness(vertices, material);
+            float[,] ke = ElementStiffnessCalculator.ComputeLocalStiffness(vertices, physicalObject.materialPreset);
             localStiffnessMatrices.Add(ke);
         }
 
@@ -145,30 +239,82 @@ public class FEMController : MonoBehaviour
         }
     }
 
+    void ApplyInitialForce()
+    {
+        if (physicalObject.initialForce == Vector3.zero) return;
+
+        // Apply initial force to all nodes
+        Vector3 forcePerNode = physicalObject.initialForce / solver.Nodes.Length;
+
+        for (int i = 0; i < solver.Nodes.Length; i++)
+        {
+            int baseIndex = i * 3;
+            totalForce[baseIndex] += forcePerNode.x;
+            totalForce[baseIndex + 1] += forcePerNode.y;
+            totalForce[baseIndex + 2] += forcePerNode.z;
+        }
+    }
+
+    // void SetupBoundingBox()
+    // {
+    //     BoundingBoxDrawer bbox = gameObject.GetComponent<BoundingBoxDrawer>();
+    //     if (bbox == null)
+    //         bbox = gameObject.AddComponent<BoundingBoxDrawer>();
+
+    //     switch (physicalObject.massShapeType)
+    //     {
+    //         case MassShapeType.Cube:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+    //             break;
+    //         case MassShapeType.Sphere:
+    //             bbox.isSphere = true;
+    //             bbox.size = Vector3.one * physicalObject.radius * 2f;
+    //             break;
+    //         case MassShapeType.Cylinder:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
+    //             break;
+    //         case MassShapeType.Capsule:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
+    //             break;
+    //         case MassShapeType.Other:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+    //             break;
+    //     }
+    // }
+
     void VisualizeMesh()
     {
         if (ShowNodes) CreateNodeVisuals();
         CreateWireframe();
-        
-        // Only update wireframe lines if dynamics is initialized
         if (wireframeRenderer != null && wireframeEdges.Count > 0 && dynamics != null)
             UpdateWireframeLines();
     }
 
     void CreateNodeVisuals()
     {
+        // Destroy previous node visuals if they exist
         foreach (var node in nodeVisuals)
             if (node != null) Destroy(node);
         nodeVisuals.Clear();
 
+        // Create new node visuals
         foreach (var node in mesh.Nodes)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = node.Position;
             sphere.transform.localScale = Vector3.one * NodeScale;
+
+            // ✅ Set FEMController's GameObject as parent
+            sphere.transform.SetParent(this.transform);
+
             nodeVisuals.Add(sphere);
         }
     }
+
 
     void CreateWireframe()
     {
@@ -197,8 +343,6 @@ public class FEMController : MonoBehaviour
         wireframeRenderer.startWidth = LineWidth;
         wireframeRenderer.endWidth = LineWidth;
         wireframeRenderer.useWorldSpace = true;
-
-        // Prevent null access by ensuring a position count
         wireframeRenderer.positionCount = 0;
     }
 
@@ -206,18 +350,6 @@ public class FEMController : MonoBehaviour
     {
         if (!edges.Contains((a, b)) && !edges.Contains((b, a)))
             edges.Add((a, b));
-    }
-
-    void Update()
-    {
-        if (dynamics == null || solver == null)
-            return;
-
-        dynamics.Step(solver.GlobalMassMatrix, solver.GlobalStiffnessMatrix, totalForce);
-        UpdateNodeVisuals();
-
-        if (wireframeRenderer != null)
-            UpdateWireframeLines();
     }
 
     void UpdateNodeVisuals()
@@ -277,10 +409,42 @@ public class FEMController : MonoBehaviour
 
     void OnDestroy()
     {
-        foreach (var obj in nodeVisuals) 
+        DestroyFEMSystem();
+    }
+
+    // Public method to manually create the FEM system
+    public void ManuallyCreateSystem()
+    {
+        isCreated = true;
+        // Initialize will be called automatically in the next Update()
+    }
+
+    // Public method to destroy the FEM system
+    public void DestroyFEMSystem()
+    {
+        isCreated = false;
+        previousIsCreated = false;
+
+        // Clean up all FEM data
+        solver = null;
+        dynamics = null;
+        mesh = null;
+        totalForce = null;
+        localStiffnessMatrices?.Clear();
+        wireframeEdges?.Clear();
+
+        // Clean up visual objects
+        foreach (var obj in nodeVisuals)
             if (obj != null) Destroy(obj);
-        if (wireframeRenderer != null) 
+        nodeVisuals.Clear();
+
+        if (wireframeRenderer != null)
+        {
             Destroy(wireframeRenderer.gameObject);
+            wireframeRenderer = null;
+        }
+
+        Debug.Log("FEM System destroyed");
     }
 
     void PrintMassMatrixSummary(float[,] M)
@@ -322,5 +486,26 @@ public class FEMController : MonoBehaviour
 
         float expectedMass = mat.Density * totalVolume;
         Debug.Log($"Expected mass = {expectedMass:F4} (Total volume = {totalVolume:F4})");
+    }
+
+    public Node[] GetAllNodes()
+    {
+        return this.mesh.Nodes;
+    }
+
+    public Vector3 Center
+    {
+        get
+        {
+            Node[] nodes = this.GetAllNodes();
+            if (nodes == null || nodes.Length == 0)
+                return transform.position;
+
+            Vector3 sum = Vector3.zero;
+            foreach (var node in nodes)
+                sum += node.Position;
+
+            return sum / nodes.Length;
+        }
     }
 }

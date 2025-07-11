@@ -3,16 +3,68 @@
   "WorkspaceRootPath": "C:\\My\\Projects\\VR Project\\vr-project-solids\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\CollisionDetector_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\CollisionDetector_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\CollisionDetector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\CollisionDetector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\CollisionManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\CollisionManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\BroadPhase\\SweepAndPrune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\BroadPhase\\SweepAndPrune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\1- Mesh\\Mesh3D.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\FEM\\1- Mesh\\Mesh3D.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\GJK.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\NarrowPhase\\GJK.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\GJK_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\GJK_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\SAT_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\SAT_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\EPA_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\EPA_FEM.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\EPA.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\NarrowPhase\\EPA.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\FEMController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\FEM\\FEMController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\SpringMassSystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\springMassSystem\\SpringMassSystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\MassPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\springMassSystem\\MassPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\1- Mesh\\Node.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\FEM\\1- Mesh\\Node.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\PhysicalObject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\PhysicalObject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\BroadPhase\\SweepAndPrune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Collision Detection\\BroadPhase\\SweepAndPrune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,11 +74,201 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CollisionDetector_FEM.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\CollisionDetector_FEM.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\CollisionDetector_FEM.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\CollisionDetector_FEM.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\CollisionDetector_FEM.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAADMAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T15:59:38.318Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CollisionManager.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\CollisionManager.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\CollisionManager.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\CollisionManager.cs",
+              "RelativeToolTip": "Assets\\scripts\\CollisionManager.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAAAFgAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T17:46:14.812Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "CollisionDetector.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\CollisionDetector.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\CollisionDetector.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\CollisionDetector.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\CollisionDetector.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T11:30:19.623Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Mesh3D.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\1- Mesh\\Mesh3D.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\FEM\\1- Mesh\\Mesh3D.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\1- Mesh\\Mesh3D.cs",
+              "RelativeToolTip": "Assets\\scripts\\FEM\\1- Mesh\\Mesh3D.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T16:05:38.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GJK.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\GJK.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\GJK.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\GJK.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\GJK.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T09:35:33.418Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "GJK_FEM.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\GJK_FEM.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\GJK_FEM.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\GJK_FEM.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\GJK_FEM.cs",
+              "ViewState": "AgIAAJwAAAAAAAAAAAAAAAkAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T15:55:04.924Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SAT_FEM.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\SAT_FEM.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\SAT_FEM.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\SAT_FEM.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\SAT_FEM.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T15:57:15.069Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "EPA_FEM.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\EPA_FEM.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\EPA_FEM.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\EPA_FEM.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\EPA_FEM.cs",
+              "ViewState": "AgIAAJkAAAAAAAAAAAAAAAMAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T15:56:02.889Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "EPA.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\EPA.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\EPA.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\EPA.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\EPA.cs",
+              "ViewState": "AgIAAJQAAAAAAAAAAAAQwKIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T09:34:51.835Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "SAT.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
+              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAQwE4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T18:15:03.559Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "FEMController.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\FEMController.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\FEM\\FEMController.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\FEMController.cs",
+              "RelativeToolTip": "Assets\\scripts\\FEM\\FEMController.cs",
+              "ViewState": "AgIAAFUBAAAAAAAAAAAQwPsBAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T16:01:47.223Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "SpringMassSystem.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\SpringMassSystem.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\springMassSystem\\SpringMassSystem.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\SpringMassSystem.cs",
+              "RelativeToolTip": "Assets\\scripts\\springMassSystem\\SpringMassSystem.cs",
+              "ViewState": "AgIAABoBAAAAAAAAAAAAwCEBAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T21:32:49.41Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "MassPoint.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "RelativeToolTip": "Assets\\scripts\\springMassSystem\\MassPoint.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAwBYAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T10:40:06.092Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Node.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\1- Mesh\\Node.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\FEM\\1- Mesh\\Node.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\FEM\\1- Mesh\\Node.cs",
+              "RelativeToolTip": "Assets\\scripts\\FEM\\1- Mesh\\Node.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T15:51:31.85Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "PhysicalObject.cs",
+              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\PhysicalObject.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\PhysicalObject.cs",
+              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\PhysicalObject.cs",
+              "RelativeToolTip": "Assets\\scripts\\PhysicalObject.cs",
+              "ViewState": "AgIAAHMAAAAAAAAAAAAYwHoAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T08:53:40.98Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
               "Title": "SweepAndPrune.cs",
               "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\BroadPhase\\SweepAndPrune.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\BroadPhase\\SweepAndPrune.cs",
@@ -34,33 +276,7 @@
               "RelativeToolTip": "Assets\\scripts\\Collision Detection\\BroadPhase\\SweepAndPrune.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T18:16:51.428Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "SAT.cs",
-              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
-              "RelativeDocumentMoniker": "Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
-              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
-              "RelativeToolTip": "Assets\\scripts\\Collision Detection\\NarrowPhase\\SAT.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T18:15:03.559Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CollisionManager.cs",
-              "DocumentMoniker": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\CollisionManager.cs",
-              "RelativeDocumentMoniker": "Assets\\scripts\\CollisionManager.cs",
-              "ToolTip": "C:\\My\\Projects\\VR Project\\vr-project-solids\\Assets\\scripts\\CollisionManager.cs",
-              "RelativeToolTip": "Assets\\scripts\\CollisionManager.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAACwAAAA3AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T17:46:14.812Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-08T18:16:51.428Z"
             }
           ]
         }

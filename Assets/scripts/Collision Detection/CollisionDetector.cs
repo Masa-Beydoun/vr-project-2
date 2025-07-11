@@ -13,49 +13,62 @@ public struct CollisionResult
 
 public static class CollisionDetector
 {
-    public static CollisionResult CheckCollision(SpringMassSystem objA, SpringMassSystem objB)
+    public static List<CollisionResult> CheckCollision(SpringMassSystem objA, SpringMassSystem objB)
     {
+        List<CollisionResult> results = new List<CollisionResult>();
         List<Vector3> simplex = new List<Vector3>();
+
         if (GJK.Detect(objA, objB, simplex))
         {
             if (EPA.Expand(objA, objB, simplex, out Vector3 normal, out float depth, out Vector3 contactPoint))
             {
-                (MassPoint pa, MassPoint pb) = FindClosestSupportPoints(objA, objB, normal);
+                List<(MassPoint, MassPoint)> pairs = FindAllPenetratingPairs(objA, objB, normal, depth);
 
-                return new CollisionResult
+                foreach (var (pa, pb) in pairs)
                 {
-                    collided = true,
-                    normal = normal,
-                    penetrationDepth = depth,
-                    contactPoint = contactPoint,
-                    pointA = pa,
-                    pointB = pb
-                };
+                    results.Add(new CollisionResult
+                    {
+                        collided = true,
+                        normal = normal,
+                        penetrationDepth = depth,
+                        contactPoint = 0.5f * (pa.position + pb.position),
+                        pointA = pa,
+                        pointB = pb
+                    });
+                }
             }
         }
 
-        return new CollisionResult { collided = false };
+        return results;
     }
 
-    private static (MassPoint, MassPoint) FindClosestSupportPoints(SpringMassSystem a, SpringMassSystem b, Vector3 direction)
+    private static List<(MassPoint, MassPoint)> FindAllPenetratingPairs(
+    SpringMassSystem a, SpringMassSystem b, Vector3 normal, float penetrationDepth)
     {
-        MassPoint bestA = null, bestB = null;
-        float maxDot = float.MinValue;
+        List<(MassPoint, MassPoint)> pairs = new List<(MassPoint, MassPoint)>();
+        float epsilon = 1e-9f;
+        float maxDistance = penetrationDepth + epsilon;
 
         foreach (var pa in a.GetMassPoints())
         {
             foreach (var pb in b.GetMassPoints())
             {
                 Vector3 diff = pa.position - pb.position;
-                float dot = Vector3.Dot(diff, direction);
-                if (dot > maxDot)
+                float proj = Vector3.Dot(diff, normal);
+
+                if (proj > -epsilon && proj <= maxDistance)
                 {
-                    maxDot = dot;
-                    bestA = pa;
-                    bestB = pb;
+                    float distanceSq = diff.sqrMagnitude;
+
+                    if (distanceSq <= (penetrationDepth + epsilon) * (penetrationDepth + epsilon))
+                    {
+                        pairs.Add((pa, pb));
+                    }
                 }
             }
         }
-        return (bestA, bestB);
+
+        return pairs;
     }
+
 }
