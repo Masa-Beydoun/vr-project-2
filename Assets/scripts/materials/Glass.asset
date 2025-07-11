@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Glass
   m_EditorClassIdentifier: 
   materialName: glass
-  Density: 1
-  dragCoefficient: 1
-  bounciness: 0.3
-  stiffness: 1000
-  fractureThreshold: 10000
-  youngsModulus: 200000
-  poissonRatio: 0.3
+  Density: 2500
+  dragCoefficient: 0.5
+  bounciness: 0.95
+  stiffness: 20000
+  fractureThreshold: 50000000
+  dampingCoefficient: 0.04
+  youngsModulus: 7e+10
+  poissonRatio: 0.2

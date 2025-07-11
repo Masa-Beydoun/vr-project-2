@@ -1,72 +1,121 @@
 using UnityEngine;
 
-public enum CollisionResponseType
-{
-    Bounce,
-    Deform
-}
 public class CollisionHandler : MonoBehaviour
 {
-    public CollisionResponseType responseType = CollisionResponseType.Bounce;
+    // Coefficient of restitution (elasticity), 0 = perfectly inelastic, 1 = perfectly elastic
+    [Range(0, 1)]
     public float restitution = 0.5f;
-    public float deformationThreshold = 10f;
-    public float minPenetrationCorrection = 0.01f;
 
-    public void HandleCollision(MassPoint a, MassPoint b)
-    {
-        Vector3 normal = (a.position - b.position).normalized;
-        switch (responseType)
-        {
-            case CollisionResponseType.Bounce:
-                HandleBounce(a, b, normal);
-                break;
-            case CollisionResponseType.Deform:
-                HandleDeformation(a, b, normal);
-                break;
-        }
-    }
+    // Friction coefficient
+    [Range(0, 1)]
+    public float friction = 0.2f;
 
-    private void HandleBounce(MassPoint a, MassPoint b, Vector3 normal)
+    public void HandleCollision(CollisionResult result)
     {
+        var a = result.pointA;
+        var b = result.pointB;
+        var normal = result.normal;
+        float penetration = result.penetrationDepth;
+
+        // 1. Skip if both points are pinned (fixed)
+        if (a.isPinned && b.isPinned)
+            return;
+
+        // 2. Resolve penetration - move points apart
+        ResolvePenetration(a, b, normal, penetration);
+
+        // 3. Calculate relative velocity along the normal
         Vector3 relativeVelocity = b.velocity - a.velocity;
         float velAlongNormal = Vector3.Dot(relativeVelocity, normal);
 
-        if (velAlongNormal > 0) return; // they're separating
+        // If points are moving apart, no impulse needed
+        if (velAlongNormal > 0)
+            return;
 
-        float invMassA = 1f / a.mass;
-        float invMassB = 1f / b.mass;
+        // 4. Calculate impulse scalar
+        float invMassA = a.isPinned ? 0f : 1f / a.mass;
+        float invMassB = b.isPinned ? 0f : 1f / b.mass;
 
-        float impulseMag = -(1 + restitution) * velAlongNormal / (invMassA + invMassB);
-        Vector3 impulse = impulseMag * normal;
+        float impulseMagnitude = -(1 + restitution) * velAlongNormal;
+        impulseMagnitude /= invMassA + invMassB;
 
-        a.velocity -= impulse * invMassA;
-        b.velocity += impulse * invMassB;
+        Vector3 impulse = impulseMagnitude * normal;
 
-        // Optional: positional correction to resolve penetration
-        Vector3 correction = normal * minPenetrationCorrection;
-        a.position += correction * 0.5f;
-        b.position -= correction * 0.5f;
+        // 5. Apply impulse to velocities
+        if (!a.isPinned)
+            a.velocity -= invMassA * impulse;
+        if (!b.isPinned)
+            b.velocity += invMassB * impulse;
+
+        // 6. Apply friction impulse (tangent direction)
+        Vector3 tangent = relativeVelocity - Vector3.Dot(relativeVelocity, normal) * normal;
+        if (tangent != Vector3.zero)
+            tangent.Normalize();
+
+        float frictionImpulseMag = -Vector3.Dot(relativeVelocity, tangent);
+        frictionImpulseMag /= invMassA + invMassB;
+
+        frictionImpulseMag = Mathf.Clamp(frictionImpulseMag, -impulseMagnitude * friction, impulseMagnitude * friction);
+
+        Vector3 frictionImpulse = frictionImpulseMag * tangent;
+
+        if (!a.isPinned)
+            a.velocity -= invMassA * frictionImpulse;
+        if (!b.isPinned)
+            b.velocity += invMassB * frictionImpulse;
+
+        // 7. Optional: Apply spring deformation or forces if needed
+        ApplySpringForces(a);
+        ApplySpringForces(b);
     }
 
-    private void HandleDeformation(MassPoint a, MassPoint b, Vector3 normal)
+    private void ResolvePenetration(MassPoint a, MassPoint b, Vector3 normal, float penetration)
     {
-        float impactForce = (b.velocity - a.velocity).magnitude * 0.5f * (a.mass + b.mass);
+        float invMassA = a.isPinned ? 0f : 1f / a.mass;
+        float invMassB = b.isPinned ? 0f : 1f / b.mass;
+        float invMassSum = invMassA + invMassB;
 
-        if (impactForce >= deformationThreshold)
-        {
-            Debug.Log("Deformation: breaking spring between points.");
-            Spring s = FindSpring(a, b);
-            if (s != null) s.broken = true;
-        }
-        else
-        {
-            HandleBounce(a, b, normal); // fallback
-        }
+        if (invMassSum == 0)
+            return;
+
+        Vector3 correction = normal * (penetration / invMassSum);
+
+        if (!a.isPinned)
+            a.position += correction * invMassA;
+        if (!b.isPinned)
+            b.position -= correction * invMassB;
     }
 
-    private Spring FindSpring(MassPoint a, MassPoint b)
+    private void ApplySpringForces(MassPoint point)
     {
-        // You must implement this based on how your springs are stored
-        return null;
+        if (point.isPinned) return;
+
+        // For each spring connected to the mass point
+        foreach (var spring in point.connectedSprings)
+        {
+            // Apply spring force based on Hooke's law
+            Vector3 dir = spring.pointB.position - spring.pointA.position;
+            float currentLength = dir.magnitude;
+            dir.Normalize();
+
+            float displacement = currentLength - spring.restLength;
+
+            // Hooke's law force magnitude
+            float forceMagnitude = spring.springStiffness * displacement;
+
+            // Damping force (based on relative velocity)
+            Vector3 relativeVelocity = spring.pointB.velocity - spring.pointA.velocity;
+            float dampingForceMag = spring.springDamping * Vector3.Dot(relativeVelocity, dir);
+
+            float totalForceMag = forceMagnitude + dampingForceMag;
+
+            Vector3 force = totalForceMag * dir;
+
+            // Apply force to mass points (equal and opposite)
+            if (!spring.pointA.isPinned)
+                spring.pointA.velocity += force / spring.pointA.mass * Time.fixedDeltaTime;
+            if (!spring.pointB.isPinned)
+                spring.pointB.velocity -= force / spring.pointB.mass * Time.fixedDeltaTime;
+        }
     }
 }

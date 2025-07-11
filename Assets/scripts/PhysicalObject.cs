@@ -38,6 +38,9 @@ public class PhysicalObject : MonoBehaviour
 
     public GameObject meshSourceObject; // For Other shape
 
+    [Header("Body Settings")]
+    public bool useCustomSpringProperties = true;
+
     public float mass = 1f;
     [HideInInspector] public Vector3 velocity;
     [HideInInspector] public Vector3 forceAccumulator;
@@ -50,6 +53,20 @@ public class PhysicalObject : MonoBehaviour
     [Header("Rotation")]
     public Vector3 rotationEuler = Vector3.zero;  // Not linked to transform.rotation
 
+    public bool useCustomProperties = false;
+    public PhysicalMaterial material;
+
+    public float customDensity = 1f;
+    public float customBounciness = 0.3f;
+    public float customStiffness = 1000f;
+    public float customFractureThreshold = 10000f;
+    public float customDamping = 0.1f;
+
+    public float Density => useCustomProperties ? customDensity : material?.Density ?? 1f;
+    public float Bounciness => useCustomProperties ? customBounciness : material?.bounciness ?? 0.3f;
+    public float Stiffness => useCustomProperties ? customStiffness : material?.stiffness ?? 1000f;
+    public float FractureThreshold => useCustomProperties ? customFractureThreshold : material?.fractureThreshold ?? 10000f;
+    public float Damping => useCustomProperties ? customDamping : material?.dampingCoefficient ?? 0.1f;
 
     public BoundingShapeType shapeType = BoundingShapeType.Sphere;
     public bool isStatic

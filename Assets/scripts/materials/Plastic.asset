@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Plastic
   m_EditorClassIdentifier: 
   materialName: plastic
-  Density: 1
-  dragCoefficient: 1
-  bounciness: 0.3
-  stiffness: 1000
-  fractureThreshold: 10000
-  youngsModulus: 200000
-  poissonRatio: 0.3
+  Density: 1200
+  dragCoefficient: 0.4
+  bounciness: 0.5
+  stiffness: 5000
+  fractureThreshold: 20000000
+  dampingCoefficient: 0.4
+  youngsModulus: 2.5e+9
+  poissonRatio: 0.35

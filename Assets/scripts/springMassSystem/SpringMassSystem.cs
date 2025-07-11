@@ -11,13 +11,19 @@ public enum MeshPointGenerationMode
 {
     UseMeshVertices,
     FillUsingBounds,
-    FillUsingVolumeSampling,
     MeshVerticesAndBounds,
-    MeshVerticesAndVolume,
+
     FillUsingFloodFill,
+    MeshVerticesAndFloodFill,
+
     FillUsingOctreeBasic,
+    MeshVerticesAndOctreeBasic,
+
     FillUsingOctreeAdvanced,
-    FillUsingSDFDistanceOnly
+    MeshVerticesAndOctreeAdvanced,
+
+    FillUsingSDFDistanceOnly,
+    MeshVerticesAndSDFDistanceOnly
 }
 
 public enum MeshConnectionMode
@@ -42,13 +48,9 @@ public class SpringMassSystem : MonoBehaviour
     public GameObject pointPrefab;
     public Material springLineMaterial;
 
-    private MassPoint[,,] cubeGrid;
-    private List<MassPoint> allPoints = new List<MassPoint>();
-    private List<Spring> springs = new List<Spring>();
-
-    [Header("Spring Settings")]
-    public bool useCustomSpringProperties = true;
-    public PhysicalMaterial materialPreset;
+    [HideInInspector] public MassPoint[,,] cubeGrid;
+    [HideInInspector] public List<MassPoint> allPoints = new List<MassPoint>();
+    [HideInInspector] public List<Spring> springs = new List<Spring>();
 
     [Header("Mesh Connection Settings")]
     public MeshConnectionMode meshConnectionMode = MeshConnectionMode.KNearestNeighbors;
@@ -64,12 +66,8 @@ public class SpringMassSystem : MonoBehaviour
         if (physicalObject == null)
             physicalObject = GetComponent<PhysicalObject>();
     }
-
-
     void Start()
     {
-        //Debug.Log($"Start: isStatic = {physicalObject.isStatic}");
-        //dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : 1f;
         if (isCreated)
         {
             CreateSystem();
@@ -78,22 +76,20 @@ public class SpringMassSystem : MonoBehaviour
 
     public void CreateSystem()
     {
-        
+        Debug.Log("CreateSystem was called");
+
+
         if (physicalObject == null)
         {
             Debug.LogError("PhysicalObject not assigned!");
             return;
         }
+
         if (!isCreated) return;
         massShapeType = physicalObject.massShapeType;
 
         allPoints.Clear();
         springs.Clear();
-        if (!useCustomSpringProperties && materialPreset != null)
-        {
-            springStiffness = materialPreset.stiffness;
-            springDamping = 2f; // Optional: you can add damping to the material class if needed
-        }
         switch (massShapeType)
         {
             case MassShapeType.Cube:
@@ -114,67 +110,80 @@ public class SpringMassSystem : MonoBehaviour
             case MassShapeType.Other:
                 if (physicalObject.meshSourceObject != null)
                 {
-                    // Use a HashSet to avoid duplicate points
                     HashSet<MassPoint> uniquePoints = new HashSet<MassPoint>();
                     allPoints.Clear();
 
-                    if (generationMode == MeshPointGenerationMode.UseMeshVertices ||
-                        generationMode == MeshPointGenerationMode.MeshVerticesAndBounds ||
-                        generationMode == MeshPointGenerationMode.MeshVerticesAndVolume)
-                    {
+                    // Always add mesh vertices if required by the current mode
+                    bool includeMeshVertices = generationMode == MeshPointGenerationMode.UseMeshVertices ||
+                                               generationMode == MeshPointGenerationMode.MeshVerticesAndBounds ||
+                                               generationMode == MeshPointGenerationMode.MeshVerticesAndFloodFill ||
+                                               generationMode == MeshPointGenerationMode.MeshVerticesAndOctreeBasic ||
+                                               generationMode == MeshPointGenerationMode.MeshVerticesAndOctreeAdvanced ||
+                                               generationMode == MeshPointGenerationMode.MeshVerticesAndSDFDistanceOnly;
+
+                    if (includeMeshVertices)
                         GenerateMeshPoints(physicalObject.meshSourceObject, uniquePoints);
+
+                    // Then apply the selected fill strategy
+                    switch (generationMode)
+                    {
+                        case MeshPointGenerationMode.FillUsingBounds:
+                        case MeshPointGenerationMode.MeshVerticesAndBounds:
+                            VoxelFiller.FillUsingBounds(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            TransferUniquePointsToAllPoints(uniquePoints);
+
+                            break;
+
+                        case MeshPointGenerationMode.FillUsingFloodFill:
+                        case MeshPointGenerationMode.MeshVerticesAndFloodFill:
+                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            TransferUniquePointsToAllPoints(uniquePoints);
+
+                            break;
+
+                        case MeshPointGenerationMode.FillUsingOctreeBasic:
+                        case MeshPointGenerationMode.MeshVerticesAndOctreeBasic:
+                             VoxelFiller.FillUsingOctreeBasic(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            TransferUniquePointsToAllPoints(uniquePoints);
+
+                            break;
+
+                        case MeshPointGenerationMode.FillUsingOctreeAdvanced:
+                        case MeshPointGenerationMode.MeshVerticesAndOctreeAdvanced:
+                            VoxelFiller.FillUsingOctreeAdvanced(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            TransferUniquePointsToAllPoints(uniquePoints);
+
+                            break;
+
+                        case MeshPointGenerationMode.FillUsingSDFDistanceOnly:
+                        case MeshPointGenerationMode.MeshVerticesAndSDFDistanceOnly:
+                            VoxelFiller.FillUsingSDFDistanceOnly(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                            TransferUniquePointsToAllPoints(uniquePoints);
+
+                            break;
+                    }
+                    switch (meshConnectionMode)
+                    {
+                        case MeshConnectionMode.KNearestNeighbors:
+                            ConnectMeshSprings_KNN(new HashSet<(int, int)>());
+                            break;
+
+                        case MeshConnectionMode.TriangleEdges:
+                            var connectedPairs = new HashSet<(int, int)>();
+                            MeshFilter[] meshFilters = physicalObject.meshSourceObject.GetComponentsInChildren<MeshFilter>();
+                            ConnectMeshSprings_Triangles(meshFilters, connectedPairs);
+                            break;
+
+                        case MeshConnectionMode.Hybrid:
+                            ConnectMeshSprings_Hybrid();
+                            break;
                     }
 
-                    if (generationMode == MeshPointGenerationMode.FillUsingBounds ||
-                        generationMode == MeshPointGenerationMode.MeshVerticesAndBounds)
-                    {
-                        VoxelFiller.FillUsingBounds(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                    }
-
-                    if (generationMode == MeshPointGenerationMode.FillUsingVolumeSampling ||
-                        generationMode == MeshPointGenerationMode.MeshVerticesAndVolume)
-                    {
-                        VoxelFiller.FillUsingVolumeSampling(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                    }
-
-                    if (generationMode == MeshPointGenerationMode.FillUsingFloodFill)
-                    {
-                        VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-
-                    }
-                    if (generationMode == MeshPointGenerationMode.FillUsingOctreeBasic)
-                    {
-                        VoxelFiller.FillUsingOctreeBasic(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                    }
-                    else if (generationMode == MeshPointGenerationMode.FillUsingOctreeAdvanced)
-                    {
-                        VoxelFiller.FillUsingOctreeAdvanced(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                    }
-                    else if (generationMode == MeshPointGenerationMode.FillUsingSDFDistanceOnly)
-                    {
-                        VoxelFiller.FillUsingSDFDistanceOnly(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                    }
-
-                    // Copy uniquePoints into allPoints list
-                    allPoints = new List<MassPoint>(uniquePoints);
-
-                    // Connect springs
-                    if (meshConnectionMode == MeshConnectionMode.KNearestNeighbors)
-                    {
-                        ConnectMeshSprings_KNN(new HashSet<(int, int)>());
-                        LogConnectionSummary("Accelerated KNN");
-                    }
-                    else if (meshConnectionMode == MeshConnectionMode.TriangleEdges)
-                    {
-                        var meshFilters = physicalObject.meshSourceObject.GetComponentsInChildren<MeshFilter>();
-                        ConnectMeshSprings_Triangles(meshFilters, new HashSet<(int, int)>());
-                        LogConnectionSummary("Triangle Edges");
-                    }
-                    else if (meshConnectionMode == MeshConnectionMode.Hybrid)
-                    {
-                        ConnectMeshSprings_Hybrid();
-                        LogConnectionSummary("Hybrid (Triangles + KNN)");
-                    }
                 }
                 else
                 {
@@ -246,6 +255,7 @@ public class SpringMassSystem : MonoBehaviour
         foreach (var s in springs)
             s.UpdateLine();
     }
+
     static readonly Vector3Int[] StructuralOffsets = {
     new Vector3Int(1, 0, 0), new Vector3Int(0, 1, 0), new Vector3Int(0, 0, 1),
     new Vector3Int(-1, 0, 0), new Vector3Int(0, -1, 0), new Vector3Int(0, 0, -1),
@@ -331,14 +341,16 @@ public class SpringMassSystem : MonoBehaviour
                         if (nx >= 0 && nx < pointsX && ny >= 0 && ny < pointsY && nz >= 0 && nz < pointsZ)
                         {
                             var neighbor = cubeGrid[nx, ny, nz];
-                            springs.Add(new Spring(current, neighbor, springStiffness, springDamping, transform, springLineMaterial));
+                            Spring s = new Spring(current, neighbor, springStiffness, springDamping, transform, springLineMaterial);
+                            springs.Add(s);
+                            current.connectedSprings.Add(s);
+                            neighbor.connectedSprings.Add(s);
                         }
                     }
                 }
             }
         }
     }
-
 
     void GenerateSpherePoints()
     {
@@ -381,7 +393,10 @@ public class SpringMassSystem : MonoBehaviour
             {
                 if (Vector3.Distance(allPoints[i].position, allPoints[j].position) <= connectionRadius)
                 {
-                    springs.Add(new Spring(allPoints[i], allPoints[j], springStiffness, springDamping, transform, springLineMaterial));
+                    Spring s = new Spring(allPoints[i], allPoints[j], springStiffness, springDamping, transform, springLineMaterial);
+                    springs.Add(s);
+                    allPoints[i].connectedSprings.Add(s);
+                    allPoints[j].connectedSprings.Add(s);
                 }
             }
         }
@@ -520,6 +535,7 @@ public class SpringMassSystem : MonoBehaviour
                 controller.Initialize(mp);
 
                 uniquePoints.Add(mp);
+                allPoints.Add(mp);
             }
         }
     }
@@ -569,7 +585,10 @@ public class SpringMassSystem : MonoBehaviour
             var key = (Mathf.Min(i1, i2), Mathf.Max(i1, i2));
             if (connectedPairs.Contains(key)) return;
 
-            springs.Add(new Spring(p1, p2, springStiffness, springDamping, transform, springLineMaterial));
+            Spring s = new Spring(p1, p2, springStiffness, springDamping, transform, springLineMaterial);
+            springs.Add(s);
+            p1.connectedSprings.Add(s);
+            p2.connectedSprings.Add(s);
             connectedPairs.Add(key);
         }
 
@@ -581,11 +600,9 @@ public class SpringMassSystem : MonoBehaviour
         springs.Clear();
         var connectedPairs = new HashSet<(int, int)>();
 
-        // Surface springs
         MeshFilter[] meshFilters = physicalObject.meshSourceObject.GetComponentsInChildren<MeshFilter>();
         ConnectMeshSprings_Triangles(meshFilters, connectedPairs);
 
-        // Volume/internal springs
         ConnectMeshSprings_KNN(connectedPairs);
     }
 
@@ -629,7 +646,10 @@ public class SpringMassSystem : MonoBehaviour
 
                 if (!connectedPairs.Contains((minIdx, maxIdx)))
                 {
-                    springs.Add(new Spring(current, allPoints[neighborIdx], springStiffness, springDamping, transform, springLineMaterial));
+                    Spring s = new Spring(current, allPoints[neighborIdx], springStiffness, springDamping, transform, springLineMaterial);
+                    springs.Add(s);
+                    current.connectedSprings.Add(s);
+                    allPoints[neighborIdx].connectedSprings.Add(s);
                     connectedPairs.Add((minIdx, maxIdx));
                 }
             }
@@ -638,7 +658,6 @@ public class SpringMassSystem : MonoBehaviour
 
     }
 
-    // Estimate average nearest neighbor distance (same as in your commented code)
     float EstimateConnectionRadius(List<MassPoint> points)
     {
         float totalNearest = 0f;
@@ -676,8 +695,6 @@ public class SpringMassSystem : MonoBehaviour
         return closest;
     }
 
-
-
     void CreateBoundingDrawer()
     {
 #if UNITY_EDITOR
@@ -690,9 +707,6 @@ public class SpringMassSystem : MonoBehaviour
     physicalObject.boundingBoxDrawer = boxDrawer; // ✅ Save reference
 #endif
     }
-
-
-
 
     void UpdateBoundingShape()
     {
@@ -757,5 +771,12 @@ public class SpringMassSystem : MonoBehaviour
     {
         return allPoints;
     }
+
+    private void TransferUniquePointsToAllPoints(HashSet<MassPoint> uniquePoints)
+    {
+        allPoints.Clear(); // Optional: clear previous data if needed
+        allPoints.AddRange(uniquePoints);
+    }
+
 
 }

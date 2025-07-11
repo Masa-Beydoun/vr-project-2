@@ -8,7 +8,34 @@ public class PhysicalObjectEditor : Editor
     {
         PhysicalObject po = (PhysicalObject)target;
 
-        po.materialPreset = (PhysicalMaterial)EditorGUILayout.ObjectField("Material Preset", po.materialPreset, typeof(PhysicalMaterial), false);
+        po.useCustomSpringProperties = EditorGUILayout.Toggle("Use Custom Properties", po.useCustomSpringProperties);
+
+        if (!po.useCustomProperties)
+        {
+            po.material = (PhysicalMaterial)EditorGUILayout.ObjectField("Material", po.material, typeof(PhysicalMaterial), false);
+
+            if (po.material != null)
+            {
+                EditorGUILayout.LabelField("Material Properties", EditorStyles.boldLabel);
+                EditorGUILayout.FloatField("Density", po.material.Density);
+                EditorGUILayout.FloatField("Bounciness", po.material.bounciness);
+                EditorGUILayout.FloatField("Stiffness", po.material.stiffness);
+                EditorGUILayout.FloatField("Fracture Threshold", po.material.fractureThreshold);
+                EditorGUILayout.FloatField("Damping", po.material.dampingCoefficient);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("Assign a PhysicalMaterial to use default properties.", MessageType.Warning);
+            }
+        }
+        else
+        {
+            po.customDensity = EditorGUILayout.FloatField("Custom Density", po.customDensity);
+            po.customBounciness = EditorGUILayout.FloatField("Custom Bounciness", po.customBounciness);
+            po.customStiffness = EditorGUILayout.FloatField("Custom Stiffness", po.customStiffness);
+            po.customFractureThreshold = EditorGUILayout.FloatField("Custom Fracture Threshold", po.customFractureThreshold);
+            po.customDamping = EditorGUILayout.FloatField("Custom Damping", po.customDamping);
+        }
         po.mass = EditorGUILayout.FloatField("Mass", po.mass);
 
         po.shapeType = (BoundingShapeType)EditorGUILayout.EnumPopup("Bounding Shape Type", po.shapeType);
