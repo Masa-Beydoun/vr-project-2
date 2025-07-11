@@ -8,15 +8,16 @@ public class MassPoint
 
     public Vector3 position;
     public Vector3 velocity;
+    public float mass;
+    public bool isPinned;
+
     public Vector3 acceleration; // Added acceleration storage
     public PhysicalObject physicalObject;
-    public bool isPinned = false;
-    public float mass = 1.0f;
     public float signedDistance;
     public string sourceName;
     public List<Spring> connectedSprings = new List<Spring>();
 
-    public MassPoint(Vector3 position, PhysicalObject physicalObject, string name)
+    public MassPoint(Vector3 position, PhysicalObject physicalObject, string name, bool isPinned = false)
     {
         this.id = globalIDCounter++;
         this.position = position;
@@ -29,6 +30,11 @@ public class MassPoint
     public void ApplyForce(Vector3 force, float deltaTime)
     {
         if (isPinned) return;
+        if (mass <= 0f)
+        {
+            Debug.LogError($"MassPoint {id} has zero or negative mass! Force = {force}");
+            return;
+        }
 
         // F = m * a => a = F / m
         Vector3 newAcceleration = force / mass;

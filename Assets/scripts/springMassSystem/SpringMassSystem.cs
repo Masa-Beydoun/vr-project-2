@@ -197,11 +197,9 @@ public class SpringMassSystem : MonoBehaviour
             float massPerPoint = physicalObject.mass / allPoints.Count;
             foreach (var mp in allPoints)
             {
-                if (mp.physicalObject != null)
-                {
-                    mp.physicalObject.mass = massPerPoint;
-                }
+                mp.mass = massPerPoint;
             }
+
         }
 
         foreach (var s in springs)

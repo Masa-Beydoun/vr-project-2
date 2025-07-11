@@ -13,9 +13,9 @@ public struct CollisionResult
 
 public static class CollisionDetector
 {
-    public static List<CollisionResult> CheckCollision(SpringMassSystem objA, SpringMassSystem objB)
+    public static List<CollisionResultEnhanced> CheckCollision(SpringMassSystem objA, SpringMassSystem objB)
     {
-        List<CollisionResult> results = new List<CollisionResult>();
+        List<CollisionResultEnhanced> results = new List<CollisionResultEnhanced>();
         List<Vector3> simplex = new List<Vector3>();
 
         if (GJK.Detect(objA, objB, simplex))
@@ -26,15 +26,20 @@ public static class CollisionDetector
 
                 foreach (var (pa, pb) in pairs)
                 {
-                    results.Add(new CollisionResult
+                    Vector3 relativeVel = pb.velocity - pa.velocity;
+                    float relVelAlongNormal = Vector3.Dot(relativeVel, normal);
+
+                    results.Add(new CollisionResultEnhanced
                     {
-                        collided = true,
+                        pointA = pa,
+                        pointB = pb,
                         normal = normal,
                         penetrationDepth = depth,
                         contactPoint = 0.5f * (pa.position + pb.position),
-                        pointA = pa,
-                        pointB = pb
-                    });
+                        relativeVelocity = relVelAlongNormal,
+                        collisionType = DetermineCollisionType(pa, pb, relVelAlongNormal),
+                        collided = true
+                    }) ;
                 }
             }
         }
@@ -70,5 +75,19 @@ public static class CollisionDetector
 
         return pairs;
     }
+    private static CollisionType DetermineCollisionType(MassPoint a, MassPoint b, float relVel)
+    {
+        bool aStatic = a.isPinned;
+        bool bStatic = b.isPinned;
+
+        if (aStatic && bStatic)
+            return CollisionType.SpringMass_Static;
+        else if (aStatic || bStatic)
+            return CollisionType.SpringMass_Static;
+        else
+            return CollisionType.SpringMass_SpringMass;
+    }
+
+
 
 }
