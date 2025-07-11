@@ -44,7 +44,7 @@ public class Mesh3D
                         center.z - size.z / 2 + k * dz
                     );
                     nodeIndexMap[(i, j, k)] = nodes.Count;
-                    nodes.Add(new Node(pos, nodes.Count));
+                    nodes.Add(new Node(pos,nodes.Count));
                 }
             }
         }

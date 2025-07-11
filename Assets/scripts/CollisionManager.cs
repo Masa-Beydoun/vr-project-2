@@ -1,126 +1,126 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿//using System;
+//using System.Collections.Generic;
+//using UnityEngine;
 
-public class CollisionManager : MonoBehaviour
-{
-    private PhysicalObject[] physicalObjects;
-    public const BroadPhaseMethod broadPhaseMethod = BroadPhaseMethod.SweepAndPrune;
-    IBroadPhase broadPhase;
-    [SerializeField] private CollisionHandler collisionHandler;
+//public class CollisionManager : MonoBehaviour
+//{
+//    private PhysicalObject[] physicalObjects;
+//    public const BroadPhaseMethod broadPhaseMethod = BroadPhaseMethod.SweepAndPrune;
+//    IBroadPhase broadPhase;
+//    [SerializeField] private CollisionHandler collisionHandler;
 
-    void Start()
-    {
-        switch (broadPhaseMethod)
-        {
-            case BroadPhaseMethod.SweepAndPrune:
-                broadPhase = new SweepAndPrune();
-                break;
-            case BroadPhaseMethod.UniformGrid:
-                float cellSize = 1.0f;
-                broadPhase = new UniformGrid(cellSize: cellSize);
-                break;
-            case BroadPhaseMethod.Octree:
-                broadPhase = new Octree(new Bounds(Vector3.zero, Vector3.one * 10000));
-                break;
-        }
-    }
+//    void Start()
+//    {
+//        switch (broadPhaseMethod)
+//        {
+//            case BroadPhaseMethod.SweepAndPrune:
+//                broadPhase = new SweepAndPrune();
+//                break;
+//            case BroadPhaseMethod.UniformGrid:
+//                float cellSize = 1.0f;
+//                broadPhase = new UniformGrid(cellSize: cellSize);
+//                break;
+//            case BroadPhaseMethod.Octree:
+//                broadPhase = new Octree(new Bounds(Vector3.zero, Vector3.one * 10000));
+//                break;
+//        }
+//    }
 
-    void FixedUpdate()
-    {
-        physicalObjects = FindObjectsOfType<PhysicalObject>();
+//    void FixedUpdate()
+//    {
+//        physicalObjects = FindObjectsOfType<PhysicalObject>();
 
-        var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
+//        var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
 
-        foreach (var (a, b) in candidatePairs)
-        {
-            //Vector3 mtv = Vector3.zero;
-            //if (IsColliding(a, b, out mtv))
-            //{
-            //    bool isMassPointA = a.GetComponent<MassPointController>() != null;
-            //    bool isMassPointB = b.GetComponent<MassPointController>() != null;
+//        foreach (var (a, b) in candidatePairs)
+//        {
+//            //Vector3 mtv = Vector3.zero;
+//            //if (IsColliding(a, b, out mtv))
+//            //{
+//            //    bool isMassPointA = a.GetComponent<MassPointController>() != null;
+//            //    bool isMassPointB = b.GetComponent<MassPointController>() != null;
 
-            //    MassPoint m1 = isMassPointA ? a.GetComponent<MassPointController>()?.point : null;
-            //    MassPoint m2 = isMassPointB ? b.GetComponent<MassPointController>()?.point : null;
+//            //    MassPoint m1 = isMassPointA ? a.GetComponent<MassPointController>()?.point : null;
+//            //    MassPoint m2 = isMassPointB ? b.GetComponent<MassPointController>()?.point : null;
 
-            //    if (isMassPointA && isMassPointB)
-            //    {
-            //        // Same source skip (optional)
-            //        if (m1 != null && m2 != null && m1.sourceName == m2.sourceName)
-            //            return;
+//            //    if (isMassPointA && isMassPointB)
+//            //    {
+//            //        // Same source skip (optional)
+//            //        if (m1 != null && m2 != null && m1.sourceName == m2.sourceName)
+//            //            return;
 
-            //        Debug.Log(
-            //            $"[MassPoint vs MassPoint]\n" +
-            //            $" - MassPoint 1: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
-            //            $" - MassPoint 2: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
-            //            $" - MTV: {mtv}"
-            //        );
-            //    }
-            //    else if (isMassPointA && !isMassPointB)
-            //    {
-            //        Debug.Log(
-            //            $"[MassPoint vs Object]\n" +
-            //            $" - MassPoint: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
-            //            $" - Other Object: {b.name}\n" +
-            //            $" - MTV: {mtv}"
-            //        );
-            //    }
-            //    else if (!isMassPointA && isMassPointB)
-            //    {
-            //        Debug.Log(
-            //            $"[Object vs MassPoint]\n" +
-            //            $" - MassPoint: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
-            //            $" - Other Object: {a.name}\n" +
-            //            $" - MTV: {mtv}"
-            //        );
-            //    }
-            //    else
-            //    {
-            //        Debug.Log($"[Object vs Object] Collision Detected between {a.name} and {b.name} with MTV: {mtv}");
-            //    }
+//            //        Debug.Log(
+//            //            $"[MassPoint vs MassPoint]\n" +
+//            //            $" - MassPoint 1: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
+//            //            $" - MassPoint 2: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
+//            //            $" - MTV: {mtv}"
+//            //        );
+//            //    }
+//            //    else if (isMassPointA && !isMassPointB)
+//            //    {
+//            //        Debug.Log(
+//            //            $"[MassPoint vs Object]\n" +
+//            //            $" - MassPoint: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
+//            //            $" - Other Object: {b.name}\n" +
+//            //            $" - MTV: {mtv}"
+//            //        );
+//            //    }
+//            //    else if (!isMassPointA && isMassPointB)
+//            //    {
+//            //        Debug.Log(
+//            //            $"[Object vs MassPoint]\n" +
+//            //            $" - MassPoint: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
+//            //            $" - Other Object: {a.name}\n" +
+//            //            $" - MTV: {mtv}"
+//            //        );
+//            //    }
+//            //    else
+//            //    {
+//            //        Debug.Log($"[Object vs Object] Collision Detected between {a.name} and {b.name} with MTV: {mtv}");
+//            //    }
 
-            //}
-            if (a.transform != null && b.transform != null)
-            {
-                SpringMassSystem aSystem = a.GetComponentInParent<SpringMassSystem>();
-                SpringMassSystem bSystem = b.GetComponentInParent<SpringMassSystem>();
+//            //}
+//            if (a.transform != null && b.transform != null)
+//            {
+//                SpringMassSystem aSystem = a.GetComponentInParent<SpringMassSystem>();
+//                SpringMassSystem bSystem = b.GetComponentInParent<SpringMassSystem>();
 
-                if (aSystem.transform != null && bSystem.transform != null && aSystem.GetMassPoints().Count > 0 && bSystem.GetMassPoints().Count > 0)
-                {
-                    List<CollisionResult> collisions = CollisionDetector.CheckCollision(aSystem, bSystem);
-                    foreach (var result in collisions)
-                    {
-                        Debug.Log("Collision Detected!");
-                        Debug.Log($"Contact Point: {result.contactPoint}");
-                        Debug.Log($"Normal: {result.normal}, Depth: {result.penetrationDepth}");
-                        Debug.Log($"Colliding Points: {result.pointA.sourceName}[{result.pointA.id}] <-> {result.pointB.sourceName}[{result.pointB.id}]");
+//                if (aSystem.transform != null && bSystem.transform != null && aSystem.GetMassPoints().Count > 0 && bSystem.GetMassPoints().Count > 0)
+//                {
+//                    List<CollisionResult> collisions = CollisionDetector.CheckCollision(aSystem, bSystem);
+//                    foreach (var result in collisions)
+//                    {
+//                        Debug.Log("Collision Detected!");
+//                        Debug.Log($"Contact Point: {result.contactPoint}");
+//                        Debug.Log($"Normal: {result.normal}, Depth: {result.penetrationDepth}");
+//                        Debug.Log($"Colliding Points: {result.pointA.sourceName}[{result.pointA.id}] <-> {result.pointB.sourceName}[{result.pointB.id}]");
 
-                        Debug.DrawLine(result.pointA.position, result.pointB.position, Color.green, 5f);
-                        collisionHandler.HandleSpringMassCollision(result);
+//                        Debug.DrawLine(result.pointA.position, result.pointB.position, Color.green, 5f);
+//                        collisionHandler.HandleSpringMassCollision(result);
 
-                    }
-                }
-                else
-                {
-                    FEMController aController = a.GetComponentInParent<FEMController>();
-                    FEMController bController = b.GetComponentInParent<FEMController>();
+//                    }
+//                }
+//                else
+//                {
+//                    FEMController aController = a.GetComponentInParent<FEMController>();
+//                    FEMController bController = b.GetComponentInParent<FEMController>();
 
-                    if (aController.transform != null && bController.transform != null && aController.GetAllNodes().Length > 0 && bController.GetAllNodes().Length > 0)
-                    {
-                        List<CollisionResult_FEM> collisions = CollisionDetector_FEM.CheckCollision(aController, bController);
-                        foreach (var collision in collisions)
-                        {
-                            Debug.Log("Collision Detected!");
-                            Debug.Log($"Contact Point: {collision.contactPoint}");
-                            Debug.Log($"Normal: {collision.normal}, Depth: {collision.penetrationDepth}");
-                            Debug.Log($"Colliding Points: {aController.gameObject.name}[{collision.pointA.ID}] <-> {bController.gameObject.name}[{collision.pointB.ID}]");
+//                    if (aController.transform != null && bController.transform != null && aController.GetAllNodes().Length > 0 && bController.GetAllNodes().Length > 0)
+//                    {
+//                        List<CollisionResult_FEM> collisions = CollisionDetector_FEM.CheckCollision(aController, bController);
+//                        foreach (var collision in collisions)
+//                        {
+//                            Debug.Log("Collision Detected!");
+//                            Debug.Log($"Contact Point: {collision.contactPoint}");
+//                            Debug.Log($"Normal: {collision.normal}, Depth: {collision.penetrationDepth}");
+//                            Debug.Log($"Colliding Points: {aController.gameObject.name}[{collision.pointA.ID}] <-> {bController.gameObject.name}[{collision.pointB.ID}]");
 
-                            Debug.DrawLine(collision.pointA.Position, collision.pointB.Position, Color.red, 5f);
-                        }
-                    }
-                }
-            }
-        }
-    }
+//                            Debug.DrawLine(collision.pointA.Position, collision.pointB.Position, Color.red, 5f);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-}
+//}

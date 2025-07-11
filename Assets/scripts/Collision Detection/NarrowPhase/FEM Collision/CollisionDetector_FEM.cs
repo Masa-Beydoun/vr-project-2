@@ -13,9 +13,9 @@ public struct CollisionResult_FEM
 
 public static class CollisionDetector_FEM
 {
-    public static List<CollisionResult_FEM> CheckCollision(FEMController objA, FEMController objB)
+    public static List<CollisionResultEnhanced_FEM> CheckCollision(FEMController objA, FEMController objB)
     {
-        List<CollisionResult_FEM> results = new List<CollisionResult_FEM>();
+        List<CollisionResultEnhanced_FEM> results = new List<CollisionResultEnhanced_FEM>();
         List<Vector3> simplex = new List<Vector3>();
 
         if (GJK_FEM.Detect(objA, objB, simplex))
@@ -26,14 +26,18 @@ public static class CollisionDetector_FEM
 
                 foreach (var (pa, pb) in pairs)
                 {
-                    results.Add(new CollisionResult_FEM
+                    Vector3 relativeVelocity = pb.Velocity - pa.Velocity;
+                    float relVelAlongNormal = Vector3.Dot(relativeVelocity, normal);
+                    results.Add(new CollisionResultEnhanced_FEM
                     {
-                        collided = true,
+                        pointA = pa,
+                        pointB = pb,
                         normal = normal,
                         penetrationDepth = depth,
                         contactPoint = 0.5f * (pa.Position + pb.Position),
-                        pointA = pa,
-                        pointB = pb
+                        relativeVelocity = relVelAlongNormal,
+                        collisionType = CollisionType.FEM_FEM,
+                        collided = true
                     });
                 }
             }
