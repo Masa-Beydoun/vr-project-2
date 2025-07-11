@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Assets",
+    "\\Assets\\scripts",
+    "\\Assets\\scripts\\Collision Detection",
+    "\\Assets\\scripts\\Collision Detection\\NarrowPhase",
+    "\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision"
+  ],
+  "SelectedNode": "\\Assets\\scripts\\Collision Detection\\NarrowPhase\\FEM Collision\\GJK_FEM.cs",
+  "PreviewInSolutionExplorer": false
+}

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,83 +32,120 @@ public class CollisionManager : MonoBehaviour
 
         var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
 
-        List<(PhysicalObject, PhysicalObject, Vector3)> realCollidedPairs = new List<(PhysicalObject, PhysicalObject, Vector3)>();
         foreach (var (a, b) in candidatePairs)
         {
-            Vector3 mtv = Vector3.zero;
-            if (IsColliding(a, b, out mtv))
+            //Vector3 mtv = Vector3.zero;
+            //if (IsColliding(a, b, out mtv))
+            //{
+            //    bool isMassPointA = a.GetComponent<MassPointController>() != null;
+            //    bool isMassPointB = b.GetComponent<MassPointController>() != null;
+
+            //    MassPoint m1 = isMassPointA ? a.GetComponent<MassPointController>()?.point : null;
+            //    MassPoint m2 = isMassPointB ? b.GetComponent<MassPointController>()?.point : null;
+
+            //    if (isMassPointA && isMassPointB)
+            //    {
+            //        // Same source skip (optional)
+            //        if (m1 != null && m2 != null && m1.sourceName == m2.sourceName)
+            //            return;
+
+            //        Debug.Log(
+            //            $"[MassPoint vs MassPoint]\n" +
+            //            $" - MassPoint 1: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
+            //            $" - MassPoint 2: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
+            //            $" - MTV: {mtv}"
+            //        );
+            //    }
+            //    else if (isMassPointA && !isMassPointB)
+            //    {
+            //        Debug.Log(
+            //            $"[MassPoint vs Object]\n" +
+            //            $" - MassPoint: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
+            //            $" - Other Object: {b.name}\n" +
+            //            $" - MTV: {mtv}"
+            //        );
+            //    }
+            //    else if (!isMassPointA && isMassPointB)
+            //    {
+            //        Debug.Log(
+            //            $"[Object vs MassPoint]\n" +
+            //            $" - MassPoint: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
+            //            $" - Other Object: {a.name}\n" +
+            //            $" - MTV: {mtv}"
+            //        );
+            //    }
+            //    else
+            //    {
+            //        Debug.Log($"[Object vs Object] Collision Detected between {a.name} and {b.name} with MTV: {mtv}");
+            //    }
+
+            //}
+            if (a.transform != null && b.transform != null)
             {
-                bool isMassPointA = a.GetComponent<MassPointController>() != null;
-                bool isMassPointB = b.GetComponent<MassPointController>() != null;
+                SpringMassSystem aSystem = a.GetComponentInParent<SpringMassSystem>();
+                SpringMassSystem bSystem = b.GetComponentInParent<SpringMassSystem>();
 
-                MassPoint m1 = isMassPointA ? a.GetComponent<MassPointController>()?.point : null;
-                MassPoint m2 = isMassPointB ? b.GetComponent<MassPointController>()?.point : null;
+                if (aSystem.transform != null && bSystem.transform != null && aSystem.GetMassPoints().Count > 0 && bSystem.GetMassPoints().Count > 0)
+                {
+                    List<CollisionResult> collisions = CollisionDetector.CheckCollision(aSystem, bSystem);
+                    foreach (var result in collisions)
+                    {
+                        Debug.Log("Collision Detected!");
+                        Debug.Log($"Contact Point: {result.contactPoint}");
+                        Debug.Log($"Normal: {result.normal}, Depth: {result.penetrationDepth}");
+                        Debug.Log($"Colliding Points: {result.pointA.sourceName}[{result.pointA.id}] <-> {result.pointB.sourceName}[{result.pointB.id}]");
 
-                if (isMassPointA && isMassPointB)
-                {
-                    // Same source skip (optional)
-                    if (m1 != null && m2 != null && m1.sourceName == m2.sourceName)
-                        return;
-
-                    Debug.Log(
-                        $"[MassPoint vs MassPoint]\n" +
-                        $" - MassPoint 1: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
-                        $" - MassPoint 2: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
-                        $" - MTV: {mtv}"
-                    );
-                }
-                else if (isMassPointA && !isMassPointB)
-                {
-                    Debug.Log(
-                        $"[MassPoint vs Object]\n" +
-                        $" - MassPoint: ID = {m1?.GetHashCode()}, Source = {m1?.sourceName}, Pos = {m1?.position}\n" +
-                        $" - Other Object: {b.name}\n" +
-                        $" - MTV: {mtv}"
-                    );
-                }
-                else if (!isMassPointA && isMassPointB)
-                {
-                    Debug.Log(
-                        $"[Object vs MassPoint]\n" +
-                        $" - MassPoint: ID = {m2?.GetHashCode()}, Source = {m2?.sourceName}, Pos = {m2?.position}\n" +
-                        $" - Other Object: {a.name}\n" +
-                        $" - MTV: {mtv}"
-                    );
+                        Debug.DrawLine(result.pointA.position, result.pointB.position, Color.green, 5f);
+                    }
                 }
                 else
                 {
-                    Debug.Log($"[Object vs Object] Collision Detected between {a.name} and {b.name} with MTV: {mtv}");
-                }
+                    FEMController aController = a.GetComponentInParent<FEMController>();
+                    FEMController bController = b.GetComponentInParent<FEMController>();
 
+                    if (aController.transform != null && bController.transform != null && aController.GetAllNodes().Length > 0 && bController.GetAllNodes().Length > 0)
+                    {
+                        List<CollisionResult_FEM> collisions = CollisionDetector_FEM.CheckCollision(aController, bController);
+                        foreach (var collision in collisions)
+                        {
+                            Debug.Log("Collision Detected!");
+                            Debug.Log($"Contact Point: {collision.contactPoint}");
+                            Debug.Log($"Normal: {collision.normal}, Depth: {collision.penetrationDepth}");
+                            Debug.Log($"Colliding Points: {aController.gameObject.name}[{collision.pointA.ID}] <-> {bController.gameObject.name}[{collision.pointB.ID}]");
+
+                            Debug.DrawLine(collision.pointA.Position, collision.pointB.Position, Color.red, 5f);
+                        }
+                    }
+                }
             }
         }
     }
 
-    static bool IsColliding(PhysicalObject a, PhysicalObject b, out Vector3 mtv)
-    {
-        mtv = Vector3.zero;
-        bool collided = false;
+    //static bool IsColliding(PhysicalObject a, PhysicalObject b, out Vector3 mtv)
+    //{
+    //    mtv = Vector3.zero;
+    //    bool collided = false;
 
-        if (a.shapeType == BoundingShapeType.Sphere && b.shapeType == BoundingShapeType.Sphere)
-            collided = SAT.SphereSphereCollisionWithMTV(a, b, out mtv);
-        else if (a.shapeType == BoundingShapeType.AABB && b.shapeType == BoundingShapeType.AABB)
-            collided = SAT.AABBAABBCollisionWithMTV(a, b, out mtv);
-        else if (a.shapeType == BoundingShapeType.Sphere && b.shapeType == BoundingShapeType.AABB)
-            collided = SAT.SphereOBBCollisionWithMTV(a, b, out mtv);
-        else if (a.shapeType == BoundingShapeType.AABB && b.shapeType == BoundingShapeType.Sphere)
-            collided = SAT.SphereOBBCollisionWithMTV(b, a, out mtv);
-        else if (a.shapeType == BoundingShapeType.AABB && b.shapeType == BoundingShapeType.AABB)
-            collided = SAT.OBBOBBCollisionWithMTV(a, b, out mtv);
+    //    if (a.shapeType == BoundingShapeType.Sphere && b.shapeType == BoundingShapeType.Sphere)
+    //        collided = SAT.SphereSphereCollisionWithMTV(a, b, out mtv);
+    //    else if (a.shapeType == BoundingShapeType.AABB && b.shapeType == BoundingShapeType.AABB)
+    //        collided = SAT.AABBAABBCollisionWithMTV(a, b, out mtv);
+    //    else if (a.shapeType == BoundingShapeType.Sphere && b.shapeType == BoundingShapeType.AABB)
+    //        collided = SAT.SphereOBBCollisionWithMTV(a, b, out mtv);
+    //    else if (a.shapeType == BoundingShapeType.AABB && b.shapeType == BoundingShapeType.Sphere)
+    //        collided = SAT.SphereOBBCollisionWithMTV(b, a, out mtv);
+    //    else if (a.shapeType == BoundingShapeType.AABB && b.shapeType == BoundingShapeType.AABB)
+    //        collided = SAT.OBBOBBCollisionWithMTV(a, b, out mtv);
 
-        if (collided)
-        {
-            if (!a.isStatic) a.transform.position -= mtv * 0.5f;
-            if (!b.isStatic) b.transform.position += mtv * 0.5f;
-            return true;
-        }
+    //    if (collided)
+    //    {
+    //        if (!a.isStatic) a.transform.position -= mtv * 0.5f;
+    //        if (!b.isStatic) b.transform.position += mtv * 0.5f;
+    //        return true;
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
 
     void ResolveCollision(PhysicalObject a, PhysicalObject b)
     {

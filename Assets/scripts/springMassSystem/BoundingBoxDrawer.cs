@@ -4,7 +4,6 @@ public class BoundingBoxDrawer : MonoBehaviour
 {
     public Vector3 size = Vector3.one;
     public bool isSphere = false;
-
     private LineRenderer lineRenderer;
 
     void Awake()

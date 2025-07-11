@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class GJK
+public static class GJK_FEM
 {
-    public static bool Detect(SpringMassSystem a, SpringMassSystem b, List<Vector3> simplex)
+    public static bool Detect(FEMController a, FEMController b, List<Vector3> simplex)
     {
         Vector3 direction = a.transform.position - b.transform.position;
         if (direction == Vector3.zero)
@@ -31,25 +31,25 @@ public static class GJK
         return false;
     }
 
-    private static Vector3 Support(SpringMassSystem a, SpringMassSystem b, Vector3 direction)
+    private static Vector3 Support(FEMController a, FEMController b, Vector3 direction)
     {
-        Vector3 p1 = GetFarthestPoint(a.GetMassPoints(), direction);
-        Vector3 p2 = GetFarthestPoint(b.GetMassPoints(), -direction);
+        Vector3 p1 = GetFarthestPoint(a.GetAllNodes(), direction);
+        Vector3 p2 = GetFarthestPoint(b.GetAllNodes(), -direction);
         return p1 - p2;
     }
 
-    private static Vector3 GetFarthestPoint(List<MassPoint> points, Vector3 direction)
+    private static Vector3 GetFarthestPoint(Node[] nodes, Vector3 direction)
     {
         float maxDot = float.MinValue;
-        Vector3 best = points[0].position;
+        Vector3 best = nodes[0].Position;
 
-        foreach (var p in points)
+        foreach (var node in nodes)
         {
-            float dot = Vector3.Dot(p.position, direction);
+            float dot = Vector3.Dot(node.Position, direction);
             if (dot > maxDot)
             {
                 maxDot = dot;
-                best = p.position;
+                best = node.Position;
             }
         }
         return best;

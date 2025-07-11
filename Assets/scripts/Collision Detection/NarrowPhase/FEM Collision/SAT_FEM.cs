@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class SAT
+public static class SAT_FEM
 {
-    public static bool TestCollision(List<Vector3> pointsA, List<Vector3> pointsB)
+    public static bool TestCollision(FEMController femA, FEMController femB)
     {
+        List<Vector3> pointsA = GetNodePositions(femA.GetAllNodes());
+        List<Vector3> pointsB = GetNodePositions(femB.GetAllNodes());
+
         List<Vector3> axes = new List<Vector3>();
 
         AddFaceNormals(pointsA, axes);
-
         AddFaceNormals(pointsB, axes);
-
         AddCrossProductAxes(pointsA, pointsB, axes);
 
         foreach (Vector3 axis in axes)
@@ -20,6 +21,16 @@ public static class SAT
         }
 
         return true;
+    }
+
+    private static List<Vector3> GetNodePositions(Node[] nodes)
+    {
+        List<Vector3> positions = new List<Vector3>();
+        foreach (Node node in nodes)
+        {
+            positions.Add(node.Position); // يفترض أن "Node" يحتوي على متغير "Position" من نوع Vector3
+        }
+        return positions;
     }
 
     private static void AddFaceNormals(List<Vector3> points, List<Vector3> axes)
