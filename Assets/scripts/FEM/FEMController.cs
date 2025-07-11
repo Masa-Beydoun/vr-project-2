@@ -64,6 +64,24 @@ public class FEMController : MonoBehaviour
                 Debug.LogWarning("Cannot initialize FEM: PhysicalObject or material not assigned.");
                 isCreated = false; // Reset if can't initialize
             }
+
+
+            if (isCreated && dynamics != null && solver != null)
+            {
+                // Update forces every frame before simulation step
+                UpdateTotalForce();
+
+                // Step simulation: input mass matrix, stiffness matrix, and force vector
+                dynamics.Step(solver.GlobalMassMatrix, solver.GlobalStiffnessMatrix, totalForce);
+
+                // Update node visuals to reflect new displacements
+                UpdateNodeVisuals();
+
+                if (wireframeRenderer != null)
+                    UpdateWireframeLines();
+            }
+
+            
         }
         
         // Update previous state for next frame
@@ -151,7 +169,7 @@ public class FEMController : MonoBehaviour
         PrintMassMatrixSummary(solver.GlobalMassMatrix);
         PrintExpectedMass(solver.Nodes, solver.Tetrahedra, physicalObject.materialPreset);
 
-        SetupBoundingBox();
+        // SetupBoundingBox();
 
         Debug.Log("FEM System initialized successfully!");
     }
@@ -181,23 +199,28 @@ public class FEMController : MonoBehaviour
                 // Now using proper capsule mesh generation
                 mesh.GenerateCapsuleMesh(physicalObject.radius, physicalObject.height, CapsuleResolution, transform.position);
                 break;
-                
-            case MassShapeType.Other:
-                // For custom meshes, you might need to extract mesh data from meshSourceObject
-                if (physicalObject.meshSourceObject != null)
-                {
-                    // Default to cube for now, but you should implement custom mesh handling
-                    Vector3 defaultSize = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
-                    mesh.GenerateCubeMesh(defaultSize, transform.position);
-                    Debug.LogWarning("Custom mesh shape using cube approximation. Consider implementing custom mesh support.");
-                }
-                else
-                {
-                    Debug.LogError("Custom mesh selected but no meshSourceObject assigned.");
-                    Vector3 defaultSize = Vector3.one;
-                    mesh.GenerateCubeMesh(defaultSize, transform.position);
-                }
+
+             case MassShapeType.Other:
+                // Now using proper capsule mesh generation
+                mesh.GenerateConeMesh(physicalObject.radius, physicalObject.height, CapsuleResolution, transform.position);
                 break;
+                
+            // case MassShapeType.Other:
+            //     // For custom meshes, you might need to extract mesh data from meshSourceObject
+            //     if (physicalObject.meshSourceObject != null)
+            //     {
+            //         // Default to cube for now, but you should implement custom mesh handling
+            //         Vector3 defaultSize = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+            //         mesh.GenerateCubeMesh(defaultSize, transform.position);
+            //         Debug.LogWarning("Custom mesh shape using cube approximation. Consider implementing custom mesh support.");
+            //     }
+            //     else
+            //     {
+            //         Debug.LogError("Custom mesh selected but no meshSourceObject assigned.");
+            //         Vector3 defaultSize = Vector3.one;
+            //         mesh.GenerateCubeMesh(defaultSize, transform.position);
+            //     }
+            //     break;
         }
 
         Debug.Log($"FEM Mesh: {mesh.Nodes.Length} nodes, {mesh.Elements.Length} tetrahedrons");
@@ -255,36 +278,36 @@ public class FEMController : MonoBehaviour
         }
     }
 
-    void SetupBoundingBox()
-    {
-        BoundingBoxDrawer bbox = gameObject.GetComponent<BoundingBoxDrawer>();
-        if (bbox == null)
-            bbox = gameObject.AddComponent<BoundingBoxDrawer>();
+    // void SetupBoundingBox()
+    // {
+    //     BoundingBoxDrawer bbox = gameObject.GetComponent<BoundingBoxDrawer>();
+    //     if (bbox == null)
+    //         bbox = gameObject.AddComponent<BoundingBoxDrawer>();
 
-        switch (physicalObject.massShapeType)
-        {
-            case MassShapeType.Cube:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
-                break;
-            case MassShapeType.Sphere:
-                bbox.isSphere = true;
-                bbox.size = Vector3.one * physicalObject.radius * 2f;
-                break;
-            case MassShapeType.Cylinder:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
-                break;
-            case MassShapeType.Capsule:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
-                break;
-            case MassShapeType.Other:
-                bbox.isSphere = false;
-                bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
-                break;
-        }
-    }
+    //     switch (physicalObject.massShapeType)
+    //     {
+    //         case MassShapeType.Cube:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+    //             break;
+    //         case MassShapeType.Sphere:
+    //             bbox.isSphere = true;
+    //             bbox.size = Vector3.one * physicalObject.radius * 2f;
+    //             break;
+    //         case MassShapeType.Cylinder:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
+    //             break;
+    //         case MassShapeType.Capsule:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.radius * 2f, physicalObject.height, physicalObject.radius * 2f);
+    //             break;
+    //         case MassShapeType.Other:
+    //             bbox.isSphere = false;
+    //             bbox.size = new Vector3(physicalObject.width, physicalObject.height, physicalObject.depth);
+    //             break;
+    //     }
+    // }
 
     void VisualizeMesh()
     {
@@ -295,19 +318,26 @@ public class FEMController : MonoBehaviour
     }
 
     void CreateNodeVisuals()
-    {
-        foreach (var node in nodeVisuals)
-            if (node != null) Destroy(node);
-        nodeVisuals.Clear();
+{
+    // Destroy previous node visuals if they exist
+    foreach (var node in nodeVisuals)
+        if (node != null) Destroy(node);
+    nodeVisuals.Clear();
 
-        foreach (var node in mesh.Nodes)
-        {
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.transform.position = node.Position;
-            sphere.transform.localScale = Vector3.one * NodeScale;
-            nodeVisuals.Add(sphere);
-        }
+    // Create new node visuals
+    foreach (var node in mesh.Nodes)
+    {
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.position = node.Position;
+        sphere.transform.localScale = Vector3.one * NodeScale;
+
+        // ✅ Set FEMController's GameObject as parent
+        sphere.transform.SetParent(this.transform);
+
+        nodeVisuals.Add(sphere);
     }
+}
+
 
     void CreateWireframe()
     {
@@ -480,4 +510,21 @@ public class FEMController : MonoBehaviour
         float expectedMass = mat.Density * totalVolume;
         Debug.Log($"Expected mass = {expectedMass:F4} (Total volume = {totalVolume:F4})");
     }
+
+
+    void UpdateTotalForce()
+    {
+        // Reset to gravity force (or zero if you want to customize)
+        Vector3 gravity = new Vector3(0, -9.81f, 0);  // For example
+        totalForce = GravityForceGenerator.ComputeGravityForce(
+            solver.Nodes,
+            solver.Tetrahedra,
+            physicalObject.materialPreset.Density,
+            gravity
+        );
+
+        // Add any other forces (e.g., user forces, springs, constraints) here:
+        ApplyInitialForce();  // Or rename to ApplyExternalForces() if you want to call this every frame
+    }
+
 }
