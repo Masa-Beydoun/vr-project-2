@@ -55,11 +55,6 @@ public static class VoxelFiller
         Debug.Log($"[Bounds Fill] Spawned {count} points.");
     }
 
-    public static void FillUsingVolumeSampling(GameObject meshObject, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, int resolution)
-    {
-        FillUsingBounds(meshObject, pointPrefab, parent, uniquePoints, resolution);
-    }
-
     public static Bounds CalculateWorldBounds(GameObject obj)
     {
         MeshFilter[] mfs = obj.GetComponentsInChildren<MeshFilter>();

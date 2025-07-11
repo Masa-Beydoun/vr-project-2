@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Steel
   m_EditorClassIdentifier: 
   materialName: steel
-  Density: 1
-  dragCoefficient: 1
+  Density: 78500.9
+  dragCoefficient: 0.2
   bounciness: 0.3
-  stiffness: 1000
-  fractureThreshold: 10000
-  youngsModulus: 200000
+  stiffness: 100000
+  fractureThreshold: 300000000
+  dampingCoefficient: 0.03
+  youngsModulus: 2e+11
   poissonRatio: 0.3

@@ -2,35 +2,29 @@ using UnityEngine;
 
 public class MassPointController : MonoBehaviour
 {
-    public bool isPinned = false; // Visible in Inspector at runtime
-    [HideInInspector]public MassPoint point;
+    public bool isPinned = false; // Debug view only
+    [HideInInspector] public MassPoint point;
 
     public void Initialize(MassPoint point)
     {
         this.point = point;
-        point.isPinned = isPinned; // Sync initial value
+        this.isPinned = point.isPinned; // reflect initial state only
     }
 
     void Update()
     {
         if (point == null) return;
 
-        point.isPinned = isPinned;
+        isPinned = point.isPinned; // display current state (don't set it!)
 
-        if (isPinned)
+        if (point.isPinned)
         {
-            // Sync the transform (visual position) to the simulation's data
             point.position = transform.position;
-
-            // Optional: freeze movement completely
             point.velocity = Vector3.zero;
         }
         else
         {
-            // Let the simulation update the transform
             transform.position = point.position;
         }
     }
-
-
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class MassPoint
 {
@@ -7,37 +8,50 @@ public class MassPoint
 
     public Vector3 position;
     public Vector3 velocity;
+    public Vector3 acceleration; // Added acceleration storage
     public PhysicalObject physicalObject;
     public bool isPinned = false;
     public float mass = 1.0f;
     public float signedDistance;
     public string sourceName;
+    public List<Spring> connectedSprings = new List<Spring>();
 
-
-    public MassPoint(Vector3 position, PhysicalObject physicalObject,string name)
+    public MassPoint(Vector3 position, PhysicalObject physicalObject, string name)
     {
         this.id = globalIDCounter++;
         this.position = position;
         this.velocity = Vector3.zero;
+        this.acceleration = Vector3.zero; // Initialize acceleration
         this.physicalObject = physicalObject;
         this.sourceName = name;
     }
 
-
     public void ApplyForce(Vector3 force, float deltaTime)
     {
         if (isPinned) return;
-        Vector3 acceleration = force / mass;
-        velocity += acceleration * deltaTime;
+
+        // F = m * a => a = F / m
+        Vector3 newAcceleration = force / mass;
+        acceleration += newAcceleration; // Accumulate acceleration (forces can come multiple times per step)
     }
 
     public void Integrate(float deltaTime)
     {
-        if (isPinned) return;
+        if (isPinned)
+        {
+            // Keep pinned points fixed: zero velocity and acceleration
+            velocity = Vector3.zero;
+            acceleration = Vector3.zero;
+            return;
+        }
+
+        // Semi-implicit Euler integration:
+        velocity += acceleration * deltaTime;
         position += velocity * deltaTime;
+
+        // Clear acceleration after integration for next frame
+        acceleration = Vector3.zero;
     }
-
-
 
     public override bool Equals(object obj)
     {
@@ -51,4 +65,3 @@ public class MassPoint
         return position.GetHashCode();
     }
 }
-    

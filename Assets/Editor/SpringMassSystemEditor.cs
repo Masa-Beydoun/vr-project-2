@@ -15,28 +15,7 @@ public class SpringMassSystemEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Spring Configuration", EditorStyles.boldLabel);
 
-        system.useCustomSpringProperties = EditorGUILayout.Toggle("Use Custom Properties", system.useCustomSpringProperties);
-
-        if (system.useCustomSpringProperties)
-        {
-            system.springStiffness = EditorGUILayout.FloatField("Spring Stiffness", system.springStiffness);
-            system.springDamping = EditorGUILayout.FloatField("Spring Damping", system.springDamping);
-        }
-        else
-        {
-            system.materialPreset = (PhysicalMaterial)EditorGUILayout.ObjectField("Material Preset", system.materialPreset, typeof(PhysicalMaterial), false);
-
-            if (system.materialPreset != null)
-            {
-                EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Preview from Material", EditorStyles.boldLabel);
-                EditorGUILayout.FloatField("Stiffness", system.materialPreset.stiffness);
-                EditorGUILayout.FloatField("Density", system.materialPreset.Density);
-                EditorGUILayout.FloatField("Drag Coefficient", system.materialPreset.dragCoefficient);
-                EditorGUILayout.FloatField("Bounciness", system.materialPreset.bounciness);
-                EditorGUILayout.FloatField("Fracture Threshold", system.materialPreset.fractureThreshold);
-            }
-        }
+        
 
         system.isCreated = EditorGUILayout.Toggle("Is Created", system.isCreated);
 
