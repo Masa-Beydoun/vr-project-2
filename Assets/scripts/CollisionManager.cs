@@ -96,6 +96,8 @@ public class CollisionManager : MonoBehaviour
                         Debug.Log($"Colliding Points: {result.pointA.sourceName}[{result.pointA.id}] <-> {result.pointB.sourceName}[{result.pointB.id}]");
 
                         Debug.DrawLine(result.pointA.position, result.pointB.position, Color.green, 5f);
+                        collisionHandler.HandleSpringMassCollision(result);
+
                     }
                 }
                 else

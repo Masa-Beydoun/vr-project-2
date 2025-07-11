@@ -118,4 +118,40 @@ public class CollisionHandler : MonoBehaviour
                 spring.pointB.velocity -= force / spring.pointB.mass * Time.fixedDeltaTime;
         }
     }
+
+
+    public void HandleSpringMassCollision(CollisionResult result)
+    {
+        MassPoint a = result.pointA;
+        MassPoint b = result.pointB;
+
+        Vector3 normal = result.normal;
+        float depth = result.penetrationDepth;
+
+        float totalMass = a.mass + b.mass;
+
+        // 1. Position Correction (split movement based on mass)
+        Vector3 correction = normal * depth;
+        if (!a.isPinned)
+            a.position -= correction * (b.mass / totalMass);
+        if (!b.isPinned)
+            b.position += correction * (a.mass / totalMass);
+
+        // 2. Velocity Adjustment (simple elastic collision)
+        Vector3 relativeVelocity = b.velocity - a.velocity;
+        float velAlongNormal = Vector3.Dot(relativeVelocity, normal);
+
+        // Skip if separating
+        if (velAlongNormal > 0) return;
+
+        float restitution = 0.5f; // Between 0 (inelastic) and 1 (perfect elastic)
+        float impulseMag = -(1 + restitution) * velAlongNormal / (1f / a.mass + 1f / b.mass);
+
+        Vector3 impulse = impulseMag * normal;
+        if (!a.isPinned)
+            a.velocity -= impulse / a.mass;
+        if (!b.isPinned)
+            b.velocity += impulse / b.mass;
+    }
+
 }
