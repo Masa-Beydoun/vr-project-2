@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/CreateObjectUI.uss?fileID=7433441132597879392&amp;guid=25a20a6ba42517f429c1639b53784fc0&amp;type=3#CreateObjectUI" />
+    <ui:Button text="Add Object" parse-escape-sequences="true" display-tooltip-when-elided="true" name="add-object-button" />
+</ui:UXML>

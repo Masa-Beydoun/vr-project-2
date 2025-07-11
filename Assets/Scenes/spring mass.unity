@@ -385,6 +385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 0
   radius: 0
@@ -393,6 +394,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
   mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -400,6 +402,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!4 &187059674
@@ -439,8 +448,6 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
   meshConnectionMode: 0
   k: 0
   useVoxelFilling: 1
@@ -521,6 +528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 0
   radius: 0
@@ -529,6 +537,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
   mass: 1000
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -536,6 +545,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!23 &381229238
@@ -762,7 +778,6 @@ GameObject:
   m_Component:
   - component: {fileID: 625630967}
   - component: {fileID: 625630966}
-  - component: {fileID: 625630965}
   - component: {fileID: 625630968}
   m_Layer: 0
   m_Name: shpere
@@ -771,18 +786,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &625630965
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 625630963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cecd7c3d8539b314f98514c35f8c8587, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &625630966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,6 +798,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 11400000, guid: 91de10dd8b88a5847bd048e3ff0704d7, type: 2}
   massShapeType: 1
   radius: 1
@@ -803,6 +807,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
   mass: 20
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -810,6 +815,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!4 &625630967
@@ -849,8 +861,6 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
   meshConnectionMode: 0
   k: 0
   useVoxelFilling: 1
@@ -1083,7 +1093,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1430292136}
   - component: {fileID: 1430292135}
-  - component: {fileID: 1430292134}
   m_Layer: 0
   m_Name: cube
   m_TagString: Untagged
@@ -1091,18 +1100,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1430292134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430292132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cecd7c3d8539b314f98514c35f8c8587, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1430292135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1115,6 +1112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 11400000, guid: 91de10dd8b88a5847bd048e3ff0704d7, type: 2}
   massShapeType: 0
   radius: 0
@@ -1123,6 +1121,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
   mass: 10
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -1130,6 +1129,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!4 &1430292136
@@ -1192,6 +1198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 4
   radius: 0.5
@@ -1200,6 +1207,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 1723450733}
+  useCustomSpringProperties: 1
   mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -1207,6 +1215,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!114 &1495567084
@@ -1231,8 +1246,6 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
   meshConnectionMode: 0
   k: 4
   useVoxelFilling: 1
@@ -1323,8 +1336,6 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
   meshConnectionMode: 0
   k: 0
   useVoxelFilling: 1
@@ -1341,6 +1352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 4
   radius: 0.5
@@ -1349,6 +1361,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 682467906}
+  useCustomSpringProperties: 1
   mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -1356,6 +1369,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!1 &1723450733 stripped
@@ -1461,6 +1481,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 0
   radius: 0.1
@@ -1469,6 +1490,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
   mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -1476,6 +1498,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!4 &1890435890
@@ -1570,6 +1599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 0
   radius: 0.1
@@ -1578,6 +1608,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
   mass: 1
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -1585,6 +1616,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!4 &1941609705
@@ -1766,6 +1804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
   materialPreset: {fileID: 0}
   massShapeType: 4
   radius: 0.5
@@ -1774,6 +1813,7 @@ MonoBehaviour:
   depth: 1
   boundingShapeType: 0
   meshSourceObject: {fileID: 1298921294}
+  useCustomSpringProperties: 1
   mass: 100
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
@@ -1781,6 +1821,13 @@ MonoBehaviour:
   initialForce: {x: 0, y: 0, z: 0}
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 0}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
   shapeType: 1
   _isStatic: 1
 --- !u!114 &2094849919
@@ -1805,8 +1852,6 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  useCustomSpringProperties: 1
-  materialPreset: {fileID: 0}
   meshConnectionMode: 0
   k: 0
   useVoxelFilling: 1
