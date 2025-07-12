@@ -16,7 +16,7 @@ MonoBehaviour:
   Density: 700
   dragCoefficient: 0.6
   bounciness: 0.45
-  stiffness: 5000
+  stiffness: 350
   fractureThreshold: 40000000
   dampingCoefficient: 0.5
   youngsModulus: 1.1e+10

@@ -39,23 +39,27 @@ public class EnhancedCollisionHandler : MonoBehaviour
 {
     [Header("Physics Parameters")]
     [Range(0, 1)]
-    public float globalRestitution = 0.5f;
+    public float globalRestitution = 0.3f;
 
     [Range(0, 1)]
-    public float globalFriction = 0.2f;
+    public float globalFriction = 0.4f;
 
     [Range(0, 1)]
-    public float dampingFactor = 0.1f;
+    public float dampingFactor = 0.05f;
 
     [Header("Collision Response")]
-    public float collisionResponseStrength = 1.0f;
-    public float separationBias = 0.1f;
+    public float collisionResponseStrength = 0.5f;
+    public float separationBias = 0.05f;
     public bool usePositionCorrection = true;
     public bool useVelocityCorrection = true;
 
     [Header("Debugging")]
     public bool showCollisionDebug = true;
     public float debugLineDuration = 0.1f;
+
+    [Header("Advanced Settings")]
+    public float maxCollisionForce = 100f; // NEW: Clamp maximum collision forces
+    public float minPenetrationForResponse = 0.01f; // NEW: Ignore tiny penetrations
 
     // Handle Spring-Mass to Spring-Mass collisions
     public void HandleSpringMassCollision(CollisionResultEnhanced result)
@@ -170,8 +174,8 @@ public class EnhancedCollisionHandler : MonoBehaviour
 
     private void ResolvePenetration(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration)
     {
-        // Increase separation bias for more aggressive separation
-        float enhancedSeparationBias = separationBias * 2.0f;
+        // MUCH more conservative separation bias
+        float conservativeSeparationBias = separationBias * 0.3f; // Reduced from 2.0f
 
         float invMassA = pointA.isPinned ? 0f : 1f / pointA.mass;
         float invMassB = pointB.isPinned ? 0f : 1f / pointB.mass;
@@ -179,28 +183,25 @@ public class EnhancedCollisionHandler : MonoBehaviour
 
         if (invMassSum == 0) return;
 
-        // More aggressive penetration resolution
-        Vector3 correction = normal * (penetration * enhancedSeparationBias / invMassSum);
+        // Less aggressive penetration resolution
+        Vector3 correction = normal * (penetration * conservativeSeparationBias / invMassSum);
 
-        // Add a minimum separation to ensure objects don't stick
-        float minSeparation = 0.01f;
-        if (penetration > 0)
-        {
-            correction += normal * minSeparation;
-        }
+        // Remove the additional minimum separation that was causing issues
+        // The original code was adding extra separation on top of penetration resolution
 
         if (!pointA.isPinned)
             pointA.position += correction * invMassA;
         if (!pointB.isPinned)
             pointB.position -= correction * invMassB;
 
-        // Additional velocity adjustment to prevent re-penetration
+        // MUCH gentler velocity adjustment
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
         float velAlongNormal = Vector3.Dot(relativeVelocity, normal);
 
         if (velAlongNormal < 0) // Objects moving towards each other
         {
-            Vector3 velocityCorrection = normal * (-velAlongNormal * 0.5f);
+            // Reduce velocity correction strength significantly
+            Vector3 velocityCorrection = normal * (-velAlongNormal * 0.1f); // Reduced from 0.5f
 
             if (!pointA.isPinned)
                 pointA.velocity += velocityCorrection * invMassA / (invMassA + invMassB);
@@ -208,7 +209,6 @@ public class EnhancedCollisionHandler : MonoBehaviour
                 pointB.velocity -= velocityCorrection * invMassB / (invMassA + invMassB);
         }
     }
-
     private void ApplyCollisionImpulse(MassPoint pointA, MassPoint pointB, Vector3 normal, float restitution, float friction)
     {
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
@@ -259,8 +259,15 @@ public class EnhancedCollisionHandler : MonoBehaviour
 
     private void ApplySpringDeformation(MassPoint pointA, MassPoint pointB, CollisionResultEnhanced result)
     {
-        // Apply additional spring forces based on collision
-        float deformationForce = result.penetrationDepth * collisionResponseStrength;
+        // Only apply deformation if penetration is significant
+        if (result.penetrationDepth < minPenetrationForResponse) return;
+
+        // MUCH gentler deformation force
+        float deformationForce = result.penetrationDepth * collisionResponseStrength * 10f; // Reduced multiplier
+
+        // Clamp the maximum force to prevent explosion
+        deformationForce = Mathf.Min(deformationForce, maxCollisionForce);
+
         Vector3 force = result.normal * deformationForce;
 
         if (!pointA.isPinned)
@@ -268,15 +275,15 @@ public class EnhancedCollisionHandler : MonoBehaviour
         if (!pointB.isPinned)
             pointB.ApplyForce(-force, Time.fixedDeltaTime);
 
-        // Apply damping to reduce oscillations
-        Vector3 dampingForce = (pointB.velocity - pointA.velocity) * dampingFactor;
+        // Gentler damping - don't fight the spring system
+        Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
+        Vector3 dampingForce = relativeVelocity * dampingFactor * 0.5f; // Reduced damping
 
         if (!pointA.isPinned)
             pointA.ApplyForce(dampingForce, Time.fixedDeltaTime);
         if (!pointB.isPinned)
             pointB.ApplyForce(-dampingForce, Time.fixedDeltaTime);
     }
-
     #endregion
 
     #region FEM Collision Methods

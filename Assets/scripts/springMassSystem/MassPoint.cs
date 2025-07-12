@@ -35,6 +35,12 @@ public class MassPoint
             Debug.LogError($"MassPoint {id} has zero or negative mass! Force = {force}");
             return;
         }
+        if (force.magnitude > 1000f)
+        {
+            Debug.LogWarning($"Excessive force detected: {force.magnitude}");
+            force = force.normalized * 1000f;
+        }
+
 
         // F = m * a => a = F / m
         Vector3 newAcceleration = force / mass;
@@ -45,6 +51,12 @@ public class MassPoint
     {
         if (isPinned)
         {
+            // Clamp velocity to prevent explosion
+            if (velocity.magnitude > 50f)
+            {
+                velocity = velocity.normalized * 50f;
+            }
+
             // Keep pinned points fixed: zero velocity and acceleration
             velocity = Vector3.zero;
             acceleration = Vector3.zero;

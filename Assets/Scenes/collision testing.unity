@@ -162,7 +162,7 @@ MonoBehaviour:
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
   useCustomSpringProperties: 1
-  mass: 100000
+  mass: 10000
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   initialVelocity: {x: 0, y: 0, z: 0}
@@ -208,7 +208,7 @@ MonoBehaviour:
   isCreated: 0
   previousIsCreated: 0
   connectionRadius: 0
-  resolution: 20
+  resolution: 10
   springStiffness: 50
   springDamping: 2
   massShapeType: 0
@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   globalRestitution: 0.5
-  globalFriction: 0.2
+  globalFriction: 0.4
   dampingFactor: 0.5
   collisionResponseStrength: 2
   separationBias: 0.3
@@ -398,6 +398,8 @@ MonoBehaviour:
   useVelocityCorrection: 1
   showCollisionDebug: 1
   debugLineDuration: 0.1
+  maxCollisionForce: 100
+  minPenetrationForResponse: 0.01
 --- !u!4 &674526945
 Transform:
   m_ObjectHideFlags: 0
@@ -661,9 +663,107 @@ MonoBehaviour:
   enableCollisionCaching: 0
   cacheValidityTime: 0.016
   minCollisionInterval: 0.05
+  minPenetrationDepth: 0.02
   showBroadPhaseDebug: 0
   showNarrowPhaseDebug: 0
   logCollisionStats: 0
+--- !u!1 &1498590286
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1498590289}
+  - component: {fileID: 1498590288}
+  - component: {fileID: 1498590287}
+  m_Layer: 3
+  m_Name: ground22 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1498590287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498590286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff47506ab995b8648b20d36ef3cf4107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCreated: 0
+  previousIsCreated: 0
+  connectionRadius: 0
+  resolution: 15
+  springStiffness: 50
+  springDamping: 2
+  massShapeType: 0
+  physicalObject: {fileID: 0}
+  pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
+  springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
+  meshConnectionMode: 0
+  k: 0
+  useVoxelFilling: 1
+  generationMode: 0
+--- !u!114 &1498590288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498590286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f9fe7fd5ff9efa4b9a8667f7cbf1635, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boundingBoxDrawer: {fileID: 0}
+  materialPreset: {fileID: 0}
+  massShapeType: 0
+  radius: 0
+  height: 0.1
+  width: 1
+  depth: 1
+  boundingShapeType: 0
+  meshSourceObject: {fileID: 0}
+  useCustomSpringProperties: 1
+  mass: 10000
+  velocity: {x: 0, y: 0, z: 0}
+  forceAccumulator: {x: 0, y: 0, z: 0}
+  initialVelocity: {x: 0, y: 0, z: 0}
+  initialForce: {x: 0, y: 0, z: 0}
+  dragCoefficient: 0
+  rotationEuler: {x: 0, y: 0, z: 0}
+  useCustomProperties: 0
+  material: {fileID: 11400000, guid: 9db27100363fa3743962a20a6886730d, type: 2}
+  customDensity: 1
+  customBounciness: 0.3
+  customStiffness: 1000
+  customFractureThreshold: 10000
+  customDamping: 0.1
+  shapeType: 2
+  _isStatic: 1
+--- !u!4 &1498590289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498590286}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: -0.6, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1500751870
 GameObject:
   m_ObjectHideFlags: 0
@@ -1168,6 +1268,7 @@ SceneRoots:
   - {fileID: 580176830}
   - {fileID: 972104231}
   - {fileID: 187059674}
+  - {fileID: 1498590289}
   - {fileID: 374413071}
   - {fileID: 714976037}
   - {fileID: 1896529661}

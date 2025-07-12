@@ -12,10 +12,14 @@ public class EnhancedCollisionManager : MonoBehaviour
     [SerializeField] private EnhancedCollisionHandler collisionHandler;
 
     [Header("Performance Settings")]
-    [SerializeField] private int maxCollisionsPerFrame = 50; // Reduced from 100
+    [SerializeField] private int maxCollisionsPerFrame = 20; // Reduced from 100
     [SerializeField] private bool enableCollisionCaching = true;
-    [SerializeField] private float cacheValidityTime = 0.1f; // Increased from 0.016f
-    [SerializeField] private float minCollisionInterval = 0.05f; // NEW: Minimum time between same-pair collisions
+    [SerializeField] private float cacheValidityTime = 0.2f; // Increased from 0.016f
+    [SerializeField] private float minCollisionInterval = 0.1f; // NEW: Minimum time between same-pair collisions
+
+    // Add this new parameter to reduce collision spam
+    [SerializeField] private float minPenetrationDepth = 0.02f; // NEW: Minimum penetration to trigger collision
+
 
     [Header("Debug Settings")]
     [SerializeField] private bool showBroadPhaseDebug = false;
@@ -238,6 +242,7 @@ public class EnhancedCollisionManager : MonoBehaviour
         }
     }
 
+    // Modify HandleSpringMassToSpringMass to limit collisions:
     private void HandleSpringMassToSpringMass(SpringMassSystem systemA, SpringMassSystem systemB)
     {
         if (systemA.allPoints.Count == 0 || systemB.allPoints.Count == 0)
@@ -245,28 +250,33 @@ public class EnhancedCollisionManager : MonoBehaviour
 
         List<CollisionResultEnhanced> collisions = CollisionDetector.CheckCollision(systemA, systemB);
 
-        // Limit collisions per pair to prevent spam
+        // Filter out tiny collisions that cause jitter
+        var significantCollisions = collisions.FindAll(c =>
+            c.collided && c.penetrationDepth > minPenetrationDepth);
+
+        // Process only the most significant collisions
+        significantCollisions.Sort((a, b) => b.penetrationDepth.CompareTo(a.penetrationDepth));
+
         int processedCollisions = 0;
-        const int maxCollisionsPerPair = 5;
+        const int maxCollisionsPerPair = 3; // Reduced from 5
 
-        foreach (var collision in collisions)
+        foreach (var collision in significantCollisions)
         {
-            if (collision.collided && processedCollisions < maxCollisionsPerPair)
-            {
-                collisionHandler.HandleCollision(collision);
-                actualCollisions++;
-                collisionCount++;
-                processedCollisions++;
+            if (processedCollisions >= maxCollisionsPerPair) break;
+            Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
 
-                if (showNarrowPhaseDebug)
-                {
-                    Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}]");
-                    Debug.DrawLine(collision.pointA.position, collision.pointB.position, Color.red, 0.1f);
-                }
+            collisionHandler.HandleCollision(collision);
+            actualCollisions++;
+            collisionCount++;
+            processedCollisions++;
+
+            if (showNarrowPhaseDebug)
+            {
+                Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
+                Debug.DrawLine(collision.pointA.position, collision.pointB.position, Color.red, 0.1f);
             }
         }
     }
-
     private void HandleFEMToFEM(FEMController controllerA, FEMController controllerB)
     {
         if (controllerA.GetAllNodes().Length == 0 || controllerB.GetAllNodes().Length == 0)

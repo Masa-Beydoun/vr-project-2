@@ -253,7 +253,12 @@ public class SpringMassSystem : MonoBehaviour
     void FixedUpdate()
     {
         if (!isCreated) return;
-        if (physicalObject.isStatic) return;
+        if (physicalObject.isStatic)
+        {
+            foreach (var s in springs)
+                s.UpdateLine();
+            return;
+        }
 
         float dt = Time.fixedDeltaTime;
         Vector3 gravity = SimulationEnvironment.Instance.GetGravity();
