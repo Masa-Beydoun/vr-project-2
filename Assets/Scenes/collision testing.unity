@@ -157,8 +157,8 @@ MonoBehaviour:
   massShapeType: 0
   radius: 0
   height: 0.1
-  width: 0.5
-  depth: 0.5
+  width: 0.8
+  depth: 0.8
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
   useCustomSpringProperties: 1
@@ -888,7 +888,7 @@ Transform:
   m_GameObject: {fileID: 1715684845}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 1, z: 0}
+  m_LocalPosition: {x: 3, y: 1, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -950,7 +950,7 @@ MonoBehaviour:
   dragCoefficient: 0
   rotationEuler: {x: 0, y: 0, z: 0}
   useCustomProperties: 0
-  material: {fileID: 0}
+  material: {fileID: 11400000, guid: fcb03f5a31f074b41be8f8a63782941c, type: 2}
   customDensity: 1
   customBounciness: 0.3
   customStiffness: 1000
@@ -1022,9 +1022,13 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1265,13 +1269,13 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1896529661}
   - {fileID: 580176830}
   - {fileID: 972104231}
   - {fileID: 187059674}
   - {fileID: 1498590289}
   - {fileID: 374413071}
   - {fileID: 714976037}
-  - {fileID: 1896529661}
   - {fileID: 951317344}
   - {fileID: 2094849916}
   - {fileID: 1963660750}

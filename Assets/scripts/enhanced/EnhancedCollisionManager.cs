@@ -263,7 +263,7 @@ public class EnhancedCollisionManager : MonoBehaviour
         foreach (var collision in significantCollisions)
         {
             if (processedCollisions >= maxCollisionsPerPair) break;
-            Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
+            //Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
 
             collisionHandler.HandleCollision(collision);
             actualCollisions++;
