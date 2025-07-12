@@ -34,7 +34,7 @@ public static class CollisionDetector
         try
         {
             gjkResult = GJK.Detect(objA, objB, simplex);
-            Debug.Log($"[CollisionDetector] GJK result: {gjkResult}");
+            //Debug.Log($"[CollisionDetector] GJK result: {gjkResult}");
         }
         catch (System.Exception e)
         {
@@ -89,7 +89,7 @@ public static class CollisionDetector
         }
         else
         {
-            Debug.Log("[CollisionDetector] GJK detected no collision");
+            //Debug.Log("[CollisionDetector] GJK detected no collision");
         }
 
         //Debug.Log($"[CollisionDetector] Final result: {results.Count} collisions found");

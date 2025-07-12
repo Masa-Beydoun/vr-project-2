@@ -1,0 +1,460 @@
+[33mcommit ca6d837236f979894a1e97dbd69c5d6441bca7db[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 12 13:05:57 2025 +0300
+
+    trying collison
+
+[33mcommit 4cc1575cf30c330dd15c56de0b24edde685502be[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 12 12:33:55 2025 +0300
+
+    trying collison
+
+[33mcommit b9ad95ed9a26749f327b963756488052055464a0[m
+Merge: dbb38972 f9c5f21f
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 12 11:44:37 2025 +0300
+
+    Merge https://github.com/Masa-Beydoun/vr-project-2
+
+[33mcommit dbb38972383f67baf280a2f9e9889ce2add130ba[m[33m ([m[1;32mhandler[m[33m)[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 12 11:43:17 2025 +0300
+
+    slow down
+
+[33mcommit f9c5f21f40ce5e593296c3ad6de8d579a934d418[m
+Merge: 94e4ba21 db8db0d1
+Author: Masa <110569438+Masa-Beydoun@users.noreply.github.com>
+Date:   Fri Jul 11 23:53:06 2025 +0300
+
+    Merge pull request #1 from Masa-Beydoun/handler
+    
+    Handler
+
+[33mcommit db8db0d165f755d0fe1ba9fae41675271beaa19f[m[33m ([m[1;31morigin/handler[m[33m)[m
+Merge: 95e97895 94e4ba21
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 23:42:13 2025 +0300
+
+    Merge branch 'main' of https://gitlab.com/ai-4th-year1/vr-project-solids
+
+[33mcommit 95e97895cce7ff8e0cc44625fb593adfc2442bda[m[33m ([m[1;32mgui[m[33m)[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 23:38:00 2025 +0300
+
+    enhanced
+
+[33mcommit bdfec2b334580c5379238facfd92034c5d6c9ac8[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 17:38:54 2025 +0300
+
+    push on hub
+
+[33mcommit 94e4ba211550ec8cd5d3cf056bdfedbcaff9b707[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: fed4bb5d 938ae5a7
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 13:57:49 2025 +0000
+
+    Merge branch 'gui' into 'main'
+    
+    Gui
+    
+    See merge request ai-4th-year1/vr-project-solids!12
+
+[33mcommit 938ae5a7a54d84933786912aa1e47a9ec133b31e[m[33m ([m[1;31morigin/gui[m[33m)[m
+Merge: 062391e7 a9dc7806
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 16:50:57 2025 +0300
+
+    trying gui
+
+[33mcommit 062391e7e9e31521279c481e1d43dd28ee9396fd[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 16:49:57 2025 +0300
+
+    trying gui
+
+[33mcommit a9dc7806a1afbe010f5f3ef8505f2a43437423d4[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 14:29:17 2025 +0300
+
+    start gui
+
+[33mcommit fed4bb5d8d043758df60f6bfd4d852c069c4f9ce[m
+Merge: 7c224ccb 06611c3b
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 11:27:50 2025 +0000
+
+    Merge branch 'someBugs' into 'main'
+    
+    fixing some bugs
+    
+    See merge request ai-4th-year1/vr-project-solids!11
+
+[33mcommit 06611c3b63a6bc9722466b2c9b1353f13e41ccf2[m[33m ([m[1;31morigin/someBugs[m[33m)[m
+Merge: 371ecc68 7c224ccb
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 11:27:26 2025 +0000
+
+    Merge branch 'main' into 'someBugs'
+    
+    # Conflicts:
+    #   Assets/scripts/CollisionManager.cs
+
+[33mcommit 371ecc68e9c3350de8836b17c153818e902ad1c4[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jul 11 12:21:04 2025 +0300
+
+    fixing some bugs
+
+[33mcommit 7c224ccb8e7d0733b530f331dfcf5224c54961c2[m[33m ([m[1;31morigin/deedee[m[33m)[m
+Author: unknown <deedepsi@gmail.com>
+Date:   Thu Jul 10 19:04:30 2025 +0300
+
+    Collision Detection FEM.
+
+[33mcommit 2cbb3ba751f233cfb1db4f45f2d08dff48b3aa22[m
+Merge: f9cbbfda 331e600e
+Author: Hiba moh <hiba77moh@gmail.com>
+Date:   Wed Jul 9 14:42:14 2025 +0000
+
+    Merge branch 'hiba' into 'main'
+    
+    VR object updated, new scenes and changes to FEM and bounding box logic
+    
+    See merge request ai-4th-year1/vr-project-solids!9
+
+[33mcommit 331e600e828a5ff33769a674fdee2d1fd8313aeb[m
+Merge: 3f4fd95d f9cbbfda
+Author: Hiba moh <hiba77moh@gmail.com>
+Date:   Wed Jul 9 14:41:55 2025 +0000
+
+    Merge branch 'main' into 'hiba'
+    
+    # Conflicts:
+    #   Assets/Scenes/collision testing.unity
+    #   Assets/scripts/springMassSystem/BoundingBoxDrawer.cs
+
+[33mcommit 3f4fd95d1193302c27696b4bdb1bd195ca636a8f[m
+Author: hiba77moh <hiba77moh@gmail.com>
+Date:   Wed Jul 9 17:20:18 2025 +0300
+
+    VR object updated, new scenes and changes to FEM and bounding box logic
+
+[33mcommit f9cbbfda959510ae97ec3080ebd19b928882cf57[m
+Merge: 0f417473 eadeb277
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Wed Jul 9 14:13:17 2025 +0000
+
+    Merge branch 'bounding-box' into 'main'
+    
+    adding bounding box
+    
+    See merge request ai-4th-year1/vr-project-solids!8
+
+[33mcommit eadeb277c514d6487df4c0a686c53312eb76a879[m[33m ([m[1;31morigin/bounding-box[m[33m)[m
+Merge: 96d5bbf0 0f417473
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Wed Jul 9 14:12:58 2025 +0000
+
+    Merge branch 'main' into 'bounding-box'
+    
+    # Conflicts:
+    #   Assets/scripts/springMassSystem/SpringMassSystem.cs
+
+[33mcommit 96d5bbf09291a0f16d9fc425e729ccf213efdb17[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Wed Jul 9 17:08:36 2025 +0300
+
+    adding bounding box
+
+[33mcommit 0f417473b16f07c8dda2bd08071296b4177e8035[m
+Author: unknown <deedepsi@gmail.com>
+Date:   Wed Jul 9 15:41:39 2025 +0300
+
+    Collision Detection Completed.
+
+[33mcommit 7436890292002e46094951aec221ee7341ce2593[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jul 8 19:48:21 2025 +0300
+
+    adding bounds correctly
+
+[33mcommit 303d4552b64b0a03064b1148ee0ea3f0cb553991[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jul 8 19:47:54 2025 +0300
+
+    adding bounds correctly
+
+[33mcommit 14bd5dcd8fa7dc805be56a67d0f1232e02f63f20[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jul 8 14:45:44 2025 +0300
+
+    rotation added, resolution improved
+
+[33mcommit eca429e38016846d5bb3eaa43bfe278b9eb81e86[m
+Merge: b839d442 d4236b28
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jul 8 11:42:27 2025 +0300
+
+    Merge branch 'main' of https://gitlab.com/ai-4th-year1/vr-project-solids
+
+[33mcommit b839d442127d68f09181176dfe82008691d11682[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jul 8 11:41:51 2025 +0300
+
+    addding source name
+
+[33mcommit d4236b2851f73bd1ff68a5a2ef0c49073d9324f7[m
+Merge: 0e129512 9eed40dd
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sun Jul 6 16:02:22 2025 +0000
+
+    Merge branch 'mass-temp' into 'main'
+    
+    Mass temp
+    
+    See merge request ai-4th-year1/vr-project-solids!7
+
+[33mcommit 9eed40ddf5b2f7bcd1d66c0b860f674dd8838718[m[33m ([m[1;31morigin/mass-temp[m[33m)[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sun Jul 6 19:00:51 2025 +0300
+
+    Resolve merge conflicts
+
+[33mcommit d5b04493974fa4ce71a08597d9b85bc40d2a0b4d[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sun Jul 6 18:44:51 2025 +0300
+
+    Remove auto-generated csproj files
+
+[33mcommit a5c1cb5b4805e9d8955c677a5c6e9a3b530ccf2b[m
+Merge: 76fb5610 0e129512
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sun Jul 6 18:44:32 2025 +0300
+
+    Remove Unity-generated files from version control
+
+[33mcommit 76fb561088d87121777da1f273599ac0568dc04a[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sun Jul 6 18:36:55 2025 +0300
+
+    Reapply .gitignore rules
+
+[33mcommit b37de2fd741fe006b107984b58cd0c2ae495da76[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sun Jul 6 18:36:45 2025 +0300
+
+    Stop tracking Logs folder
+
+[33mcommit 0e1295122ebe31296514cedd4ab4eea4a889611c[m
+Author: unknown <deedepsi@gmail.com>
+Date:   Sat Jul 5 23:10:27 2025 +0300
+
+    Narrow Phase Collision Detection
+
+[33mcommit 2030969d14ec20e12e9dd33b7f70249283fc6c3e[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 5 21:54:09 2025 +0300
+
+    Remove and ignore Unity UserSettings layout file
+
+[33mcommit 64ee7ad2500e03218d1252917875bddbd2bf07cb[m
+Merge: 28e816ad 924f5ad8
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 5 21:46:18 2025 +0300
+
+    remove library
+
+[33mcommit 924f5ad8bfada4291d0135aed4969d1443689f01[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 5 21:38:48 2025 +0300
+
+    mass ready
+
+[33mcommit 46bb3873c074ca512c4b9d0fae5e99ac7507e985[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 5 21:38:15 2025 +0300
+
+    Remove Library folder and other ignored files
+
+[33mcommit 18ae958f108693af68b616cbf4c1fd2e2e279b68[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat Jul 5 21:34:55 2025 +0300
+
+    added git ignore
+
+[33mcommit 28e816ad6956ebec984b956f7874c5b4c57d7e67[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Thu Jul 3 12:37:52 2025 +0300
+
+    try to change
+
+[33mcommit 1c5ffa3f5ba868df0a9a949c3e29a92889488c48[m
+Merge: f780a429 78b4bab0
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jul 1 09:42:56 2025 +0000
+
+    Merge branch 'masa' into 'main'
+    
+    Masa
+    
+    See merge request ai-4th-year1/vr-project-solids!6
+
+[33mcommit 78b4bab06a895c8826cf2765078c9eda98ca2969[m[33m ([m[1;31morigin/masa[m[33m)[m
+Merge: 8fae2b92 f780a429
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jul 1 12:41:24 2025 +0300
+
+    wb3den?
+
+[33mcommit 8fae2b921548fe78272b6b8760b3103e9b7786be[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Mon Jun 30 22:18:24 2025 +0300
+
+    voxel filler
+
+[33mcommit 7fb85a8859ba6b8a2f94a1b521b22d75b1b85c4b[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Mon Jun 30 19:57:17 2025 +0300
+
+    scripts
+
+[33mcommit f780a429a7114a6dd3e6f9d40832a22e11c5cc6b[m
+Author: hiba77moh <hiba77moh@gmail.com>
+Date:   Mon Jun 30 14:50:52 2025 +0300
+
+    Remove Library folder from version control
+
+[33mcommit 27d82f873b3433f0f6b45963722889feb80140de[m
+Merge: bf756d70 bc1b7687
+Author: Hiba moh <hiba77moh@gmail.com>
+Date:   Sat Jun 28 07:37:40 2025 +0000
+
+    Merge branch 'hiba' into 'main'
+    
+    Hiba
+    
+    See merge request ai-4th-year1/vr-project-solids!4
+
+[33mcommit bc1b76879594e81ad16b79ee72c566a32b9ba88d[m
+Merge: a6126582 bf756d70
+Author: Hiba moh <hiba77moh@gmail.com>
+Date:   Sat Jun 28 07:37:04 2025 +0000
+
+    Merge branch 'main' into 'hiba'
+    
+    # Conflicts:
+    #   Assets/Editor.meta
+    #   Assets/Scenes.meta
+    #   Assets/Scenes/SampleScene.unity
+    #   Assets/scripts.meta
+    #   ProjectSettings/ProjectSettings.asset
+
+[33mcommit a6126582559ceef39c253d5195ae8f9dca512ff0[m
+Author: hiba77moh <hiba77moh@gmail.com>
+Date:   Wed Jun 25 09:15:15 2025 +0300
+
+    FEM
+
+[33mcommit bf756d701aacbd613198d52efaaea5eccdeb4537[m
+Merge: 2cfbf62a e71250a3
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue Jun 24 20:06:54 2025 +0000
+
+    Merge branch 'masa' into 'main'
+    
+    Masa into main
+    
+    See merge request ai-4th-year1/vr-project-solids!3
+
+[33mcommit e71250a357757dab3a5f552de5dd707a1b721554[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Mon Jun 23 21:27:32 2025 +0300
+
+    connecting mass points
+
+[33mcommit 407e3d9788e44fc5d44cac74e8f94d2433d6b041[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Mon Jun 23 19:30:49 2025 +0300
+
+    mesh
+
+[33mcommit f4406f6140ca1c61bb3f1e446a700cb5e744d9bd[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jun 20 20:13:10 2025 +0300
+
+    scene
+
+[33mcommit 13c84877e1ab0ab89c8468683cbf1507a1f07fe5[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri Jun 20 19:59:28 2025 +0300
+
+    spring mass done with start of mesh
+
+[33mcommit 7c3c50b0332d9b5a8c610337bf3bb690df97dbfa[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sun Jun 15 13:48:56 2025 +0300
+
+    testing spring mass
+
+[33mcommit 2cfbf62a2d3e1042ccf3b8433a535de23bad2396[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat May 24 21:58:34 2025 +0300
+
+    testing spring mass
+
+[33mcommit 8bd14597c46599b434cdc14b3ea5b059ba92a9a5[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Wed May 21 20:19:31 2025 +0300
+
+    final commit before interview
+
+[33mcommit ec62d2e39b9d68ec0974605dade7a483ab88d77d[m
+Author: hiba77moh <hiba77moh@gmail.com>
+Date:   Wed May 21 10:02:41 2025 +0300
+
+    dviding the main cube into 8 small cubes
+
+[33mcommit b998f562c06fc61441b03b81464fb2be9f8597e1[m
+Author: hiba77moh <hiba77moh@gmail.com>
+Date:   Wed May 21 08:50:48 2025 +0300
+
+     Shape Functions
+
+[33mcommit 5a51b3b22c02068cf23addbed71899abe8b02167[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Tue May 20 16:13:10 2025 +0300
+
+    Spring mass done
+
+[33mcommit 7c5d700df75d11a125b47d29c3aa3706805cd0ac[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat May 17 18:15:43 2025 +0300
+
+    starting with spring-mass
+
+[33mcommit 8e9677ab48dda251d2b5ffe652a16b8d838702f1[m
+Author: hiba77moh <hiba77moh@gmail.com>
+Date:   Sat May 17 13:33:05 2025 +0300
+
+    Mesh - nodes representation
+
+[33mcommit 426891d2f3c41bb5ed9542088c478d32f32f59e8[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Fri May 16 20:13:37 2025 +0300
+
+    collision found
+
+[33mcommit 999e6bc6719d7a9123c26c7894f813b41240fd11[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Mon May 12 12:48:09 2025 +0300
+
+    gravity added
+
+[33mcommit 086db199e8cb6f610e93bacdb0e155939d1ed237[m
+Author: Masa <masa.beydoun@hotmail.com>
+Date:   Sat May 10 21:39:00 2025 +0300
+
+    first environment

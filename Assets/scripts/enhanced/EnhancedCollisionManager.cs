@@ -59,17 +59,34 @@ public class EnhancedCollisionManager : MonoBehaviour
 
         if (physicalObjects.Length < 1) return;
 
-        // Broad phase collision detection
-        var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
-        broadPhaseChecks = candidatePairs.Count;
+        // Handle collisions immediately but with multiple iterations
+        // This ensures we catch and correct penetrations as they happen
 
-        if (showBroadPhaseDebug)
+        int maxIterations = 3; // Multiple collision passes per frame
+
+        for (int iteration = 0; iteration < maxIterations; iteration++)
         {
-            Debug.Log($"Broad Phase: {broadPhaseChecks} candidate pairs found");
-        }
+            // Broad phase collision detection
+            var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
 
-        // Process collision pairs
-        ProcessCollisionPairs(candidatePairs);
+            if (iteration == 0) // Only count stats on first iteration
+            {
+                broadPhaseChecks = candidatePairs.Count;
+                if (showBroadPhaseDebug)
+                {
+                    Debug.Log($"Broad Phase: {broadPhaseChecks} candidate pairs found");
+                }
+            }
+
+            // Process collision pairs
+            bool hadCollisions = ProcessCollisionPairs(candidatePairs);
+
+            // If no collisions were found, we can stop early
+            if (!hadCollisions && iteration > 0)
+            {
+                break;
+            }
+        }
 
         // Clean up old cache entries
         if (enableCollisionCaching)
@@ -83,7 +100,6 @@ public class EnhancedCollisionManager : MonoBehaviour
             LogCollisionStatistics();
         }
     }
-
     private void InitializeBroadPhase()
     {
         switch (broadPhaseMethod)
@@ -116,34 +132,20 @@ public class EnhancedCollisionManager : MonoBehaviour
         }
     }
 
-    private void ProcessCollisionPairs(List<(PhysicalObject, PhysicalObject)> candidatePairs)
+    private bool ProcessCollisionPairs(List<(PhysicalObject, PhysicalObject)> candidatePairs)
     {
-        collisionCount = 0;
+        bool hadCollisions = false;
 
-        foreach (var (objA, objB) in candidatePairs)
+        foreach (var pair in candidatePairs)
         {
-            if (collisionCount >= maxCollisionsPerFrame)
+            bool collisionOccurred = HandleCollisionPair(pair.Item1, pair.Item2);
+            if (collisionOccurred)
             {
-                if (showNarrowPhaseDebug)
-                {
-                    Debug.LogWarning($"Maximum collisions per frame ({maxCollisionsPerFrame}) reached. Some collisions may be skipped.");
-                }
-                break;
+                hadCollisions = true;
             }
-
-            if (objA == null || objB == null) continue;
-
-            // Check if we should skip this collision due to timing
-            if (ShouldSkipCollision(objA, objB))
-            {
-                continue;
-            }
-
-            narrowPhaseChecks++;
-
-            // Determine collision type and handle accordingly
-            HandleCollisionPair(objA, objB);
         }
+
+        return hadCollisions;
     }
 
     private bool ShouldSkipCollision(PhysicalObject objA, PhysicalObject objB)
@@ -207,7 +209,7 @@ public class EnhancedCollisionManager : MonoBehaviour
         lastCollisionTime[key] = Time.fixedTime;
     }
 
-    private void HandleCollisionPair(PhysicalObject objA, PhysicalObject objB)
+    private bool HandleCollisionPair(PhysicalObject objA, PhysicalObject objB)
     {
         // Get the systems/controllers for each object
         SpringMassSystem springSystemA = objA.GetComponentInParent<SpringMassSystem>();
@@ -221,24 +223,24 @@ public class EnhancedCollisionManager : MonoBehaviour
         // Determine collision type and handle appropriately
         if (springSystemA != null && springSystemB != null)
         {
-            HandleSpringMassToSpringMass(springSystemA, springSystemB);
+            return HandleSpringMassToSpringMass(springSystemA, springSystemB);
         }
         else if (femControllerA != null && femControllerB != null)
         {
-            HandleFEMToFEM(femControllerA, femControllerB);
+            return HandleFEMToFEM(femControllerA, femControllerB);
         }
         else if (springSystemA != null && femControllerB != null)
         {
-            HandleSpringMassToFEM(springSystemA, femControllerB);
+            return HandleSpringMassToFEM(springSystemA, femControllerB);
         }
         else if (femControllerA != null && springSystemB != null)
         {
-            HandleFEMToSpringMass(femControllerA, springSystemB);
+            return HandleFEMToSpringMass(femControllerA, springSystemB);
         }
         else
         {
             // Handle static object collisions or other cases
-            HandleStaticCollision(objA, objB);
+            return HandleStaticCollision(objA, objB);
         }
     }
 
