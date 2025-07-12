@@ -26,6 +26,7 @@ public static class CollisionDetector
 
                 foreach (var (pa, pb) in pairs)
                 {
+                    if (pa.sourceName == pb.sourceName) continue;
                     Vector3 relativeVel = pb.velocity - pa.velocity;
                     float relVelAlongNormal = Vector3.Dot(relativeVel, normal);
 
@@ -54,9 +55,9 @@ public static class CollisionDetector
         float epsilon = 1e-9f;
         float maxDistance = penetrationDepth + epsilon;
 
-        foreach (var pa in a.GetMassPoints())
+        foreach (var pa in a.allPoints)
         {
-            foreach (var pb in b.GetMassPoints())
+            foreach (var pb in b.allPoints)
             {
                 Vector3 diff = pa.position - pb.position;
                 float proj = Vector3.Dot(diff, normal);

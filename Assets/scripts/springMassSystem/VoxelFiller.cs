@@ -1,75 +1,124 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
 public struct Triangle
 {
     public Vector3 v0, v1, v2;
+    public Vector3 normal;
+    public Vector3 center;
+
     public Triangle(Vector3 a, Vector3 b, Vector3 c)
     {
         v0 = a; v1 = b; v2 = c;
+        normal = Vector3.Cross(b - a, c - a).normalized;
+        center = (a + b + c) / 3f;
     }
 }
 
 public static class VoxelFiller
 {
+    // 1. Improved FillUsingBounds with better error handling and optimization
     public static void FillUsingBounds(GameObject meshObject, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, int resolution)
     {
+        Debug.Log("bounds called");
+        if (meshObject == null || pointPrefab == null || parent == null)
+        {
+            Debug.LogError("[Bounds Fill] Invalid parameters provided");
+            return;
+        }
+
         Bounds bounds = CalculateWorldBounds(meshObject);
         float voxelSize = 1f / resolution;
 
+        // Add small padding to ensure we don't miss edge cases
+        bounds.Expand(voxelSize * 0.1f);
+
         MeshInsideChecker checker = new MeshInsideChecker(meshObject);
         int count = 0;
+        int totalChecked = 0;
 
-        for (float x = bounds.min.x; x < bounds.max.x; x += voxelSize)
+        Vector3 start = bounds.min;
+        Vector3 end = bounds.max;
+
+        for (float x = start.x; x < end.x; x += voxelSize)
         {
-            for (float y = bounds.min.y; y < bounds.max.y; y += voxelSize)
+            for (float y = start.y; y < end.y; y += voxelSize)
             {
-                for (float z = bounds.min.z; z < bounds.max.z; z += voxelSize)
+                for (float z = start.z; z < end.z; z += voxelSize)
                 {
                     Vector3 p = new Vector3(x, y, z);
+                    totalChecked++;
+
                     if (checker.IsPointInside(p))
                     {
-                   
-                        MassPoint candidate = new MassPoint(p, null, parent.name);
-                        if (uniquePoints.Contains(candidate))
-                            continue;
-
-                        GameObject go = Object.Instantiate(pointPrefab, p, Quaternion.identity, parent);
-                        go.transform.localScale = Vector3.one * voxelSize;
-
-                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
-                        var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        //go.AddComponent<CollisionBody>();
-
-
-                        MassPoint mp = new MassPoint(p, po,parent.name);
-                        controller.Initialize(mp);
-                        uniquePoints.Add(mp);
-                        count++;
+                        if (TryAddUniquePoint(p, pointPrefab, parent, uniquePoints, voxelSize))
+                        {
+                            count++;
+                        }
                     }
                 }
             }
         }
 
-        Debug.Log($"[Bounds Fill] Spawned {count} points.");
+        Debug.Log($"[Bounds Fill] Spawned {count} points out of {totalChecked} checked positions.");
+    }
+
+    // 2. Helper method to reduce code duplication
+    private static bool TryAddUniquePoint(Vector3 position, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, float scale)
+    {
+        MassPoint candidate = new MassPoint(position, null, parent.name);
+        if (uniquePoints.Contains(candidate))
+            return false;
+
+        GameObject go = Object.Instantiate(pointPrefab, position, Quaternion.identity, parent);
+        go.transform.localScale = Vector3.one * scale;
+        go.name = $"VoxelPoint_{uniquePoints.Count}";
+
+        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+        var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
+
+        MassPoint mp = new MassPoint(position, po, parent.name);
+        controller.Initialize(mp);
+        uniquePoints.Add(mp);
+        return true;
     }
 
     public static Bounds CalculateWorldBounds(GameObject obj)
     {
         MeshFilter[] mfs = obj.GetComponentsInChildren<MeshFilter>();
-        if (mfs.Length == 0) return new Bounds(obj.transform.position, Vector3.one);
+        if (mfs.Length == 0)
+        {
+            Debug.LogWarning("[CalculateWorldBounds] No MeshFilters found!");
+            return new Bounds(obj.transform.position, Vector3.one);
+        }
 
-        Bounds totalBounds = TransformBounds(mfs[0], mfs[0].sharedMesh.bounds);
+        bool initialized = false;
+        Bounds totalBounds = new Bounds();
 
         foreach (var mf in mfs)
         {
             if (mf.sharedMesh == null) continue;
-            Bounds local = mf.sharedMesh.bounds;
-            totalBounds.Encapsulate(TransformBounds(mf, local));
+
+            Bounds localBounds = mf.sharedMesh.bounds;
+            Bounds worldBounds = TransformBounds(mf, localBounds);
+
+            if (!initialized)
+            {
+                totalBounds = worldBounds;
+                initialized = true;
+            }
+            else
+            {
+                totalBounds.Encapsulate(worldBounds);
+            }
         }
+
+        Debug.Log($"[CalculateWorldBounds] Final bounds center: {totalBounds.center}, size: {totalBounds.size}");
         return totalBounds;
     }
+
 
     private static Bounds TransformBounds(MeshFilter mf, Bounds localBounds)
     {
@@ -80,56 +129,65 @@ public static class VoxelFiller
         return worldBounds;
     }
 
+    // 3. Improved FillUsingFloodFill with better performance and error handling
     public static void FillUsingFloodFill(GameObject meshObject, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, int resolution)
     {
-        Bounds bounds = CalculateWorldBounds(meshObject);
-        float voxelSize = 1f / resolution;
-
-        MeshInsideChecker checker = new MeshInsideChecker(meshObject);
-        Vector3? maybeStart = FindInternalPoint(meshObject, bounds, resolution);
-        if (!maybeStart.HasValue)
+        if (meshObject == null || pointPrefab == null || parent == null)
         {
-            Debug.LogWarning("[FloodFill] No valid internal point found.");
+            Debug.LogError("[FloodFill] Invalid parameters provided");
             return;
         }
 
+        Bounds bounds = CalculateWorldBounds(meshObject);
+        float voxelSize = 1f / resolution;
+        bounds.Expand(voxelSize * 0.1f);
+
+        MeshInsideChecker checker = new MeshInsideChecker(meshObject);
+        Vector3? maybeStart = FindInternalPoint(meshObject, bounds, resolution);
+
+        if (!maybeStart.HasValue)
+        {
+            Debug.LogWarning("[FloodFill] No valid internal point found. Trying center point.");
+            Vector3 center = bounds.center;
+            if (checker.IsPointInside(center))
+            {
+                maybeStart = center;
+            }
+            else
+            {
+                Debug.LogError("[FloodFill] Cannot find any internal point to start flood fill.");
+                return;
+            }
+        }
+
         Vector3 start = maybeStart.Value;
-
-
         HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
         Queue<Vector3Int> queue = new Queue<Vector3Int>();
         Vector3Int startGrid = WorldToGrid(start, bounds.min, voxelSize);
+
         queue.Enqueue(startGrid);
         visited.Add(startGrid);
 
         int count = 0;
-        Vector3Int[] directions = new Vector3Int[]
-        {
+        int maxIterations = 100000; // Prevent infinite loops
+        int iterations = 0;
+
+        Vector3Int[] directions = {
             Vector3Int.right, Vector3Int.left,
             Vector3Int.up, Vector3Int.down,
             new Vector3Int(0, 0, 1), new Vector3Int(0, 0, -1)
         };
 
-        while (queue.Count > 0)
+        while (queue.Count > 0 && iterations < maxIterations)
         {
+            iterations++;
             Vector3Int current = queue.Dequeue();
             Vector3 worldPos = GridToWorld(current, bounds.min, voxelSize);
 
             if (!checker.IsPointInside(worldPos)) continue;
 
-            MassPoint candidate = new MassPoint(worldPos, null, parent.name);
-            if (!uniquePoints.Contains(candidate))
+            if (TryAddUniquePoint(worldPos, pointPrefab, parent, uniquePoints, voxelSize))
             {
-                GameObject go = Object.Instantiate(pointPrefab, worldPos, Quaternion.identity, parent);
-                go.transform.localScale = Vector3.one * voxelSize;
-
-                var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
-                var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                //go.AddComponent<CollisionBody>();
-
-                MassPoint mp = new MassPoint(worldPos, po, parent.name);
-                controller.Initialize(mp);
-                uniquePoints.Add(mp);
                 count++;
             }
 
@@ -139,7 +197,9 @@ public static class VoxelFiller
                 if (!visited.Contains(neighbor))
                 {
                     Vector3 neighborWorld = GridToWorld(neighbor, bounds.min, voxelSize);
-                    if (checker.IsPointInside(neighborWorld))
+
+                    // Check bounds to prevent infinite expansion
+                    if (bounds.Contains(neighborWorld) && checker.IsPointInside(neighborWorld))
                     {
                         queue.Enqueue(neighbor);
                         visited.Add(neighbor);
@@ -148,7 +208,12 @@ public static class VoxelFiller
             }
         }
 
-        Debug.Log($"[FloodFill] Spawned {count} points.");
+        if (iterations >= maxIterations)
+        {
+            Debug.LogWarning("[FloodFill] Reached maximum iterations limit. Process may be incomplete.");
+        }
+
+        Debug.Log($"[FloodFill] Spawned {count} points in {iterations} iterations.");
     }
 
     private static Vector3Int WorldToGrid(Vector3 worldPos, Vector3 minBounds, float voxelSize)
@@ -175,7 +240,7 @@ public static class VoxelFiller
         MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
         if (meshFilters.Length == 0)
         {
-            Debug.LogError("No MeshFilters found for Octree filling!");
+            Debug.LogError("[OctreeBasic] No MeshFilters found!");
             return;
         }
 
@@ -194,25 +259,21 @@ public static class VoxelFiller
             {
                 if (isInside)
                 {
-                    Vector3 spawnPos = center;
-
-                    GameObject go = GameObject.Instantiate(pointPrefab, spawnPos, Quaternion.identity, parent);
+                    GameObject go = GameObject.Instantiate(pointPrefab, center, Quaternion.identity, parent);
                     go.transform.localScale = Vector3.one * (bounds.size.x * 0.5f);
 
                     var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                     var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    //go.AddComponent<CollisionBody>();
 
-                    MassPoint mp = new MassPoint(spawnPos, po, parent.name);
+                    MassPoint mp = new MassPoint(center, po, parent.name);
                     controller.Initialize(mp);
                     uniquePoints.Add(mp);
-
-                    Debug.DrawRay(spawnPos, Vector3.up * 0.1f, Color.cyan, 10f);
                     filledCount++;
+
+                    Debug.DrawRay(center, Vector3.up * 0.05f, Color.cyan, 3f);
                 }
                 return;
             }
-
 
             Vector3 size = bounds.size / 2f;
             Vector3 min = bounds.min;
@@ -236,9 +297,11 @@ public static class VoxelFiller
             }
         }
 
+        Debug.Log($"[OctreeBasic] Starting subdivision with max depth = {maxDepth}");
         Subdivide(worldBounds, 0);
-        Debug.Log($"[Octree Basic] Spawned {filledCount} points using depth {maxDepth}");
+        Debug.Log($"[OctreeBasic] Spawned {filledCount} points.");
     }
+
 
     private static Bounds GetCombinedWorldBounds(MeshFilter[] meshFilters)
     {
@@ -281,11 +344,14 @@ public static class VoxelFiller
         return combined;
     }
 
+    // 4. Improved FillUsingOctreeAdvanced with better subdivision logic
     public static void FillUsingOctreeAdvanced(GameObject meshObject, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, int maxDepth)
     {
-        bool insideTest = new MeshInsideChecker(meshObject).IsPointInside(meshObject.transform.position);
-        Debug.Log("Center point inside mesh? " + insideTest);
-
+        if (meshObject == null || pointPrefab == null || parent == null)
+        {
+            Debug.LogError("[Octree Advanced] Invalid parameters provided");
+            return;
+        }
 
         MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
         if (meshFilters.Length == 0)
@@ -299,38 +365,34 @@ public static class VoxelFiller
         MeshIntersectionTester intersectionTester = new MeshIntersectionTester(meshObject);
 
         int filledCount = 0;
+        int totalChecked = 0;
 
         void Subdivide(Bounds bounds, int depth)
         {
+            totalChecked++;
             Vector3 center = bounds.center;
             float size = bounds.size.x;
 
             bool isInside = insideChecker.IsPointInside(center);
             bool intersects = intersectionTester.Intersects(bounds);
 
+            // Early termination if completely outside
             if (!intersects && !isInside) return;
 
-            if (depth == maxDepth || (isInside && !intersects))
+            // Create point if at max depth or completely inside
+            if (depth >= maxDepth || (isInside && !intersects))
             {
                 if (isInside)
                 {
-                    GameObject go = Object.Instantiate(pointPrefab, center, Quaternion.identity, parent);
-                    go.transform.localScale = Vector3.one * (size * 0.5f);
-
-                    var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
-                    var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    //go.AddComponent<CollisionBody>();
-
-                    MassPoint mp = new MassPoint(center, po, parent.name);
-                    controller.Initialize(mp);
-                    uniquePoints.Add(mp);
-
-                    Debug.DrawRay(center, Vector3.up * 0.1f, Color.yellow, 10f);
-                    filledCount++;
+                    if (TryAddUniquePoint(center, pointPrefab, parent, uniquePoints, size * 0.5f))
+                    {
+                        filledCount++;
+                    }
                 }
                 return;
             }
 
+            // Subdivide into 8 children
             Vector3 half = bounds.size / 2f;
             Vector3 min = bounds.min;
 
@@ -353,26 +415,23 @@ public static class VoxelFiller
             }
         }
 
-        Vector3? internalPoint = FindInternalPoint(meshObject, worldBounds);
-        if (!internalPoint.HasValue)
-        {
-            Debug.LogWarning("[Octree Advanced] No internal point found. Aborting.");
-            return;
-        }
-
-        // Create a very small bounding cube around the point (leaf-sized)
-        float leafSize = worldBounds.size.x / Mathf.Pow(2, maxDepth);
-        Bounds startBounds = new Bounds(internalPoint.Value, Vector3.one * leafSize);
-        Subdivide(startBounds, 0);
-
-        Debug.Log($"[Octree Advanced] Spawned {filledCount} adaptive points at depth {maxDepth}");
+        Subdivide(worldBounds, 0);
+        Debug.Log($"[Octree Advanced] Spawned {filledCount} points from {totalChecked} subdivisions at max depth {maxDepth}");
     }
 
 
+    // 5. Improved FillUsingSDFDistanceOnly with distance threshold
     public static void FillUsingSDFDistanceOnly(GameObject meshObject, GameObject pointPrefab, Transform parent, HashSet<MassPoint> uniquePoints, int resolution)
     {
+        if (meshObject == null || pointPrefab == null || parent == null)
+        {
+            Debug.LogError("[SDF Distance] Invalid parameters provided");
+            return;
+        }
+
         Bounds bounds = CalculateWorldBounds(meshObject);
         float voxelSize = 1f / resolution;
+        bounds.Expand(voxelSize * 0.1f);
 
         MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
         List<Triangle> allTriangles = new List<Triangle>();
@@ -396,7 +455,14 @@ public static class VoxelFiller
             }
         }
 
+        if (allTriangles.Count == 0)
+        {
+            Debug.LogWarning("[SDF Distance] No triangles found in mesh!");
+            return;
+        }
+
         int count = 0;
+        float maxDistance = voxelSize * 2f; // Only create points within this distance
 
         for (float x = bounds.min.x; x < bounds.max.x; x += voxelSize)
         {
@@ -407,31 +473,51 @@ public static class VoxelFiller
                     Vector3 p = new Vector3(x, y, z);
                     float minDist = float.MaxValue;
 
-                    foreach (var tri in allTriangles)
+                    // Use spatial optimization for large triangle counts
+                    if (allTriangles.Count > 1000)
                     {
-                        float d = DistanceToTriangle(p, tri);
-                        if (d < minDist)
-                            minDist = d;
+                        // Only check nearby triangles
+                        var nearbyTriangles = allTriangles.Where(tri =>
+                            Vector3.Distance(tri.center, p) < maxDistance * 2f);
+
+                        foreach (var tri in nearbyTriangles)
+                        {
+                            float d = DistanceToTriangle(p, tri);
+                            if (d < minDist)
+                                minDist = d;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var tri in allTriangles)
+                        {
+                            float d = DistanceToTriangle(p, tri);
+                            if (d < minDist)
+                                minDist = d;
+                        }
                     }
 
-                    // You could visualize this or filter by max distance
-                    GameObject go = Object.Instantiate(pointPrefab, p, Quaternion.identity, parent);
-                    go.transform.localScale = Vector3.one * voxelSize;
+                    // Only create points within reasonable distance
+                    if (minDist <= maxDistance)
+                    {
+                        GameObject go = Object.Instantiate(pointPrefab, p, Quaternion.identity, parent);
+                        go.transform.localScale = Vector3.one * voxelSize;
+                        go.name = $"SDFPoint_{count}";
 
-                    var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
-                    var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                    //go.AddComponent<CollisionBody>();
+                        var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
+                        var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
 
-                    MassPoint mp = new MassPoint(p, po, parent.name);
-                    mp.signedDistance = minDist; // You can store this in MassPoint if needed
-                    controller.Initialize(mp);
-                    uniquePoints.Add(mp);
-                    count++;
+                        MassPoint mp = new MassPoint(p, po, parent.name);
+                        mp.signedDistance = minDist;
+                        controller.Initialize(mp);
+                        uniquePoints.Add(mp);
+                        count++;
+                    }
                 }
             }
         }
 
-        Debug.Log($"[SDF Distance] Spawned {count} points.");
+        Debug.Log($"[SDF Distance] Spawned {count} points within distance threshold {maxDistance}.");
     }
 
     public static float DistanceToTriangle(Vector3 point, Triangle tri)

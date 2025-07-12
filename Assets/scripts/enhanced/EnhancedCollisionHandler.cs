@@ -170,18 +170,43 @@ public class EnhancedCollisionHandler : MonoBehaviour
 
     private void ResolvePenetration(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration)
     {
+        // Increase separation bias for more aggressive separation
+        float enhancedSeparationBias = separationBias * 2.0f;
+
         float invMassA = pointA.isPinned ? 0f : 1f / pointA.mass;
         float invMassB = pointB.isPinned ? 0f : 1f / pointB.mass;
         float invMassSum = invMassA + invMassB;
 
         if (invMassSum == 0) return;
 
-        Vector3 correction = normal * (penetration * separationBias / invMassSum);
+        // More aggressive penetration resolution
+        Vector3 correction = normal * (penetration * enhancedSeparationBias / invMassSum);
+
+        // Add a minimum separation to ensure objects don't stick
+        float minSeparation = 0.01f;
+        if (penetration > 0)
+        {
+            correction += normal * minSeparation;
+        }
 
         if (!pointA.isPinned)
             pointA.position += correction * invMassA;
         if (!pointB.isPinned)
             pointB.position -= correction * invMassB;
+
+        // Additional velocity adjustment to prevent re-penetration
+        Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
+        float velAlongNormal = Vector3.Dot(relativeVelocity, normal);
+
+        if (velAlongNormal < 0) // Objects moving towards each other
+        {
+            Vector3 velocityCorrection = normal * (-velAlongNormal * 0.5f);
+
+            if (!pointA.isPinned)
+                pointA.velocity += velocityCorrection * invMassA / (invMassA + invMassB);
+            if (!pointB.isPinned)
+                pointB.velocity -= velocityCorrection * invMassB / (invMassA + invMassB);
+        }
     }
 
     private void ApplyCollisionImpulse(MassPoint pointA, MassPoint pointB, Vector3 normal, float restitution, float friction)

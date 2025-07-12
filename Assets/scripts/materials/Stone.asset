@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e8d963f7b720a4ebeaa6f1c63305cb, type: 3}
   m_Name: Stone
   m_EditorClassIdentifier: 
-  materialName: 
-  Density: 1
-  dragCoefficient: 1
-  bounciness: 0.3
-  stiffness: 1000
-  fractureThreshold: 10000
-  dampingCoefficient: 0.1
-  youngsModulus: 200000
-  poissonRatio: 0.3
+  materialName: stone
+  Density: 2600
+  dragCoefficient: 0.8
+  bounciness: 0.2
+  stiffness: 50000
+  fractureThreshold: 80000000
+  dampingCoefficient: 0.3
+  youngsModulus: 5e+10
+  poissonRatio: 0.25

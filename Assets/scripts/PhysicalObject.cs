@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-public enum BoundingShapeType { None , Sphere, AABB }
+
+public enum BoundingShapeType { None, Sphere, AABB }
 public enum MassShapeType
 {
     Cube,
@@ -9,22 +10,21 @@ public enum MassShapeType
     Capsule,
     Other
 }
+
 public struct BoundingSphere
 {
     public Vector3 center;
     public float radius;
 }
+
 public class PhysicalObject : MonoBehaviour
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [HideInInspector] public BoundingBoxDrawer boundingBoxDrawer;
-    #endif
-
+#endif
 
     public PhysicalMaterial materialPreset;
-
     public MassShapeType massShapeType = MassShapeType.Cube;
-    
 
     [Header("Shape Dimensions")]
     public float radius = 0.5f;   // Sphere, Cylinder, Capsule
@@ -74,7 +74,6 @@ public class PhysicalObject : MonoBehaviour
         get => _isStatic;
         set
         {
-            //Debug.LogWarning($"{name}: isStatic set to {value} at runtime");
             _isStatic = value;
         }
     }
@@ -82,11 +81,17 @@ public class PhysicalObject : MonoBehaviour
     [SerializeField]
     private bool _isStatic = true;
 
+    // Add flag to check if this object is controlled by a spring-mass system
+    private bool hasSpringMassSystem = false;
+
     void Start()
     {
         dragCoefficient = materialPreset != null ? materialPreset.dragCoefficient : dragCoefficient;
         velocity = initialVelocity;
         forceAccumulator = initialForce;
+
+        // Check if this object has a spring-mass system
+        hasSpringMassSystem = GetComponent<SpringMassSystem>() != null;
     }
 
     void Update()
@@ -102,6 +107,16 @@ public class PhysicalObject : MonoBehaviour
     {
         if (isStatic) return;
 
+        // Skip physics if controlled by spring-mass system
+        if (hasSpringMassSystem)
+        {
+            var springMassSystem = GetComponent<SpringMassSystem>();
+            if (springMassSystem != null && springMassSystem.isCreated)
+            {
+                return; // Let spring-mass system handle all physics
+            }
+        }
+
         // Skip force-based integration if this object is driven by a MassPoint
         if (GetComponent<MassPointController>() != null) return;
 
@@ -109,7 +124,6 @@ public class PhysicalObject : MonoBehaviour
         ApplyAirResistance();
         transform.position += velocity * Time.fixedDeltaTime;
     }
-
 
     private void ApplyGravity()
     {
@@ -138,7 +152,13 @@ public class PhysicalObject : MonoBehaviour
 
         ApplyForce(dragForce);
     }
- 
 
+    // Method to update position from spring-mass system
+    public void UpdatePositionFromSpringMass(Vector3 newPosition)
+    {
+        if (!isStatic && hasSpringMassSystem)
+        {
+            transform.position = newPosition;
+        }
+    }
 }
-

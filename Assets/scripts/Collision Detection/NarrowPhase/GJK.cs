@@ -33,8 +33,8 @@ public static class GJK
 
     private static Vector3 Support(SpringMassSystem a, SpringMassSystem b, Vector3 direction)
     {
-        Vector3 p1 = GetFarthestPoint(a.GetMassPoints(), direction);
-        Vector3 p2 = GetFarthestPoint(b.GetMassPoints(), -direction);
+        Vector3 p1 = GetFarthestPoint(a.allPoints, direction);
+        Vector3 p2 = GetFarthestPoint(b.allPoints, -direction);
         return p1 - p2;
     }
 

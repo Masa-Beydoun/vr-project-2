@@ -61,6 +61,11 @@ public class SpringMassSystem : MonoBehaviour
     [Header("Mesh Point Generation")]
     public MeshPointGenerationMode generationMode = MeshPointGenerationMode.UseMeshVertices;
 
+    // Center of mass tracking
+    private Vector3 centerOfMass;
+    private Vector3 previousCenterOfMass;
+
+
     void Awake()
     {
         if (physicalObject == null)
@@ -76,9 +81,6 @@ public class SpringMassSystem : MonoBehaviour
 
     public void CreateSystem()
     {
-        Debug.Log("CreateSystem was called");
-
-
         if (physicalObject == null)
         {
             Debug.LogError("PhysicalObject not assigned!");
@@ -87,9 +89,9 @@ public class SpringMassSystem : MonoBehaviour
 
         if (!isCreated) return;
         massShapeType = physicalObject.massShapeType;
-
         allPoints.Clear();
         springs.Clear();
+
         switch (massShapeType)
         {
             case MassShapeType.Cube:
@@ -109,89 +111,92 @@ public class SpringMassSystem : MonoBehaviour
                 break;
             case MassShapeType.Other:
                 if (physicalObject.meshSourceObject != null)
-                {
-                    HashSet<MassPoint> uniquePoints = new HashSet<MassPoint>();
-                    allPoints.Clear();
-
-                    // Always add mesh vertices if required by the current mode
-                    bool includeMeshVertices = generationMode == MeshPointGenerationMode.UseMeshVertices ||
-                                               generationMode == MeshPointGenerationMode.MeshVerticesAndBounds ||
-                                               generationMode == MeshPointGenerationMode.MeshVerticesAndFloodFill ||
-                                               generationMode == MeshPointGenerationMode.MeshVerticesAndOctreeBasic ||
-                                               generationMode == MeshPointGenerationMode.MeshVerticesAndOctreeAdvanced ||
-                                               generationMode == MeshPointGenerationMode.MeshVerticesAndSDFDistanceOnly;
-
-                    if (includeMeshVertices)
-                        GenerateMeshPoints(physicalObject.meshSourceObject, uniquePoints);
-
-                    // Then apply the selected fill strategy
-                    switch (generationMode)
-                    {
-                        case MeshPointGenerationMode.FillUsingBounds:
-                        case MeshPointGenerationMode.MeshVerticesAndBounds:
-                            VoxelFiller.FillUsingBounds(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            TransferUniquePointsToAllPoints(uniquePoints);
-
-                            break;
-
-                        case MeshPointGenerationMode.FillUsingFloodFill:
-                        case MeshPointGenerationMode.MeshVerticesAndFloodFill:
-                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            TransferUniquePointsToAllPoints(uniquePoints);
-
-                            break;
-
-                        case MeshPointGenerationMode.FillUsingOctreeBasic:
-                        case MeshPointGenerationMode.MeshVerticesAndOctreeBasic:
-                             VoxelFiller.FillUsingOctreeBasic(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            TransferUniquePointsToAllPoints(uniquePoints);
-
-                            break;
-
-                        case MeshPointGenerationMode.FillUsingOctreeAdvanced:
-                        case MeshPointGenerationMode.MeshVerticesAndOctreeAdvanced:
-                            VoxelFiller.FillUsingOctreeAdvanced(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            TransferUniquePointsToAllPoints(uniquePoints);
-
-                            break;
-
-                        case MeshPointGenerationMode.FillUsingSDFDistanceOnly:
-                        case MeshPointGenerationMode.MeshVerticesAndSDFDistanceOnly:
-                            VoxelFiller.FillUsingSDFDistanceOnly(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
-                            TransferUniquePointsToAllPoints(uniquePoints);
-
-                            break;
-                    }
-                    switch (meshConnectionMode)
-                    {
-                        case MeshConnectionMode.KNearestNeighbors:
-                            ConnectMeshSprings_KNN(new HashSet<(int, int)>());
-                            break;
-
-                        case MeshConnectionMode.TriangleEdges:
-                            var connectedPairs = new HashSet<(int, int)>();
-                            MeshFilter[] meshFilters = physicalObject.meshSourceObject.GetComponentsInChildren<MeshFilter>();
-                            ConnectMeshSprings_Triangles(meshFilters, connectedPairs);
-                            break;
-
-                        case MeshConnectionMode.Hybrid:
-                            ConnectMeshSprings_Hybrid();
-                            break;
-                    }
-
-                }
+                    GenerateAndConnectMeshPoints();
                 else
-                {
                     Debug.LogError("You selected 'Other' but did not assign a meshSourceObject.");
-                }
                 break;
         }
-        // Distribute mass equally across all points
+        DistributeMassEqually();
+        UpdateSpringsAndBounds();
+    }
+    private void GenerateAndConnectMeshPoints()
+    {
+        HashSet<MassPoint> uniquePoints = new HashSet<MassPoint>();
+        bool flag = generationMode == MeshPointGenerationMode.UseMeshVertices ||
+           generationMode == MeshPointGenerationMode.MeshVerticesAndBounds ||
+           generationMode == MeshPointGenerationMode.MeshVerticesAndFloodFill ||
+           generationMode == MeshPointGenerationMode.MeshVerticesAndOctreeBasic ||
+           generationMode == MeshPointGenerationMode.MeshVerticesAndOctreeAdvanced ||
+           generationMode == MeshPointGenerationMode.MeshVerticesAndSDFDistanceOnly;
+        // Generate mesh vertices if required
+        if (flag)
+        {
+            GenerateMeshPoints(physicalObject.meshSourceObject, uniquePoints);
+        }
+
+        // Apply fill strategy (remove duplicate calls)
+        ApplyFillStrategy(uniquePoints);
+
+        // Transfer to allPoints
+        TransferUniquePointsToAllPoints(uniquePoints);
+
+        // Connect springs
+        ConnectMeshSprings();
+    }
+    private void ApplyFillStrategy(HashSet<MassPoint> uniquePoints)
+    {
+        Debug.Log("filling");
+        switch (generationMode)
+        {
+            case MeshPointGenerationMode.FillUsingBounds:
+            case MeshPointGenerationMode.MeshVerticesAndBounds:
+                VoxelFiller.FillUsingBounds(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                break;
+
+            case MeshPointGenerationMode.FillUsingFloodFill:
+            case MeshPointGenerationMode.MeshVerticesAndFloodFill:
+                VoxelFiller.FillUsingFloodFill(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                break;
+
+            case MeshPointGenerationMode.FillUsingOctreeBasic:
+            case MeshPointGenerationMode.MeshVerticesAndOctreeBasic:
+                VoxelFiller.FillUsingOctreeBasic(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                break;
+
+            case MeshPointGenerationMode.FillUsingOctreeAdvanced:
+            case MeshPointGenerationMode.MeshVerticesAndOctreeAdvanced:
+                VoxelFiller.FillUsingOctreeAdvanced(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                break;
+
+            case MeshPointGenerationMode.FillUsingSDFDistanceOnly:
+            case MeshPointGenerationMode.MeshVerticesAndSDFDistanceOnly:
+                VoxelFiller.FillUsingSDFDistanceOnly(physicalObject.meshSourceObject, pointPrefab, transform, uniquePoints, resolution);
+                break;
+        }
+    }
+    // 5. Extract mesh spring connection logic
+    private void ConnectMeshSprings()
+    {
+        switch (meshConnectionMode)
+        {
+            case MeshConnectionMode.KNearestNeighbors:
+                ConnectMeshSprings_KNN(new HashSet<(int, int)>());
+                break;
+
+            case MeshConnectionMode.TriangleEdges:
+                var connectedPairs = new HashSet<(int, int)>();
+                MeshFilter[] meshFilters = physicalObject.meshSourceObject.GetComponentsInChildren<MeshFilter>();
+                ConnectMeshSprings_Triangles(meshFilters, connectedPairs);
+                break;
+
+            case MeshConnectionMode.Hybrid:
+                ConnectMeshSprings_Hybrid();
+                break;
+        }
+    }
+    // 6. Extract mass distribution logic
+    private void DistributeMassEqually()
+    {
         if (allPoints.Count > 0 && physicalObject != null)
         {
             float massPerPoint = physicalObject.mass / allPoints.Count;
@@ -199,15 +204,32 @@ public class SpringMassSystem : MonoBehaviour
             {
                 mp.mass = massPerPoint;
             }
-
         }
-
+    }
+    // 7. Extract spring and bounds update logic
+    private void UpdateSpringsAndBounds()
+    {
         foreach (var s in springs)
             s.UpdateLine();
-        CreateBoundingDrawer(); // One-time drawer object
-        UpdateBoundingShape();  // Draw the initial shape
 
-
+        CreateBoundingDrawer();
+        UpdateBoundingShape();
+    }
+    // 8. Add method to clear existing system
+    private void ClearExistingSystem()
+    {
+        // Clear existing GameObjects
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            var child = transform.GetChild(i);
+            if (child.name.Contains("Point") || child.name.Contains("SpringMass"))
+            {
+                if (Application.isPlaying)
+                    DestroyImmediate(child.gameObject);
+                else
+                    DestroyImmediate(child.gameObject);
+            }
+        }
     }
 
     void LogConnectionSummary(string algorithmName)
@@ -232,26 +254,65 @@ public class SpringMassSystem : MonoBehaviour
     {
         if (!isCreated) return;
         if (physicalObject.isStatic) return;
+
         float dt = Time.fixedDeltaTime;
         Vector3 gravity = SimulationEnvironment.Instance.GetGravity();
 
+        // Apply gravity to all mass points
         foreach (var p in allPoints)
         {
             p.ApplyForce(gravity * p.mass, dt);
         }
+
+        // Apply spring forces
         foreach (var s in springs)
             s.ApplyForce(dt);
 
+        // Integrate all mass points
         foreach (var p in allPoints)
         {
             p.Integrate(dt);
-            if (p.physicalObject != null && !p.physicalObject.isStatic)
-                p.physicalObject.transform.position = p.position;
-
         }
 
+        // Update center of mass and move the main object
+        CalculateCenterOfMass();
+        Vector3 centerOfMassMovement = centerOfMass - previousCenterOfMass;
+
+
+        foreach (var p in allPoints)
+        {
+            if (p.physicalObject != null && !p.physicalObject.isStatic)
+            {
+                // Don't update the main object's position here - it's handled above
+                var controller = p.physicalObject.GetComponent<MassPointController>();
+                if (controller != null)
+                {
+                    controller.transform.position = p.position;
+                }
+            }
+        }
+
+        previousCenterOfMass = centerOfMass;
+
+        // Update spring line renderers
         foreach (var s in springs)
             s.UpdateLine();
+    }
+
+    private void CalculateCenterOfMass()
+    {
+        if (allPoints.Count == 0) return;
+
+        Vector3 totalMass = Vector3.zero;
+        float totalMassValue = 0f;
+
+        foreach (var p in allPoints)
+        {
+            totalMass += p.position * p.mass;
+            totalMassValue += p.mass;
+        }
+
+        centerOfMass = totalMass / totalMassValue;
     }
 
     static readonly Vector3Int[] StructuralOffsets = {
@@ -496,6 +557,7 @@ public class SpringMassSystem : MonoBehaviour
         }
     }
 
+    // 9. Improved GenerateMeshPoints with better duplicate detection
     void GenerateMeshPoints(GameObject meshObject, HashSet<MassPoint> uniquePoints)
     {
         MeshFilter[] meshFilters = meshObject.GetComponentsInChildren<MeshFilter>();
@@ -505,8 +567,7 @@ public class SpringMassSystem : MonoBehaviour
             return;
         }
 
-        float minDistance = 0.01f;
-        DuplicateDetector detector = new DuplicateDetector(minDistance);
+        float minDistance = 1f / resolution; // Use resolution-based distance
 
         foreach (MeshFilter mf in meshFilters)
         {
@@ -517,25 +578,33 @@ public class SpringMassSystem : MonoBehaviour
             {
                 Vector3 worldPos = mf.transform.TransformPoint(localPos);
 
-                // Skip duplicates based on HashSet
-                string source = gameObject.name;
-                MassPoint candidate = new MassPoint(worldPos, physicalObject, source);
-                if (uniquePoints.Contains(candidate)) continue;
+                // Check if point is too close to existing points
+                bool tooClose = false;
+                foreach (var existingPoint in uniquePoints)
+                {
+                    if (Vector3.Distance(existingPoint.position, worldPos) < minDistance)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
 
+                if (tooClose) continue;
 
                 GameObject go = Instantiate(pointPrefab, worldPos, Quaternion.identity, transform);
                 go.transform.localScale = Vector3.one * 0.1f;
+                go.name = $"MeshPoint_{uniquePoints.Count}";
 
                 var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                //go.AddComponent<CollisionBody>();
-
+                string source = gameObject.name;
                 MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                 controller.Initialize(mp);
 
                 uniquePoints.Add(mp);
-                allPoints.Add(mp);
             }
         }
+
+        Debug.Log($"Generated {uniquePoints.Count} mesh vertex points");
     }
 
     void ConnectMeshSprings_Triangles(MeshFilter[] meshFilters, HashSet<(int, int)> connectedPairs)
@@ -604,14 +673,13 @@ public class SpringMassSystem : MonoBehaviour
         ConnectMeshSprings_KNN(connectedPairs);
     }
 
+    // 10. Improved ConnectMeshSprings_KNN with better spatial partitioning
     void ConnectMeshSprings_KNN(HashSet<(int, int)> connectedPairs)
     {
         int n = allPoints.Count;
         if (n == 0) return;
 
-        // Estimate cell size roughly as average nearest distance
         float cellSize = EstimateConnectionRadius(allPoints);
-
         SpatialGrid grid = new SpatialGrid(cellSize);
 
         // Insert points into grid
@@ -620,10 +688,12 @@ public class SpringMassSystem : MonoBehaviour
             grid.AddPoint(allPoints[i].position, i);
         }
 
+        int totalConnections = 0;
+
         for (int i = 0; i < n; i++)
         {
             var current = allPoints[i];
-            List<(float dist, int idx)> candidates = new List<(float, int)>();
+            var candidates = new List<(float dist, int idx)>();
 
             var neighborIndices = grid.GetNeighbors(current.position);
 
@@ -636,6 +706,7 @@ public class SpringMassSystem : MonoBehaviour
 
             candidates.Sort((a, b) => a.dist.CompareTo(b.dist));
 
+            int connectionsForThisPoint = 0;
             for (int c = 0; c < Mathf.Min(k, candidates.Count); c++)
             {
                 int neighborIdx = candidates[c].idx;
@@ -649,12 +720,15 @@ public class SpringMassSystem : MonoBehaviour
                     current.connectedSprings.Add(s);
                     allPoints[neighborIdx].connectedSprings.Add(s);
                     connectedPairs.Add((minIdx, maxIdx));
+                    connectionsForThisPoint++;
+                    totalConnections++;
                 }
             }
         }
 
-
+        Debug.Log($"KNN: Connected {totalConnections} springs for {n} points");
     }
+
 
     float EstimateConnectionRadius(List<MassPoint> points)
     {
@@ -763,11 +837,6 @@ public class SpringMassSystem : MonoBehaviour
         foreach (var p in allPoints)
             positions.Add(p.position);
         return positions;
-    }
-
-    public List<MassPoint> GetMassPoints()
-    {
-        return allPoints;
     }
 
     private void TransferUniquePointsToAllPoints(HashSet<MassPoint> uniquePoints)

@@ -12,18 +12,20 @@ public class EnhancedCollisionManager : MonoBehaviour
     [SerializeField] private EnhancedCollisionHandler collisionHandler;
 
     [Header("Performance Settings")]
-    [SerializeField] private int maxCollisionsPerFrame = 100;
+    [SerializeField] private int maxCollisionsPerFrame = 50; // Reduced from 100
     [SerializeField] private bool enableCollisionCaching = true;
-    [SerializeField] private float cacheValidityTime = 0.016f; // One frame at 60fps
+    [SerializeField] private float cacheValidityTime = 0.1f; // Increased from 0.016f
+    [SerializeField] private float minCollisionInterval = 0.05f; // NEW: Minimum time between same-pair collisions
 
     [Header("Debug Settings")]
     [SerializeField] private bool showBroadPhaseDebug = false;
-    [SerializeField] private bool showNarrowPhaseDebug = true;
+    [SerializeField] private bool showNarrowPhaseDebug = false; // Turn off by default
     [SerializeField] private bool logCollisionStats = false;
 
     private PhysicalObject[] physicalObjects;
     private IBroadPhase broadPhase;
     private Dictionary<(int, int), float> collisionCache;
+    private Dictionary<(int, int), float> lastCollisionTime; // NEW: Track last collision time
     private int collisionCount;
     private float lastFrameTime;
 
@@ -31,7 +33,6 @@ public class EnhancedCollisionManager : MonoBehaviour
     private int broadPhaseChecks;
     private int narrowPhaseChecks;
     private int actualCollisions;
-
 
     void Start()
     {
@@ -41,6 +42,7 @@ public class EnhancedCollisionManager : MonoBehaviour
         if (enableCollisionCaching)
         {
             collisionCache = new Dictionary<(int, int), float>();
+            lastCollisionTime = new Dictionary<(int, int), float>();
         }
     }
 
@@ -127,8 +129,8 @@ public class EnhancedCollisionManager : MonoBehaviour
 
             if (objA == null || objB == null) continue;
 
-            // Check collision cache
-            if (enableCollisionCaching && IsCollisionCached(objA, objB))
+            // Check if we should skip this collision due to timing
+            if (ShouldSkipCollision(objA, objB))
             {
                 continue;
             }
@@ -140,6 +142,67 @@ public class EnhancedCollisionManager : MonoBehaviour
         }
     }
 
+    private bool ShouldSkipCollision(PhysicalObject objA, PhysicalObject objB)
+    {
+        // Check collision cache
+        if (enableCollisionCaching && IsCollisionCached(objA, objB))
+        {
+            return true;
+        }
+
+        // Check minimum collision interval
+        if (IsCollisionTooRecent(objA, objB))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsCollisionTooRecent(PhysicalObject objA, PhysicalObject objB)
+    {
+        if (lastCollisionTime == null) return false;
+
+        int idA = objA.GetInstanceID();
+        int idB = objB.GetInstanceID();
+
+        // Ensure consistent ordering
+        if (idA > idB)
+        {
+            int temp = idA;
+            idA = idB;
+            idB = temp;
+        }
+
+        var key = (idA, idB);
+
+        if (lastCollisionTime.TryGetValue(key, out float lastTime))
+        {
+            return (Time.fixedTime - lastTime) < minCollisionInterval;
+        }
+
+        return false;
+    }
+
+    private void RecordCollisionTime(PhysicalObject objA, PhysicalObject objB)
+    {
+        if (lastCollisionTime == null) return;
+
+        int idA = objA.GetInstanceID();
+        int idB = objB.GetInstanceID();
+
+        // Ensure consistent ordering
+        if (idA > idB)
+        {
+            int temp = idA;
+            idA = idB;
+            idB = temp;
+        }
+
+        var key = (idA, idB);
+        lastCollisionTime[key] = Time.fixedTime;
+    }
+
     private void HandleCollisionPair(PhysicalObject objA, PhysicalObject objB)
     {
         // Get the systems/controllers for each object
@@ -147,6 +210,9 @@ public class EnhancedCollisionManager : MonoBehaviour
         SpringMassSystem springSystemB = objB.GetComponentInParent<SpringMassSystem>();
         FEMController femControllerA = objA.GetComponentInParent<FEMController>();
         FEMController femControllerB = objB.GetComponentInParent<FEMController>();
+
+        // Record collision time
+        RecordCollisionTime(objA, objB);
 
         // Determine collision type and handle appropriately
         if (springSystemA != null && springSystemB != null)
@@ -174,24 +240,29 @@ public class EnhancedCollisionManager : MonoBehaviour
 
     private void HandleSpringMassToSpringMass(SpringMassSystem systemA, SpringMassSystem systemB)
     {
-        if (systemA.GetMassPoints().Count == 0 || systemB.GetMassPoints().Count == 0)
+        if (systemA.allPoints.Count == 0 || systemB.allPoints.Count == 0)
             return;
 
         List<CollisionResultEnhanced> collisions = CollisionDetector.CheckCollision(systemA, systemB);
 
+        // Limit collisions per pair to prevent spam
+        int processedCollisions = 0;
+        const int maxCollisionsPerPair = 5;
+
         foreach (var collision in collisions)
         {
-            if (collision.collided)
+            if (collision.collided && processedCollisions < maxCollisionsPerPair)
             {
                 collisionHandler.HandleCollision(collision);
                 actualCollisions++;
                 collisionCount++;
+                processedCollisions++;
 
-                //if (showNarrowPhaseDebug)
-                //{
+                if (showNarrowPhaseDebug)
+                {
                     Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}]");
                     Debug.DrawLine(collision.pointA.position, collision.pointB.position, Color.red, 0.1f);
-                //}
+                }
             }
         }
     }
@@ -222,11 +293,11 @@ public class EnhancedCollisionManager : MonoBehaviour
 
     private void HandleSpringMassToFEM(SpringMassSystem springSystem, FEMController femController)
     {
-        if (springSystem.GetMassPoints().Count == 0 || femController.GetAllNodes().Length == 0)
+        if (springSystem.allPoints.Count == 0 || femController.GetAllNodes().Length == 0)
             return;
 
         // Check collisions between spring-mass points and FEM nodes
-        var massPoints = springSystem.GetMassPoints();
+        var massPoints = springSystem.allPoints;
         var femNodes = femController.GetAllNodes();
 
         foreach (var massPoint in massPoints)
@@ -346,6 +417,24 @@ public class EnhancedCollisionManager : MonoBehaviour
         {
             collisionCache.Remove(key);
         }
+
+        // Also cleanup lastCollisionTime
+        if (lastCollisionTime != null)
+        {
+            keysToRemove.Clear();
+            foreach (var kvp in lastCollisionTime)
+            {
+                if (currentTime - kvp.Value > minCollisionInterval * 5)
+                {
+                    keysToRemove.Add(kvp.Key);
+                }
+            }
+
+            foreach (var key in keysToRemove)
+            {
+                lastCollisionTime.Remove(key);
+            }
+        }
     }
 
     private void ResetFrameStatistics()
@@ -382,6 +471,7 @@ public class EnhancedCollisionManager : MonoBehaviour
         if (enable && collisionCache == null)
         {
             collisionCache = new Dictionary<(int, int), float>();
+            lastCollisionTime = new Dictionary<(int, int), float>();
         }
     }
 
