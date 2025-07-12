@@ -48,8 +48,8 @@ public class EnhancedCollisionHandler : MonoBehaviour
     public float dampingFactor = 0.05f;
 
     [Header("Collision Response")]
-    public float collisionResponseStrength = 2.0f; // Much more aggressive
-    public float separationBias = 0.8f; // Very aggressive separation
+    public float collisionResponseStrength = 0.5f; // Much more aggressive
+    public float separationBias = 0.3f; // Very aggressive separation
     public bool usePositionCorrection = true;
     public bool useVelocityCorrection = true;
 
@@ -58,9 +58,11 @@ public class EnhancedCollisionHandler : MonoBehaviour
     public float debugLineDuration = 0.1f;
 
     [Header("Advanced Settings")]
-    public float maxCollisionForce = 1000f; // Much higher limit
-    public float minPenetrationForResponse = 0.0001f; // Very low threshold
-    public float emergencyPenetrationThreshold = 0.05f; // NEW: For emergency corrections
+    public float maxCollisionForce = 100f; // Much higher limit
+    public float minPenetrationForResponse = 0.01f; // Very low threshold
+    public float maxPenetrationDepth = 2.0f; // NEW: Cap maximum penetration depth
+    public float staticObjectMass = 1000f; // NEW: Mass for static objects
+    public float emergencyPenetrationThreshold = 2.0f; // NEW: For emergency corrections
     public float emergencyForceMultiplier = 10f; // NEW: Extra force for deep penetrations
 
     // Handle Spring-Mass to Spring-Mass collisions
@@ -71,29 +73,36 @@ public class EnhancedCollisionHandler : MonoBehaviour
         var pointA = result.pointA;
         var pointB = result.pointB;
         var normal = result.normal;
-        float penetration = result.penetrationDepth;
+        float penetration = Mathf.Min(result.penetrationDepth, maxPenetrationDepth); // CAP PENETRATION
 
         // Skip if both points are pinned
         if (pointA.isPinned && pointB.isPinned) return;
+
+        // Skip if penetration is too small
+        if (penetration < minPenetrationForResponse) return;
 
         // Get material properties
         float restitution = GetEffectiveRestitution(pointA.physicalObject, pointB.physicalObject);
         float friction = GetEffectiveFriction(pointA.physicalObject, pointB.physicalObject);
 
+        // Check if either object is static/ground
+        bool isAStatic = IsStaticObject(pointA);
+        bool isBStatic = IsStaticObject(pointB);
+
         // 1. Resolve penetration FIRST and more aggressively
         if (usePositionCorrection)
         {
-            ResolvePenetration(pointA, pointB, normal, penetration);
+            ResolvePenetrationWithStatic(pointA, pointB, normal, penetration, isAStatic, isBStatic);
         }
 
         // 2. Apply collision impulse
         if (useVelocityCorrection)
         {
-            ApplyCollisionImpulse(pointA, pointB, normal, restitution, friction);
+            ApplyCollisionImpulseWithStatic(pointA, pointB, normal, restitution, friction, isAStatic, isBStatic);
         }
 
         // 3. Apply spring deformation forces
-        ApplySpringDeformation(pointA, pointB, result);
+        ApplyGentleSpringDeformation(pointA, pointB, result, isAStatic, isBStatic);
 
         // 4. Debug visualization
         if (showCollisionDebug)
@@ -102,7 +111,20 @@ public class EnhancedCollisionHandler : MonoBehaviour
             Debug.DrawRay(result.contactPoint, normal * penetration, Color.yellow, debugLineDuration);
         }
     }
+    private bool IsStaticObject(MassPoint point)
+    {
+        // Check if the object is marked as static
+        if (point.physicalObject != null && point.physicalObject.isStatic)
+            return true;
 
+        // Check if the point is pinned
+        if (point.isPinned)
+            return true;
+
+        // Check if the object name suggests it's ground/static
+        string objectName = point.sourceName.ToLower();
+        return objectName.Contains("ground") || objectName.Contains("floor") || objectName.Contains("static");
+    }
     // Handle FEM to FEM collisions
     public void HandleFEMCollision(CollisionResultEnhanced_FEM result)
     {
@@ -174,60 +196,46 @@ public class EnhancedCollisionHandler : MonoBehaviour
 
     #region Spring-Mass Collision Methods
 
-    private void ResolvePenetration(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration)
+    private void ResolvePenetrationWithStatic(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration, bool isAStatic, bool isBStatic)
     {
-        float invMassA = pointA.isPinned ? 0f : 1f / pointA.mass;
-        float invMassB = pointB.isPinned ? 0f : 1f / pointB.mass;
+        // Don't move static objects at all
+        if (isAStatic && isBStatic) return;
+
+        float invMassA = (pointA.isPinned || isAStatic) ? 0f : 1f / pointA.mass;
+        float invMassB = (pointB.isPinned || isBStatic) ? 0f : 1f / pointB.mass;
         float invMassSum = invMassA + invMassB;
 
         if (invMassSum == 0) return;
 
-        // Emergency correction for deep penetrations
-        bool isEmergency = penetration > emergencyPenetrationThreshold;
-        float effectiveSeparationBias = isEmergency ? separationBias * emergencyForceMultiplier : separationBias;
+        // Gentle position correction
+        Vector3 correction = normal * (penetration * separationBias / invMassSum);
 
-        // Much more aggressive position correction
-        Vector3 correction = normal * (penetration * effectiveSeparationBias / invMassSum);
-
-        // Apply position correction immediately
-        if (!pointA.isPinned)
+        // Apply position correction only to non-static objects
+        if (!pointA.isPinned && !isAStatic)
+        {
             pointA.position += correction * invMassA;
-        if (!pointB.isPinned)
+        }
+        if (!pointB.isPinned && !isBStatic)
+        {
             pointB.position -= correction * invMassB;
+        }
 
-        // CRITICAL: Stop downward velocity immediately if hitting ground
+        // Stop velocity towards collision for non-static objects
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
         float velAlongNormal = Vector3.Dot(relativeVelocity, normal);
 
         if (velAlongNormal < 0) // Objects moving towards each other
         {
-            // STOP the collision velocity completely, don't just reduce it
-            Vector3 velocityCorrection = normal * (-velAlongNormal);
+            Vector3 velocityCorrection = normal * (-velAlongNormal * 0.5f); // Gentler correction
 
-            if (!pointA.isPinned)
+            if (!pointA.isPinned && !isAStatic)
                 pointA.velocity += velocityCorrection * invMassA / invMassSum;
-            if (!pointB.isPinned)
+            if (!pointB.isPinned && !isBStatic)
                 pointB.velocity -= velocityCorrection * invMassB / invMassSum;
-        }
-
-        // Additional: If this is ground collision, zero out downward velocity
-        if (normal.y > 0.9f && !pointA.isPinned) // Ground collision (normal pointing up)
-        {
-            if (pointA.velocity.y < 0) // Moving downward
-            {
-                pointA.velocity.y = 0; // Stop downward movement
-            }
-        }
-        if (normal.y < -0.9f && !pointB.isPinned) // Ground collision for point B
-        {
-            if (pointB.velocity.y < 0) // Moving downward
-            {
-                pointB.velocity.y = 0; // Stop downward movement
-            }
         }
     }
 
-    private void ApplyCollisionImpulse(MassPoint pointA, MassPoint pointB, Vector3 normal, float restitution, float friction)
+    private void ApplyCollisionImpulseWithStatic(MassPoint pointA, MassPoint pointB, Vector3 normal, float restitution, float friction, bool isAStatic, bool isBStatic)
     {
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
         float velAlongNormal = Vector3.Dot(relativeVelocity, normal);
@@ -235,28 +243,33 @@ public class EnhancedCollisionHandler : MonoBehaviour
         // Objects moving apart, no impulse needed
         if (velAlongNormal > 0) return;
 
-        float invMassA = pointA.isPinned ? 0f : 1f / pointA.mass;
-        float invMassB = pointB.isPinned ? 0f : 1f / pointB.mass;
+        // Use high mass for static objects
+        float massA = isAStatic ? staticObjectMass : pointA.mass;
+        float massB = isBStatic ? staticObjectMass : pointB.mass;
 
-        // Calculate impulse scalar
+        float invMassA = (pointA.isPinned || isAStatic) ? 0f : 1f / massA;
+        float invMassB = (pointB.isPinned || isBStatic) ? 0f : 1f / massB;
+
+        if (invMassA + invMassB == 0) return;
+
+        // Calculate gentler impulse
         float impulseMagnitude = -(1 + restitution) * velAlongNormal;
         impulseMagnitude /= invMassA + invMassB;
         impulseMagnitude *= collisionResponseStrength;
 
         Vector3 impulse = impulseMagnitude * normal;
 
-        // Apply normal impulse
-        if (!pointA.isPinned)
+        // Apply impulse only to non-static objects
+        if (!pointA.isPinned && !isAStatic)
             pointA.velocity -= invMassA * impulse;
-        if (!pointB.isPinned)
+        if (!pointB.isPinned && !isBStatic)
             pointB.velocity += invMassB * impulse;
 
-        // Apply friction impulse
-        ApplyFrictionImpulse(pointA, pointB, relativeVelocity, normal, friction, impulseMagnitude, invMassA, invMassB);
+        // Apply friction
+        ApplyFrictionImpulse(pointA, pointB, relativeVelocity, normal, friction, impulseMagnitude, invMassA, invMassB, isAStatic, isBStatic);
     }
-
     private void ApplyFrictionImpulse(MassPoint pointA, MassPoint pointB, Vector3 relativeVelocity, Vector3 normal,
-                                    float friction, float normalImpulse, float invMassA, float invMassB)
+                                    float friction, float normalImpulse, float invMassA, float invMassB, bool isAStatic, bool isBStatic)
     {
         Vector3 tangent = relativeVelocity - Vector3.Dot(relativeVelocity, normal) * normal;
         if (tangent.sqrMagnitude < 0.001f) return;
@@ -269,12 +282,12 @@ public class EnhancedCollisionHandler : MonoBehaviour
 
         Vector3 frictionImpulse = frictionImpulseMag * tangent;
 
-        if (!pointA.isPinned)
+        // Apply friction only to non-static objects
+        if (!pointA.isPinned && !isAStatic)
             pointA.velocity -= invMassA * frictionImpulse;
-        if (!pointB.isPinned)
+        if (!pointB.isPinned && !isBStatic)
             pointB.velocity += invMassB * frictionImpulse;
     }
-
     private void ApplySpringDeformation(MassPoint pointA, MassPoint pointB, CollisionResultEnhanced result)
     {
         // Only apply deformation if penetration is significant
@@ -372,6 +385,35 @@ public class EnhancedCollisionHandler : MonoBehaviour
         if (!nodeB.isPinned)
             nodeB.Velocity += invMassB * frictionImpulse;
     }
+    private void ApplyGentleSpringDeformation(MassPoint pointA, MassPoint pointB, CollisionResultEnhanced result, bool isAStatic, bool isBStatic)
+    {
+        // Only apply deformation if penetration is significant
+        if (result.penetrationDepth < minPenetrationForResponse) return;
+
+        // Much gentler deformation force
+        float baseForce = Mathf.Min(result.penetrationDepth, maxPenetrationDepth) * collisionResponseStrength * 10f; // REDUCED multiplier
+
+        // Clamp the maximum force to prevent explosion
+        float deformationForce = Mathf.Min(baseForce, maxCollisionForce);
+
+        Vector3 force = result.normal * deformationForce;
+
+        // Apply force only to non-static objects
+        if (!pointA.isPinned && !isAStatic)
+            pointA.ApplyForce(force, Time.fixedDeltaTime);
+        if (!pointB.isPinned && !isBStatic)
+            pointB.ApplyForce(-force, Time.fixedDeltaTime);
+
+        // Apply gentle damping to reduce oscillation
+        Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
+        Vector3 dampingForce = relativeVelocity * dampingFactor * 0.1f; // Gentler damping
+
+        if (!pointA.isPinned && !isAStatic)
+            pointA.ApplyForce(dampingForce, Time.fixedDeltaTime);
+        if (!pointB.isPinned && !isBStatic)
+            pointB.ApplyForce(-dampingForce, Time.fixedDeltaTime);
+    }
+
 
     private void ApplyFEMDeformation(Node nodeA, Node nodeB, CollisionResultEnhanced_FEM result)
     {

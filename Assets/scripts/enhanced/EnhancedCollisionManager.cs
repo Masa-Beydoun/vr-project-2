@@ -14,11 +14,13 @@ public class EnhancedCollisionManager : MonoBehaviour
     [Header("Performance Settings")]
     [SerializeField] private int maxCollisionsPerFrame = 20; // Reduced from 100
     [SerializeField] private bool enableCollisionCaching = true;
-    [SerializeField] private float cacheValidityTime = 0.2f; // Increased from 0.016f
-    [SerializeField] private float minCollisionInterval = 0.1f; // NEW: Minimum time between same-pair collisions
+    [SerializeField] private float cacheValidityTime = 0.1f; // Increased from 0.016f
+    [SerializeField] private float minCollisionInterval = 0.05f; // NEW: Minimum time between same-pair collisions
 
-    // Add this new parameter to reduce collision spam
-    [SerializeField] private float minPenetrationDepth = 0.02f; // NEW: Minimum penetration to trigger collision
+    [Header("Penetration Control")]
+    [SerializeField] private float maxAcceptablePenetration = 5.0f; // NEW: Reject extreme penetrations
+    [SerializeField] private float minPenetrationDepth = 0.05f; // Increased minimum
+    [SerializeField] private bool ignoreExtremeCollisions = true; // NEW: Skip extreme cases
 
 
     [Header("Debug Settings")]
@@ -37,6 +39,8 @@ public class EnhancedCollisionManager : MonoBehaviour
     private int broadPhaseChecks;
     private int narrowPhaseChecks;
     private int actualCollisions;
+    private int rejectedCollisions; // NEW: Track rejected collisions
+
 
     void Start()
     {
@@ -59,42 +63,16 @@ public class EnhancedCollisionManager : MonoBehaviour
 
         if (physicalObjects.Length < 1) return;
 
-        // Handle collisions immediately but with multiple iterations
-        // This ensures we catch and correct penetrations as they happen
+        var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
+        broadPhaseChecks = candidatePairs.Count;
 
-        int maxIterations = 3; // Multiple collision passes per frame
+        ProcessCollisionPairs(candidatePairs);
 
-        for (int iteration = 0; iteration < maxIterations; iteration++)
-        {
-            // Broad phase collision detection
-            var candidatePairs = broadPhase.GetCollisionPairs(physicalObjects);
-
-            if (iteration == 0) // Only count stats on first iteration
-            {
-                broadPhaseChecks = candidatePairs.Count;
-                if (showBroadPhaseDebug)
-                {
-                    Debug.Log($"Broad Phase: {broadPhaseChecks} candidate pairs found");
-                }
-            }
-
-            // Process collision pairs
-            bool hadCollisions = ProcessCollisionPairs(candidatePairs);
-
-            // If no collisions were found, we can stop early
-            if (!hadCollisions && iteration > 0)
-            {
-                break;
-            }
-        }
-
-        // Clean up old cache entries
         if (enableCollisionCaching)
         {
             CleanupCollisionCache();
         }
 
-        // Log statistics
         if (logCollisionStats)
         {
             LogCollisionStatistics();
@@ -135,13 +113,19 @@ public class EnhancedCollisionManager : MonoBehaviour
     private bool ProcessCollisionPairs(List<(PhysicalObject, PhysicalObject)> candidatePairs)
     {
         bool hadCollisions = false;
+        int processedThisFrame = 0;
 
         foreach (var pair in candidatePairs)
         {
+            if (processedThisFrame >= maxCollisionsPerFrame) break;
+
+            if (ShouldSkipCollision(pair.Item1, pair.Item2)) continue;
+
             bool collisionOccurred = HandleCollisionPair(pair.Item1, pair.Item2);
             if (collisionOccurred)
             {
                 hadCollisions = true;
+                processedThisFrame++;
             }
         }
 
@@ -223,8 +207,8 @@ public class EnhancedCollisionManager : MonoBehaviour
         // Determine collision type and handle appropriately
         if (springSystemA != null && springSystemB != null)
         {
-            HandleSpringMassToSpringMass(springSystemA, springSystemB);
-            return true;
+            return HandleSpringMassToSpringMass(springSystemA, springSystemB);
+             
         }
         else if (femControllerA != null && femControllerB != null)
         {
@@ -254,41 +238,58 @@ public class EnhancedCollisionManager : MonoBehaviour
         return false;
     }
 
-    // Modify HandleSpringMassToSpringMass to limit collisions:
-    private void HandleSpringMassToSpringMass(SpringMassSystem systemA, SpringMassSystem systemB)
+    private bool HandleSpringMassToSpringMass(SpringMassSystem systemA, SpringMassSystem systemB)
     {
         if (systemA.allPoints.Count == 0 || systemB.allPoints.Count == 0)
-            return;
+            return false;
 
         List<CollisionResultEnhanced> collisions = CollisionDetector.CheckCollision(systemA, systemB);
 
-        // Filter out tiny collisions that cause jitter
-        var significantCollisions = collisions.FindAll(c =>
-            c.collided && c.penetrationDepth > minPenetrationDepth);
+        // Filter out problematic collisions
+        var validCollisions = new List<CollisionResultEnhanced>();
+
+        foreach (var collision in collisions)
+        {
+            if (!collision.collided) continue;
+
+            // Skip if penetration is too small
+            if (collision.penetrationDepth < minPenetrationDepth) continue;
+
+            // Skip if penetration is suspiciously large (likely a detection error)
+            if (ignoreExtremeCollisions && collision.penetrationDepth > maxAcceptablePenetration)
+            {
+                rejectedCollisions++;
+                Debug.LogWarning($"Rejected extreme collision with penetration: {collision.penetrationDepth:F2}");
+                continue;
+            }
+
+            validCollisions.Add(collision);
+        }
+
+        // Sort by penetration depth and process most significant first
+        validCollisions.Sort((a, b) => b.penetrationDepth.CompareTo(a.penetrationDepth));
 
         // Process only the most significant collisions
-        significantCollisions.Sort((a, b) => b.penetrationDepth.CompareTo(a.penetrationDepth));
-
         int processedCollisions = 0;
-        const int maxCollisionsPerPair = 3; // Reduced from 5
+        const int maxCollisionsPerPair = 2; // Further reduced
 
-        foreach (var collision in significantCollisions)
+        foreach (var collision in validCollisions)
         {
             if (processedCollisions >= maxCollisionsPerPair) break;
-            //Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
 
             collisionHandler.HandleCollision(collision);
             actualCollisions++;
-            collisionCount++;
             processedCollisions++;
 
             if (showNarrowPhaseDebug)
             {
-                Debug.Log($"SpringMass Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
-                Debug.DrawLine(collision.pointA.position, collision.pointB.position, Color.red, 0.1f);
+                Debug.Log($"Valid Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
             }
         }
+
+        return processedCollisions > 0;
     }
+
     private void HandleFEMToFEM(FEMController controllerA, FEMController controllerB)
     {
         if (controllerA.GetAllNodes().Length == 0 || controllerB.GetAllNodes().Length == 0)
@@ -464,8 +465,18 @@ public class EnhancedCollisionManager : MonoBehaviour
         broadPhaseChecks = 0;
         narrowPhaseChecks = 0;
         actualCollisions = 0;
+        //cachedCollisions = collisionCache?.Count ?? 0;
     }
-
+    public CollisionStatistics GetCollisionStatistics()
+    {
+        return new CollisionStatistics
+        {
+            broadPhaseChecks = broadPhaseChecks,
+            narrowPhaseChecks = narrowPhaseChecks,
+            actualCollisions = actualCollisions,
+            //cachedCollisions = collisionCache?.Count ?? 0
+        };
+    }
     private void LogCollisionStatistics()
     {
         Debug.Log($"Collision Stats - Broad Phase: {broadPhaseChecks}, Narrow Phase: {narrowPhaseChecks}, Actual Collisions: {actualCollisions}");
@@ -497,16 +508,7 @@ public class EnhancedCollisionManager : MonoBehaviour
         }
     }
 
-    public CollisionStatistics GetCollisionStatistics()
-    {
-        return new CollisionStatistics
-        {
-            broadPhaseChecks = broadPhaseChecks,
-            narrowPhaseChecks = narrowPhaseChecks,
-            actualCollisions = actualCollisions,
-            cachedCollisions = collisionCache?.Count ?? 0
-        };
-    }
+   
 }
 
 [System.Serializable]
