@@ -223,25 +223,35 @@ public class EnhancedCollisionManager : MonoBehaviour
         // Determine collision type and handle appropriately
         if (springSystemA != null && springSystemB != null)
         {
-            return HandleSpringMassToSpringMass(springSystemA, springSystemB);
+            HandleSpringMassToSpringMass(springSystemA, springSystemB);
+            return true;
         }
         else if (femControllerA != null && femControllerB != null)
         {
-            return HandleFEMToFEM(femControllerA, femControllerB);
+            HandleFEMToFEM(femControllerA, femControllerB);
+            return true;
+
         }
         else if (springSystemA != null && femControllerB != null)
         {
-            return HandleSpringMassToFEM(springSystemA, femControllerB);
+            HandleSpringMassToFEM(springSystemA, femControllerB);
+            return true;
+
         }
         else if (femControllerA != null && springSystemB != null)
         {
-            return HandleFEMToSpringMass(femControllerA, springSystemB);
+            HandleFEMToSpringMass(femControllerA, springSystemB);
+            return true;
+
         }
         else
         {
             // Handle static object collisions or other cases
-            return HandleStaticCollision(objA, objB);
+            HandleStaticCollision(objA, objB);
+            return true;
+
         }
+        return false;
     }
 
     // Modify HandleSpringMassToSpringMass to limit collisions:
