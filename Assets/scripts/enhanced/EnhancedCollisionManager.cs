@@ -101,7 +101,12 @@ public class EnhancedCollisionManager : MonoBehaviour
 
     private void InitializeCollisionHandler()
     {
-
+        // Initialize the simple collision handler
+        simpleHandler = GetComponent<SimpleCollisionHandler>();
+        if (simpleHandler == null)
+        {
+            Debug.LogWarning("SimpleCollisionHandler not found on " + gameObject.name);
+        }
     }
 
     private bool ProcessCollisionPairs(List<(PhysicalObject, PhysicalObject)> candidatePairs)
