@@ -8,8 +8,9 @@ public class EnhancedCollisionManager : MonoBehaviour
     [SerializeField] private float uniformGridCellSize = 1.0f;
     [SerializeField] private Vector3 octreeBounds = Vector3.one * 10000;
 
-    [Header("Collision Handling")]
-    [SerializeField] private EnhancedCollisionHandler collisionHandler;
+    [Header("simple Collision Handling")]
+    private EnhancedCollisionHandler collisionHandler;
+    [SerializeField] private SimpleCollisionHandler simpleHandler;
 
     [Header("Performance Settings")]
     [SerializeField] private int maxCollisionsPerFrame = 20; // Reduced from 100
@@ -100,14 +101,7 @@ public class EnhancedCollisionManager : MonoBehaviour
 
     private void InitializeCollisionHandler()
     {
-        if (collisionHandler == null)
-        {
-            collisionHandler = GetComponent<EnhancedCollisionHandler>();
-            if (collisionHandler == null)
-            {
-                Debug.LogError("EnhancedCollisionHandler not found! Please attach it to the same GameObject.");
-            }
-        }
+
     }
 
     private bool ProcessCollisionPairs(List<(PhysicalObject, PhysicalObject)> candidatePairs)
@@ -210,24 +204,23 @@ public class EnhancedCollisionManager : MonoBehaviour
             return HandleSpringMassToSpringMass(springSystemA, springSystemB);
              
         }
-        else if (femControllerA != null && femControllerB != null)
-        {
-            HandleFEMToFEM(femControllerA, femControllerB);
-            return true;
+        //else if (femControllerA != null && femControllerB != null)
+        //{
+        //    HandleFEMToFEM(femControllerA, femControllerB);
+        //    return true;
 
-        }
-        else if (springSystemA != null && femControllerB != null)
-        {
-            HandleSpringMassToFEM(springSystemA, femControllerB);
-            return true;
+        //}
+        //else if (springSystemA != null && femControllerB != null)
+        //{
+        //    HandleSpringMassToFEM(springSystemA, femControllerB);
+        //    return true;
 
-        }
-        else if (femControllerA != null && springSystemB != null)
-        {
-            HandleFEMToSpringMass(femControllerA, springSystemB);
-            return true;
-
-        }
+        //}
+        //else if (femControllerA != null && springSystemB != null)
+        //{
+        //    HandleFEMToSpringMass(femControllerA, springSystemB);
+        //    return true;
+        //}
         else
         {
             // Handle static object collisions or other cases
@@ -238,6 +231,8 @@ public class EnhancedCollisionManager : MonoBehaviour
         return false;
     }
 
+    // Replace your HandleSpringMassToSpringMass method with this:
+
     private bool HandleSpringMassToSpringMass(SpringMassSystem systemA, SpringMassSystem systemB)
     {
         if (systemA.allPoints.Count == 0 || systemB.allPoints.Count == 0)
@@ -245,109 +240,99 @@ public class EnhancedCollisionManager : MonoBehaviour
 
         List<CollisionResultEnhanced> collisions = CollisionDetector.CheckCollision(systemA, systemB);
 
-        // Filter out problematic collisions
+        // Simple filtering - only check basic validity
         var validCollisions = new List<CollisionResultEnhanced>();
 
         foreach (var collision in collisions)
         {
             if (!collision.collided) continue;
 
-            // Skip if penetration is too small
-            if (collision.penetrationDepth < minPenetrationDepth) continue;
-
-            // Skip if penetration is suspiciously large (likely a detection error)
-            if (ignoreExtremeCollisions && collision.penetrationDepth > maxAcceptablePenetration)
-            {
-                rejectedCollisions++;
-                Debug.LogWarning($"Rejected extreme collision with penetration: {collision.penetrationDepth:F2}");
-                continue;
-            }
+            // Basic penetration check
+            if (collision.penetrationDepth < 0.01f) continue;
+            if (collision.penetrationDepth > 2.0f) continue; // Skip extreme penetrations
 
             validCollisions.Add(collision);
         }
 
-        // Sort by penetration depth and process most significant first
-        validCollisions.Sort((a, b) => b.penetrationDepth.CompareTo(a.penetrationDepth));
-
-        // Process only the most significant collisions
+        // Process only a few collisions per frame
         int processedCollisions = 0;
-        const int maxCollisionsPerPair = 2; // Further reduced
+        const int maxCollisionsPerPair = 3;
 
         foreach (var collision in validCollisions)
         {
             if (processedCollisions >= maxCollisionsPerPair) break;
 
-            collisionHandler.HandleCollision(collision);
-            actualCollisions++;
-            processedCollisions++;
-
-            if (showNarrowPhaseDebug)
+            // Use the simple handler
+            //SimpleCollisionHandler simpleHandler = GetComponent<SimpleCollisionHandler>();
+            if (simpleHandler != null)
             {
-                Debug.Log($"Valid Collision: {collision.pointA.sourceName}[{collision.pointA.id}] <-> {collision.pointB.sourceName}[{collision.pointB.id}] (penetration: {collision.penetrationDepth:F4})");
+                simpleHandler.HandleSpringMassCollision(collision);
+                actualCollisions++;
+                processedCollisions++;
             }
         }
 
         return processedCollisions > 0;
     }
+    
+    //private void HandleFEMToFEM(FEMController controllerA, FEMController controllerB)
+    //{
+    //    if (controllerA.GetAllNodes().Length == 0 || controllerB.GetAllNodes().Length == 0)
+    //        return;
 
-    private void HandleFEMToFEM(FEMController controllerA, FEMController controllerB)
-    {
-        if (controllerA.GetAllNodes().Length == 0 || controllerB.GetAllNodes().Length == 0)
-            return;
+    //    List<CollisionResultEnhanced_FEM> collisions = CollisionDetector_FEM.CheckCollision(controllerA, controllerB);
 
-        List<CollisionResultEnhanced_FEM> collisions = CollisionDetector_FEM.CheckCollision(controllerA, controllerB);
+    //    foreach (var collision in collisions)
+    //    {
+    //        if (collision.collided)
+    //        {
+    //            collisionHandler.HandleFEMCollision(collision);
+    //            actualCollisions++;
+    //            collisionCount++;
 
-        foreach (var collision in collisions)
-        {
-            if (collision.collided)
-            {
-                collisionHandler.HandleFEMCollision(collision);
-                actualCollisions++;
-                collisionCount++;
+    //            if (showNarrowPhaseDebug)
+    //            {
+    //                Debug.Log($"FEM Collision: {controllerA.gameObject.name}[{collision.pointA.ID}] <-> {controllerB.gameObject.name}[{collision.pointB.ID}]");
+    //                Debug.DrawLine(collision.pointA.Position, collision.pointB.Position, Color.blue, 0.1f);
+    //            }
+    //        }
+    //    }
+    //}
 
-                if (showNarrowPhaseDebug)
-                {
-                    Debug.Log($"FEM Collision: {controllerA.gameObject.name}[{collision.pointA.ID}] <-> {controllerB.gameObject.name}[{collision.pointB.ID}]");
-                    Debug.DrawLine(collision.pointA.Position, collision.pointB.Position, Color.blue, 0.1f);
-                }
-            }
-        }
-    }
+    //private void HandleSpringMassToFEM(SpringMassSystem springSystem, FEMController femController)
+    //{
+    //    if (springSystem.allPoints.Count == 0 || femController.GetAllNodes().Length == 0)
+    //        return;
 
-    private void HandleSpringMassToFEM(SpringMassSystem springSystem, FEMController femController)
-    {
-        if (springSystem.allPoints.Count == 0 || femController.GetAllNodes().Length == 0)
-            return;
+    //    // Check collisions between spring-mass points and FEM nodes
+    //    var massPoints = springSystem.allPoints;
+    //    var femNodes = femController.GetAllNodes();
 
-        // Check collisions between spring-mass points and FEM nodes
-        var massPoints = springSystem.allPoints;
-        var femNodes = femController.GetAllNodes();
+    //    foreach (var massPoint in massPoints)
+    //    {
+    //        foreach (var femNode in femNodes)
+    //        {
+    //            if (CheckPointToPointCollision(massPoint.position, femNode.Position, out Vector3 normal, out float penetration, out Vector3 contactPoint))
+    //            {
+    //                collisionHandler.HandleCollision(massPoint, femNode, normal, penetration, contactPoint);
+    //                actualCollisions++;
+    //                collisionCount++;
 
-        foreach (var massPoint in massPoints)
-        {
-            foreach (var femNode in femNodes)
-            {
-                if (CheckPointToPointCollision(massPoint.position, femNode.Position, out Vector3 normal, out float penetration, out Vector3 contactPoint))
-                {
-                    collisionHandler.HandleCollision(massPoint, femNode, normal, penetration, contactPoint);
-                    actualCollisions++;
-                    collisionCount++;
+    //                if (showNarrowPhaseDebug)
+    //                {
+    //                    Debug.Log($"Mixed Collision: SpringMass[{massPoint.id}] <-> FEM[{femNode.ID}]");
+    //                    Debug.DrawLine(massPoint.position, femNode.Position, Color.green, 0.1f);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
-                    if (showNarrowPhaseDebug)
-                    {
-                        Debug.Log($"Mixed Collision: SpringMass[{massPoint.id}] <-> FEM[{femNode.ID}]");
-                        Debug.DrawLine(massPoint.position, femNode.Position, Color.green, 0.1f);
-                    }
-                }
-            }
-        }
-    }
-
-    private void HandleFEMToSpringMass(FEMController femController, SpringMassSystem springSystem)
-    {
-        // Just call the reverse
-        HandleSpringMassToFEM(springSystem, femController);
-    }
+    //private void HandleFEMToSpringMass(FEMController femController, SpringMassSystem springSystem)
+    //{
+    //    // Just call the reverse
+    //    HandleSpringMassToFEM(springSystem, femController);
+    //}
 
     private void HandleStaticCollision(PhysicalObject objA, PhysicalObject objB)
     {
@@ -507,8 +492,7 @@ public class EnhancedCollisionManager : MonoBehaviour
             lastCollisionTime = new Dictionary<(int, int), float>();
         }
     }
-
-   
+ 
 }
 
 [System.Serializable]

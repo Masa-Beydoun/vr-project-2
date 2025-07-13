@@ -48,8 +48,8 @@ public class EnhancedCollisionHandler : MonoBehaviour
     public float dampingFactor = 0.3f;
 
     [Header("Collision Response")]
-    public float collisionResponseStrength = 0.4f; // Much more aggressive
-    public float separationBias = 0.4f; // Very aggressive separation
+    public float collisionResponseStrength = 0.1f; // Much more aggressive
+    public float separationBias = 0.05f; // Very aggressive separation
     public bool usePositionCorrection = true;
     public bool useVelocityCorrection = true;
 
@@ -58,12 +58,12 @@ public class EnhancedCollisionHandler : MonoBehaviour
     public float debugLineDuration = 0.1f;
 
     [Header("Advanced Settings")]
-    public float maxCollisionForce = 30f; // Much higher limit
+    public float maxCollisionForce = 5f; // Much higher limit
     public float minPenetrationForResponse = 0.01f; // Very low threshold
-    public float maxPenetrationDepth = 2.0f; // NEW: Cap maximum penetration depth
+    public float maxPenetrationDepth = 0.5f; // NEW: Cap maximum penetration depth
     public float staticObjectMass = 1000f; // NEW: Mass for static objects
     public float emergencyPenetrationThreshold = 2.0f; // NEW: For emergency corrections
-    public float emergencyForceMultiplier = 2f; // NEW: Extra force for deep penetrations
+    public float emergencyForceMultiplier = 1.5f; // NEW: Extra force for deep penetrations
 
     // Handle Spring-Mass to Spring-Mass collisions
     public void HandleSpringMassCollision(CollisionResultEnhanced result)
@@ -258,7 +258,7 @@ public class EnhancedCollisionHandler : MonoBehaviour
         // MUCH STRONGER impulse calculation
         float impulseMagnitude = -(1 + restitution) * velAlongNormal;
         impulseMagnitude /= invMassA + invMassB;
-        impulseMagnitude *= collisionResponseStrength * 2f; // Double the response strength
+        impulseMagnitude *= collisionResponseStrength; // Double the response strength
 
         Vector3 impulse = impulseMagnitude * normal;
 
@@ -394,7 +394,7 @@ public class EnhancedCollisionHandler : MonoBehaviour
         if (result.penetrationDepth < minPenetrationForResponse) return;
 
         // MUCH STRONGER deformation force
-        float baseForce = Mathf.Min(result.penetrationDepth, maxPenetrationDepth) * collisionResponseStrength * 100f; // INCREASED from 10f
+        float baseForce = Mathf.Min(result.penetrationDepth, maxPenetrationDepth) * collisionResponseStrength * 10f; // Reduced from 100f
 
         // Add velocity-based force for moving objects
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;

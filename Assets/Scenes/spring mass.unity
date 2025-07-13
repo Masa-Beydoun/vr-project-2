@@ -468,7 +468,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &374413070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -481,7 +481,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82a9c341011e1cc4d8a2a0a71b3a7a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collisionHandler: {fileID: 0}
 --- !u!4 &374413071
 Transform:
   m_ObjectHideFlags: 0
@@ -1181,7 +1180,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1, y: 0, z: 1}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1216,7 +1215,7 @@ MonoBehaviour:
   dragCoefficient: 1
   rotationEuler: {x: 0, y: 0, z: 0}
   useCustomProperties: 0
-  material: {fileID: 0}
+  material: {fileID: 11400000, guid: 9db27100363fa3743962a20a6886730d, type: 2}
   customDensity: 1
   customBounciness: 0.3
   customStiffness: 1000
@@ -1239,7 +1238,7 @@ MonoBehaviour:
   isCreated: 0
   previousIsCreated: 0
   connectionRadius: 0
-  resolution: 70
+  resolution: 50
   springStiffness: 500
   springDamping: 2
   massShapeType: 0
@@ -1298,7 +1297,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1715684846
 Transform:
   m_ObjectHideFlags: 0

@@ -29,14 +29,20 @@ public class MassPoint
     public void ApplyForce(Vector3 force)
     {
         if (isPinned) return;
-
-        if (force.magnitude > 1000f)
+        float maxForce = 150f;
+        if (force.magnitude > maxForce)
         {
             Debug.LogWarning($"Excessive force detected: {force.magnitude}");
-            force = force.normalized * 1000f;
+            force = force.normalized * maxForce;
         }
 
         forceAccumulator += force; // accumulate forces, not acceleration
+
+        if (forceAccumulator.magnitude > maxForce * 2f)
+        {
+            Debug.LogWarning($"Accumulated force clamped from {forceAccumulator.magnitude:F2}");
+            forceAccumulator = forceAccumulator.normalized * (maxForce * 2f);
+        }
     }
 
 
@@ -50,11 +56,30 @@ public class MassPoint
         }
         if (mass <= 0) return;
 
+        // Calculate acceleration from accumulated forces
         Vector3 acceleration = forceAccumulator / mass;
+
+        // Limit acceleration to prevent explosions
+        float maxAcceleration = 300f; // Adjust as needed
+        if (acceleration.magnitude > maxAcceleration)
+        {
+            Debug.LogWarning($"Acceleration clamped from {acceleration.magnitude:F2}");
+            acceleration = acceleration.normalized * maxAcceleration;
+        }
+
+        // Update velocity and position
         velocity += acceleration * deltaTime;
+
+        // Limit velocity
+        float maxVelocity = 150f; // Adjust as needed
+        if (velocity.magnitude > maxVelocity)
+        {
+            velocity = velocity.normalized * maxVelocity;
+        }
+
         position += velocity * deltaTime;
 
-        acceleration = Vector3.zero;
+        // Clear the force accumulator
         forceAccumulator = Vector3.zero;
     }
 

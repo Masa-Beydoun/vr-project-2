@@ -26,9 +26,9 @@ public class SpringMassSystemEditor : Editor
 
 
         // Show extra mesh options ONLY if shapeType is Other
-        if (system.physicalObject != null && system.physicalObject.massShapeType == MassShapeType.Other)
-        {
-                system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
+        //if (system.physicalObject != null && system.physicalObject.massShapeType == MassShapeType.Other)
+        //{
+            system.generationMode = (MeshPointGenerationMode)EditorGUILayout.EnumPopup("Generation Mode", system.generationMode);
             system.useVoxelFilling = EditorGUILayout.Toggle("Use Voxel Filling", system.useVoxelFilling);
 
             system.meshConnectionMode = (MeshConnectionMode)EditorGUILayout.EnumPopup("Mesh Connection Mode", system.meshConnectionMode);
@@ -40,7 +40,7 @@ public class SpringMassSystemEditor : Editor
             
 
             
-        }
+        //}
 
 
         if (GUI.changed)

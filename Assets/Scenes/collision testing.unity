@@ -162,7 +162,7 @@ MonoBehaviour:
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
   useCustomSpringProperties: 1
-  mass: 10000
+  mass: 1000
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   initialVelocity: {x: 0, y: 0, z: 0}
@@ -170,7 +170,7 @@ MonoBehaviour:
   dragCoefficient: 0
   rotationEuler: {x: 0, y: 0, z: 0}
   useCustomProperties: 0
-  material: {fileID: 11400000, guid: 9db27100363fa3743962a20a6886730d, type: 2}
+  material: {fileID: 11400000, guid: fcb03f5a31f074b41be8f8a63782941c, type: 2}
   customDensity: 1
   customBounciness: 0.3
   customStiffness: 1000
@@ -391,14 +391,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalRestitution: 0.5
   globalFriction: 0.4
-  dampingFactor: 0.5
-  collisionResponseStrength: 0.5
-  separationBias: 0.3
+  dampingFactor: 0.35
+  collisionResponseStrength: 0.18
+  separationBias: 0.09
   usePositionCorrection: 1
   useVelocityCorrection: 0
   showCollisionDebug: 1
   debugLineDuration: 0.1
-  maxCollisionForce: 100
+  maxCollisionForce: 8.5
   minPenetrationForResponse: 0.01
   maxPenetrationDepth: 5
   staticObjectMass: 1000
@@ -470,6 +470,18 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0a1cade8f3785a5498483caf954be128, type: 3}
       propertyPath: m_LocalPosition.x
@@ -631,7 +643,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1432361990
 Transform:
   m_ObjectHideFlags: 0
@@ -654,7 +666,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1432361989}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a44af1fa2004704d8af5c067d74e611, type: 3}
   m_Name: 
@@ -662,7 +674,7 @@ MonoBehaviour:
   broadPhaseMethod: 0
   uniformGridCellSize: 1
   octreeBounds: {x: 10000, y: 10000, z: 10000}
-  collisionHandler: {fileID: 674526944}
+  simpleHandler: {fileID: 0}
   maxCollisionsPerFrame: 30
   enableCollisionCaching: 0
   cacheValidityTime: 0.016
@@ -867,6 +879,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1551656170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1551656172}
+  - component: {fileID: 1551656171}
+  m_Layer: 0
+  m_Name: simpleHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1551656171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551656170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c7a507d07ec87847911b546ee2a22e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  positionCorrectionStrength: 0.1
+  velocityCorrectionStrength: 0.3
+  restitution: 0.2
+  damping: 0.8
+  minPenetrationDepth: 0.01
+  maxPenetrationDepth: 1
+  maxForce: 50
+  showDebug: 1
+  debugDuration: 0.1
+--- !u!4 &1551656172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551656170}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1715684845
 GameObject:
   m_ObjectHideFlags: 0
@@ -922,8 +987,8 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  meshConnectionMode: 0
-  k: 0
+  meshConnectionMode: 2
+  k: 2
   useVoxelFilling: 1
   generationMode: 0
 --- !u!114 &1715684848
@@ -993,9 +1058,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 551809566b9096d4989dbf376d60b5af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityStrength: 0
-  airTemperature: 0
-  airPressure: 101325
+  gravityStrength: 10
+  airTemperature: 1
+  airPressure: 0
   gasConstant: 287.05
 --- !u!4 &1896529661
 Transform:
@@ -1229,7 +1294,7 @@ MonoBehaviour:
   boundingShapeType: 0
   meshSourceObject: {fileID: 1298921294}
   useCustomSpringProperties: 1
-  mass: 1000
+  mass: 200
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   initialVelocity: {x: 0, y: 0, z: 0}
@@ -1244,7 +1309,7 @@ MonoBehaviour:
   customFractureThreshold: 10000
   customDamping: 0.1
   shapeType: 1
-  _isStatic: 0
+  _isStatic: 1
 --- !u!114 &2094849919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1267,8 +1332,8 @@ MonoBehaviour:
   physicalObject: {fileID: 0}
   pointPrefab: {fileID: 7450203313149778480, guid: e2b5c68907b820f45a5ca8f4658f9e78, type: 3}
   springLineMaterial: {fileID: 2100000, guid: 027485a6782a2df46910d921d409b5e0, type: 2}
-  meshConnectionMode: 0
-  k: 0
+  meshConnectionMode: 2
+  k: 2
   useVoxelFilling: 1
   generationMode: 0
 --- !u!1660057539 &9223372036854775807
@@ -1290,3 +1355,4 @@ SceneRoots:
   - {fileID: 1991648982}
   - {fileID: 1432361990}
   - {fileID: 674526945}
+  - {fileID: 1551656172}

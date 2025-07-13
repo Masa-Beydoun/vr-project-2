@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Stone
   m_EditorClassIdentifier: 
   materialName: stone
-  Density: 2600
+  Density: 350
   dragCoefficient: 0.8
-  bounciness: 0.2
-  stiffness: 200
+  bounciness: 0.18
+  stiffness: 90
   fractureThreshold: 80000000
-  dampingCoefficient: 0.6
+  dampingCoefficient: 0.55
   youngsModulus: 5e+10
   poissonRatio: 0.25
