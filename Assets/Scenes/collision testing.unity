@@ -908,13 +908,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c7a507d07ec87847911b546ee2a22e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positionCorrectionStrength: 0.1
-  velocityCorrectionStrength: 0.3
-  restitution: 0.2
-  damping: 0.8
+  collisionForceStrength: 2000
+  separationForceStrength: 1500
+  restitution: 0.4
+  friction: 0.4
+  forceMultiplier: 2
+  velocityDamping: 0.9
   minPenetrationDepth: 0.01
   maxPenetrationDepth: 1
-  maxForce: 50
+  maxCollisionForce: 5000
   showDebug: 1
   debugDuration: 0.1
 --- !u!4 &1551656172

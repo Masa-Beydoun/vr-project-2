@@ -3,27 +3,34 @@ using System.Collections.Generic;
 
 public class SimpleCollisionHandler : MonoBehaviour
 {
-    [Header("Basic Settings")]
-    [Range(0.01f, 1f)]
-    public float positionCorrectionStrength = 0.1f; // Much lower
+    [Header("Force-Based Collision Settings")]
+    [Range(100f, 10000f)]
+    public float collisionForceStrength = 2000f; // Much higher for forces
 
-    [Range(0.01f, 1f)]
-    public float velocityCorrectionStrength = 0.3f; // Moderate
-
-    [Range(0f, 1f)]
-    public float restitution = 0.2f; // Bounciness
+    [Range(100f, 5000f)]
+    public float separationForceStrength = 1500f; // Force to separate overlapping objects
 
     [Range(0f, 1f)]
-    public float damping = 0.8f; // Energy loss
+    public float restitution = 0.6f; // Bounciness
+
+    [Range(0f, 1f)]
+    public float friction = 0.3f; // Surface friction
+
+    [Header("Force Scaling")]
+    [Range(0.1f, 10f)]
+    public float forceMultiplier = 2f; // Overall force scaling
+
+    [Range(0.01f, 1f)]
+    public float velocityDamping = 0.9f; // Velocity damping on collision
 
     [Header("Safety Limits")]
     public float minPenetrationDepth = 0.01f;
-    public float maxPenetrationDepth = 1.0f;
-    public float maxForce = 50f;
+    public float maxPenetrationDepth = 2.0f;
+    public float maxCollisionForce = 5000f;
 
     [Header("Debug")]
     public bool showDebug = true;
-    public float debugDuration = 0.1f;
+    public float debugDuration = 0.2f;
 
     public void HandleSpringMassCollision(CollisionResultEnhanced collision)
     {
@@ -40,13 +47,13 @@ public class SimpleCollisionHandler : MonoBehaviour
         // Skip if both are static
         if (isAStatic && isBStatic) return;
 
-        // 1. Simple position correction
-        CorrectPositions(pointA, pointB, collision.normal, collision.penetrationDepth, isAStatic, isBStatic);
+        // Calculate collision forces
+        ApplyCollisionForces(pointA, pointB, collision.normal, collision.penetrationDepth, isAStatic, isBStatic);
 
-        // 2. Simple velocity correction
-        CorrectVelocities(pointA, pointB, collision.normal, isAStatic, isBStatic);
+        // Apply velocity damping
+        ApplyVelocityDamping(pointA, pointB, collision.normal, isAStatic, isBStatic);
 
-        // 3. Debug visualization
+        // Debug visualization
         if (showDebug)
         {
             DrawDebugInfo(collision);
@@ -72,79 +79,85 @@ public class SimpleCollisionHandler : MonoBehaviour
         return name.Contains("ground") || name.Contains("floor") || name.Contains("static");
     }
 
-    private void CorrectPositions(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration, bool isAStatic, bool isBStatic)
+    private void ApplyCollisionForces(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration, bool isAStatic, bool isBStatic)
     {
         // Calculate effective masses
         float massA = isAStatic ? float.MaxValue : pointA.mass;
         float massB = isBStatic ? float.MaxValue : pointB.mass;
 
-        float totalMass = massA + massB;
-        if (totalMass == 0 || float.IsInfinity(totalMass)) return;
-
-        // Calculate correction amounts based on mass ratio
-        float correctionA = isBStatic ? 1f : (massB / totalMass);
-        float correctionB = isAStatic ? 1f : (massA / totalMass);
-
-        // Apply gentle position correction
-        Vector3 correction = normal * penetration * positionCorrectionStrength;
-
-        if (!pointA.isPinned && !isAStatic)
-        {
-            pointA.position += correction * correctionA;
-        }
-
-        if (!pointB.isPinned && !isBStatic)
-        {
-            pointB.position -= correction * correctionB;
-        }
-    }
-
-    private void CorrectVelocities(MassPoint pointA, MassPoint pointB, Vector3 normal, bool isAStatic, bool isBStatic)
-    {
         // Calculate relative velocity
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
         float velocityAlongNormal = Vector3.Dot(relativeVelocity, normal);
 
-        // Objects moving apart - no need to correct
-        if (velocityAlongNormal > 0) return;
+        // 1. Separation force (based on penetration depth)
+        float separationForceMagnitude = separationForceStrength * penetration * forceMultiplier;
+        separationForceMagnitude = Mathf.Min(separationForceMagnitude, maxCollisionForce);
 
-        // Calculate effective masses
-        float massA = isAStatic ? float.MaxValue : pointA.mass;
-        float massB = isBStatic ? float.MaxValue : pointB.mass;
+        Vector3 separationForce = normal * separationForceMagnitude;
 
-        float invMassA = isAStatic ? 0f : 1f / massA;
-        float invMassB = isBStatic ? 0f : 1f / massB;
-        float invMassSum = invMassA + invMassB;
+        // 2. Collision response force (based on relative velocity)
+        float collisionForceMagnitude = 0f;
+        if (velocityAlongNormal < 0) // Objects moving towards each other
+        {
+            collisionForceMagnitude = -velocityAlongNormal * collisionForceStrength * forceMultiplier;
+            collisionForceMagnitude = Mathf.Min(collisionForceMagnitude, maxCollisionForce);
+        }
 
-        if (invMassSum == 0) return;
+        Vector3 collisionForce = normal * collisionForceMagnitude;
 
-        // Calculate impulse magnitude
-        float impulseMagnitude = -(1f + restitution) * velocityAlongNormal;
-        impulseMagnitude /= invMassSum;
-        impulseMagnitude *= velocityCorrectionStrength;
+        // 3. Calculate mass-based force distribution
+        float totalInvMass = (isAStatic ? 0f : 1f / massA) + (isBStatic ? 0f : 1f / massB);
+        if (totalInvMass == 0) return;
 
-        // Limit impulse to prevent explosions
-        impulseMagnitude = Mathf.Min(impulseMagnitude, maxForce);
+        float forceRatioA = isBStatic ? 1f : (1f / massA) / totalInvMass;
+        float forceRatioB = isAStatic ? 1f : (1f / massB) / totalInvMass;
 
-        Vector3 impulse = normal * impulseMagnitude;
+        // 4. Apply forces
+        Vector3 totalForce = separationForce + collisionForce * (1f + restitution);
 
-        // Apply impulse
         if (!pointA.isPinned && !isAStatic)
         {
-            Vector3 deltaVelocity = -impulse * invMassA;
-            pointA.velocity += deltaVelocity;
+            Vector3 forceA = totalForce * forceRatioA;
+            pointA.ApplyForce(forceA);
 
-            // Apply damping
-            pointA.velocity *= damping;
+            // Apply friction force (tangential)
+            if (friction > 0)
+            {
+                Vector3 tangentialVelocity = relativeVelocity - Vector3.Project(relativeVelocity, normal);
+                Vector3 frictionForce = -tangentialVelocity.normalized * friction * separationForceMagnitude * 0.5f;
+                pointA.ApplyForce(frictionForce);
+                Debug.Log("frictionForce" + frictionForce);
+            }
         }
 
         if (!pointB.isPinned && !isBStatic)
         {
-            Vector3 deltaVelocity = impulse * invMassB;
-            pointB.velocity += deltaVelocity;
+            Vector3 forceB = -totalForce * forceRatioB;
+            pointB.ApplyForce(forceB);
 
-            // Apply damping
-            pointB.velocity *= damping;
+            // Apply friction force (tangential)
+            if (friction > 0)
+            {
+                Vector3 tangentialVelocity = relativeVelocity - Vector3.Project(relativeVelocity, normal);
+                Vector3 frictionForce = tangentialVelocity.normalized * friction * separationForceMagnitude * 0.5f;
+                pointB.ApplyForce(frictionForce);
+                Debug.Log("frictionForce" + frictionForce);
+
+            }
+        }
+    }
+
+    private void ApplyVelocityDamping(MassPoint pointA, MassPoint pointB, Vector3 normal, bool isAStatic, bool isBStatic)
+    {
+        // Apply damping to reduce oscillations
+        if (!pointA.isPinned && !isAStatic)
+        {
+            pointA.velocity *= velocityDamping;
+        }
+
+        if (!pointB.isPinned && !isBStatic)
+        {
+            pointB.velocity *= velocityDamping;
         }
     }
 
@@ -157,6 +170,10 @@ public class SimpleCollisionHandler : MonoBehaviour
         Debug.DrawRay(collision.contactPoint, collision.normal * collision.penetrationDepth, Color.yellow, debugDuration);
 
         // Draw contact point
-        Debug.DrawRay(collision.contactPoint, Vector3.up * 0.1f, Color.green, debugDuration);
+        Debug.DrawRay(collision.contactPoint, Vector3.up * 0.2f, Color.green, debugDuration);
+
+        // Draw force magnitude indicator
+        float forceIndicator = Mathf.Min(collision.penetrationDepth * separationForceStrength / 1000f, 1f);
+        Debug.DrawRay(collision.contactPoint, Vector3.right * forceIndicator, Color.cyan, debugDuration);
     }
 }
