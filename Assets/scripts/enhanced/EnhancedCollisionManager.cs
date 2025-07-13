@@ -10,7 +10,7 @@ public class EnhancedCollisionManager : MonoBehaviour
 
     [Header("simple Collision Handling")]
     private EnhancedCollisionHandler collisionHandler;
-    [SerializeField] private SimpleCollisionHandler simpleHandler;
+    public SimpleCollisionHandler simpleHandler;
 
     [Header("Performance Settings")]
     [SerializeField] private int maxCollisionsPerFrame = 20; // Reduced from 100
@@ -18,16 +18,22 @@ public class EnhancedCollisionManager : MonoBehaviour
     [SerializeField] private float cacheValidityTime = 0.1f; // Increased from 0.016f
     [SerializeField] private float minCollisionInterval = 0.05f; // NEW: Minimum time between same-pair collisions
 
-    [Header("Penetration Control")]
-    [SerializeField] private float maxAcceptablePenetration = 5.0f; // NEW: Reject extreme penetrations
-    [SerializeField] private float minPenetrationDepth = 0.05f; // Increased minimum
-    [SerializeField] private bool ignoreExtremeCollisions = true; // NEW: Skip extreme cases
+    //[Header("Penetration Control")]
+    //[SerializeField] private float maxAcceptablePenetration = 5.0f; // NEW: Reject extreme penetrations
+    //[SerializeField] private float minPenetrationDepth = 0.05f; // Increased minimum
+    //[SerializeField] private bool ignoreExtremeCollisions = true; // NEW: Skip extreme cases
 
 
     [Header("Debug Settings")]
     [SerializeField] private bool showBroadPhaseDebug = false;
     [SerializeField] private bool showNarrowPhaseDebug = false; // Turn off by default
     [SerializeField] private bool logCollisionStats = false;
+
+    //[Header("Advanced Safety")]
+    //[SerializeField] private float maxForceThreshold = 1000f; // NEW: Global force limit
+    //[SerializeField] private bool enableForceSmoothing = true; // NEW: Smooth force application
+    //[SerializeField] private float forceSmoothing = 0.1f; // NEW: Force smoothing factor
+
 
     private PhysicalObject[] physicalObjects;
     private IBroadPhase broadPhase;
@@ -78,6 +84,7 @@ public class EnhancedCollisionManager : MonoBehaviour
         {
             LogCollisionStatistics();
         }
+        ValidateAndLimitForces();
     }
     private void InitializeBroadPhase()
     {
@@ -245,30 +252,64 @@ public class EnhancedCollisionManager : MonoBehaviour
 
         List<CollisionResultEnhanced> collisions = CollisionDetector.CheckCollision(systemA, systemB);
 
-        // Simple filtering - only check basic validity
+        // Improved filtering with better validation
         var validCollisions = new List<CollisionResultEnhanced>();
 
         foreach (var collision in collisions)
         {
             if (!collision.collided) continue;
 
-            // Basic penetration check
-            if (collision.penetrationDepth < 0.01f) continue;
-            if (collision.penetrationDepth > 2.0f) continue; // Skip extreme penetrations
+            // Stricter penetration validation
+            if (collision.penetrationDepth < 0.005f) continue; // Increased minimum
+            if (collision.penetrationDepth > 0.5f) // Reduced maximum
+            {
+                if (showNarrowPhaseDebug)
+                {
+                    Debug.LogWarning($"Rejecting extreme penetration: {collision.penetrationDepth}");
+                }
+                rejectedCollisions++;
+                continue;
+            }
+
+            // Validate normal vector
+            if (collision.normal.magnitude < 0.9f || collision.normal.magnitude > 1.1f)
+            {
+                if (showNarrowPhaseDebug)
+                {
+                    Debug.LogWarning($"Invalid normal vector: {collision.normal}");
+                }
+                rejectedCollisions++;
+                continue;
+            }
+
+            // Check if points are moving away from each other (avoid duplicate processing)
+            Vector3 relativeVelocity = collision.pointB.velocity - collision.pointA.velocity;
+            float velocityAlongNormal = Vector3.Dot(relativeVelocity, collision.normal);
+
+            // If they're separating rapidly, skip this collision
+            if (velocityAlongNormal > 2.0f)
+            {
+                if (showNarrowPhaseDebug)
+                {
+                    Debug.Log($"Points already separating: {velocityAlongNormal}");
+                }
+                continue;
+            }
 
             validCollisions.Add(collision);
         }
 
-        // Process only a few collisions per frame
+        // Sort by penetration depth (handle deepest first)
+        validCollisions.Sort((a, b) => b.penetrationDepth.CompareTo(a.penetrationDepth));
+
+        // Process only the most important collisions
         int processedCollisions = 0;
-        const int maxCollisionsPerPair = 3;
+        const int maxCollisionsPerPair = 2; // Reduced from 3
 
         foreach (var collision in validCollisions)
         {
             if (processedCollisions >= maxCollisionsPerPair) break;
 
-            // Use the simple handler
-            //SimpleCollisionHandler simpleHandler = GetComponent<SimpleCollisionHandler>();
             if (simpleHandler != null)
             {
                 simpleHandler.HandleSpringMassCollision(collision);
@@ -279,7 +320,44 @@ public class EnhancedCollisionManager : MonoBehaviour
 
         return processedCollisions > 0;
     }
-    
+
+    private void ValidateAndLimitForces()
+    {
+        if (physicalObjects == null) return;
+
+        foreach (var obj in physicalObjects)
+        {
+            var springSystem = obj.GetComponentInParent<SpringMassSystem>();
+            if (springSystem == null) continue;
+
+            foreach (var point in springSystem.allPoints)
+            {
+                // Check for excessive velocities
+                if (point.velocity.magnitude > 10f)
+                {
+                    point.velocity = point.velocity.normalized * 10f;
+                    if (showNarrowPhaseDebug)
+                    {
+                        Debug.LogWarning($"Clamped excessive velocity on {point.sourceName}");
+                    }
+                }
+
+                // Check for NaN or infinite values
+                if (float.IsNaN(point.velocity.x) || float.IsInfinity(point.velocity.x))
+                {
+                    point.velocity = Vector3.zero;
+                    Debug.LogError($"Reset invalid velocity on {point.sourceName}");
+                }
+
+                if (float.IsNaN(point.position.x) || float.IsInfinity(point.position.x))
+                {
+                    point.position = Vector3.zero;
+                    Debug.LogError($"Reset invalid position on {point.sourceName}");
+                }
+            }
+        }
+    }
+
     //private void HandleFEMToFEM(FEMController controllerA, FEMController controllerB)
     //{
     //    if (controllerA.GetAllNodes().Length == 0 || controllerB.GetAllNodes().Length == 0)

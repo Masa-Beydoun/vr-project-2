@@ -674,14 +674,11 @@ MonoBehaviour:
   broadPhaseMethod: 0
   uniformGridCellSize: 1
   octreeBounds: {x: 10000, y: 10000, z: 10000}
-  simpleHandler: {fileID: 0}
+  simpleHandler: {fileID: 1551656171}
   maxCollisionsPerFrame: 30
   enableCollisionCaching: 0
   cacheValidityTime: 0.016
   minCollisionInterval: 0.05
-  maxAcceptablePenetration: 5
-  minPenetrationDepth: 0.02
-  ignoreExtremeCollisions: 1
   showBroadPhaseDebug: 0
   showNarrowPhaseDebug: 0
   logCollisionStats: 0
@@ -917,6 +914,8 @@ MonoBehaviour:
   minPenetrationDepth: 0.01
   maxPenetrationDepth: 1
   maxCollisionForce: 5000
+  positionCorrectionFactor: 0.8
+  positionCorrectionThreshold: 0.01
   showDebug: 1
   debugDuration: 0.1
 --- !u!4 &1551656172

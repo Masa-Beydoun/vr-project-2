@@ -4,32 +4,37 @@ using System.Collections.Generic;
 public class SimpleCollisionHandler : MonoBehaviour
 {
     [Header("Force-Based Collision Settings")]
-    [Range(100f, 50000f)]
-    public float collisionForceStrength = 10000f; // Increased for better response
+    [Range(100f, 10000f)]
+    public float collisionForceStrength = 2000f; // Reduced from 10000f
 
-    [Range(100f, 50000f)]
-    public float separationForceStrength = 8000f; // Increased for better separation
-
-    [Range(0f, 1f)]
-    public float restitution = 0.6f; // Bounciness
+    [Range(100f, 10000f)]
+    public float separationForceStrength = 3000f; // Reduced from 8000f
 
     [Range(0f, 1f)]
-    public float friction = 0.3f; // Surface friction
+    public float restitution = 0.4f; // Reduced from 0.6f
+
+    [Range(0f, 1f)]
+    public float friction = 0.2f; // Reduced from 0.3f
 
     [Header("Force Scaling")]
-    [Range(0.1f, 10f)]
-    public float forceMultiplier = 3f; // Increased overall force scaling
+    [Range(0.1f, 5f)]
+    public float forceMultiplier = 1f; // Reduced from 3f
 
     [Range(0.01f, 1f)]
-    public float velocityDamping = 0.9f; // Velocity damping on collision
+    public float velocityDamping = 0.8f; // Reduced from 0.9f
 
     [Header("Safety Limits")]
-    public float minPenetrationDepth = 0.001f; // Reduced for better sensitivity
-    public float maxPenetrationDepth = 2.0f;
-    public float maxCollisionForce = 15000f; // Increased limit
+    public float minPenetrationDepth = 0.001f;
+    public float maxPenetrationDepth = 0.5f; // Reduced from 2.0f
+    public float maxCollisionForce = 5000f; // Reduced from 15000f
+
+    [Header("Position Correction")]
+    [Range(0f, 1f)]
+    public float positionCorrectionFactor = 0.8f; // NEW: Direct position correction
+    public float positionCorrectionThreshold = 0.01f; // NEW: Minimum penetration for correction
 
     [Header("Debug")]
-    public bool showDebug = true;
+    public bool showDebug = false; // Turn off by default
     public float debugDuration = 0.2f;
 
     public void HandleSpringMassCollision(CollisionResultEnhanced collision)
@@ -37,7 +42,6 @@ public class SimpleCollisionHandler : MonoBehaviour
         // Validate collision
         if (!IsValidCollision(collision))
         {
-            Debug.Log("Invalid collision detected");
             return;
         }
 
@@ -51,13 +55,18 @@ public class SimpleCollisionHandler : MonoBehaviour
         // Skip if both are static
         if (isAStatic && isBStatic)
         {
-            Debug.Log("Both points are static, skipping collision");
             return;
         }
 
-        Debug.Log($"Collision detected: penetration={collision.penetrationDepth}, normal={collision.normal}");
+        if (showDebug)
+        {
+            Debug.Log($"Collision detected: penetration={collision.penetrationDepth}, normal={collision.normal}");
+        }
 
-        // Calculate collision forces
+        // Apply position correction first (immediate separation)
+        ApplyPositionCorrection(pointA, pointB, collision.normal, collision.penetrationDepth, isAStatic, isBStatic);
+
+        // Calculate collision forces (reduced intensity)
         ApplyCollisionForces(pointA, pointB, collision.normal, collision.penetrationDepth, isAStatic, isBStatic);
 
         // Apply velocity damping
@@ -74,22 +83,22 @@ public class SimpleCollisionHandler : MonoBehaviour
     {
         if (collision.pointA == null || collision.pointB == null)
         {
-            Debug.Log("Null points in collision");
             return false;
         }
         if (!collision.collided)
         {
-            Debug.Log("Collision flag is false");
             return false;
         }
         if (collision.penetrationDepth < minPenetrationDepth)
         {
-            Debug.Log($"Penetration too small: {collision.penetrationDepth} < {minPenetrationDepth}");
             return false;
         }
         if (collision.penetrationDepth > maxPenetrationDepth)
         {
-            Debug.Log($"Penetration too large: {collision.penetrationDepth} > {maxPenetrationDepth}");
+            if (showDebug)
+            {
+                Debug.LogWarning($"Penetration too large: {collision.penetrationDepth} > {maxPenetrationDepth}");
+            }
             return false;
         }
         return true;
@@ -105,6 +114,43 @@ public class SimpleCollisionHandler : MonoBehaviour
         return name.Contains("ground") || name.Contains("floor") || name.Contains("static");
     }
 
+    // NEW: Direct position correction for immediate separation
+    private void ApplyPositionCorrection(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration, bool isAStatic, bool isBStatic)
+    {
+        if (penetration < positionCorrectionThreshold) return;
+
+        // Calculate correction based on mass ratio
+        float totalMass = (isAStatic ? 0f : pointA.mass) + (isBStatic ? 0f : pointB.mass);
+        if (totalMass == 0) return;
+
+        float correctionAmount = penetration * positionCorrectionFactor;
+        Vector3 correctionVector = normal * correctionAmount;
+
+        if (!pointA.isPinned && !isAStatic)
+        {
+            float massRatioA = isBStatic ? 1f : pointB.mass / totalMass;
+            Vector3 correctionA = correctionVector * massRatioA;
+            pointA.position += correctionA;
+
+            if (showDebug)
+            {
+                Debug.Log($"Position correction A: {correctionA}");
+            }
+        }
+
+        if (!pointB.isPinned && !isBStatic)
+        {
+            float massRatioB = isAStatic ? 1f : pointA.mass / totalMass;
+            Vector3 correctionB = -correctionVector * massRatioB;
+            pointB.position += correctionB;
+
+            if (showDebug)
+            {
+                Debug.Log($"Position correction B: {correctionB}");
+            }
+        }
+    }
+
     private void ApplyCollisionForces(MassPoint pointA, MassPoint pointB, Vector3 normal, float penetration, bool isAStatic, bool isBStatic)
     {
         // Calculate effective masses
@@ -115,27 +161,36 @@ public class SimpleCollisionHandler : MonoBehaviour
         Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
         float velocityAlongNormal = Vector3.Dot(relativeVelocity, normal);
 
-        Debug.Log($"Relative velocity: {relativeVelocity.magnitude}, along normal: {velocityAlongNormal}");
+        if (showDebug)
+        {
+            Debug.Log($"Relative velocity: {relativeVelocity.magnitude}, along normal: {velocityAlongNormal}");
+        }
 
-        // 1. Separation force (based on penetration depth) - ALWAYS apply this
+        // 1. Separation force (gentler, based on penetration depth)
         float separationForceMagnitude = separationForceStrength * penetration * forceMultiplier;
-        separationForceMagnitude = Mathf.Min(separationForceMagnitude, maxCollisionForce);
+        separationForceMagnitude = Mathf.Min(separationForceMagnitude, maxCollisionForce * 0.5f); // Limit to half max force
 
         Vector3 separationForce = normal * separationForceMagnitude;
 
-        Debug.Log($"Separation force magnitude: {separationForceMagnitude}");
+        if (showDebug)
+        {
+            Debug.Log($"Separation force magnitude: {separationForceMagnitude}");
+        }
 
-        // 2. Collision response force (based on relative velocity)
+        // 2. Collision response force (only if objects are moving toward each other)
         float collisionForceMagnitude = 0f;
-        if (velocityAlongNormal < -0.01f) // Objects moving towards each other (with small threshold)
+        if (velocityAlongNormal < -0.1f) // Increased threshold to prevent micro-collisions
         {
             collisionForceMagnitude = -velocityAlongNormal * collisionForceStrength * forceMultiplier;
-            collisionForceMagnitude = Mathf.Min(collisionForceMagnitude, maxCollisionForce);
+            collisionForceMagnitude = Mathf.Min(collisionForceMagnitude, maxCollisionForce * 0.5f);
         }
 
         Vector3 collisionForce = normal * collisionForceMagnitude;
 
-        Debug.Log($"Collision force magnitude: {collisionForceMagnitude}");
+        if (showDebug)
+        {
+            Debug.Log($"Collision force magnitude: {collisionForceMagnitude}");
+        }
 
         // 3. Calculate mass-based force distribution
         float totalInvMass = (isAStatic ? 0f : 1f / massA) + (isBStatic ? 0f : 1f / massB);
@@ -144,71 +199,94 @@ public class SimpleCollisionHandler : MonoBehaviour
         float forceRatioA = isBStatic ? 1f : (1f / massA) / totalInvMass;
         float forceRatioB = isAStatic ? 1f : (1f / massB) / totalInvMass;
 
-        // 4. Apply forces
+        // 4. Apply forces with improved scaling
         Vector3 totalForce = separationForce + collisionForce * (1f + restitution);
 
-        Debug.Log($"Total force magnitude: {totalForce.magnitude}");
+        // Scale by time step to make forces frame-rate independent
+        float timeScale = Time.fixedDeltaTime / 0.02f; // Normalize to 50Hz
+        totalForce *= timeScale;
 
+        if (showDebug)
+        {
+            Debug.Log($"Total force magnitude: {totalForce.magnitude}");
+        }
+
+        // Apply forces with safety check
         if (!pointA.isPinned && !isAStatic)
         {
             Vector3 forceA = totalForce * forceRatioA;
+
+            // Safety check for excessive force
+            if (forceA.magnitude > maxCollisionForce)
+            {
+                forceA = forceA.normalized * maxCollisionForce;
+                if (showDebug)
+                {
+                    Debug.LogWarning($"Clamped force A to {maxCollisionForce}");
+                }
+            }
+
             pointA.ApplyForce(forceA);
 
-            Debug.Log($"Applied force to A: {forceA}");
+            if (showDebug)
+            {
+                Debug.Log($"Applied force to A: {forceA}");
+            }
 
-            // Apply friction force (tangential) - FIXED VERSION
+            // Apply friction force (tangential) - improved version
             if (friction > 0)
             {
-                Vector3 tangentialVelocity = relativeVelocity - Vector3.Project(relativeVelocity, normal);
-
-                // Only apply friction if there's tangential movement
-                if (tangentialVelocity.magnitude > 0.01f)
-                {
-                    Vector3 frictionDirection = -tangentialVelocity.normalized;
-                    float frictionMagnitude = friction * separationForceMagnitude * 0.5f;
-                    Vector3 frictionForce = frictionDirection * frictionMagnitude;
-
-                    pointA.ApplyForce(frictionForce);
-                    Debug.Log($"Applied friction to A: {frictionForce} (magnitude: {frictionMagnitude})");
-                }
-                else
-                {
-                    Debug.Log("No tangential velocity for friction on A");
-                }
+                ApplyFrictionForce(pointA, relativeVelocity, normal, separationForceMagnitude, false);
             }
         }
 
         if (!pointB.isPinned && !isBStatic)
         {
             Vector3 forceB = -totalForce * forceRatioB;
+
+            // Safety check for excessive force
+            if (forceB.magnitude > maxCollisionForce)
+            {
+                forceB = forceB.normalized * maxCollisionForce;
+                if (showDebug)
+                {
+                    Debug.LogWarning($"Clamped force B to {maxCollisionForce}");
+                }
+            }
+
             pointB.ApplyForce(forceB);
 
-            Debug.Log($"Applied force to B: {forceB}");
+            if (showDebug)
+            {
+                Debug.Log($"Applied force to B: {forceB}");
+            }
 
-            // Apply friction force (tangential) - FIXED VERSION
+            // Apply friction force (tangential) - improved version
             if (friction > 0)
             {
-                Vector3 tangentialVelocity = relativeVelocity - Vector3.Project(relativeVelocity, normal);
-
-                // Only apply friction if there's tangential movement
-                if (tangentialVelocity.magnitude > 0.01f)
-                {
-                    Vector3 frictionDirection = tangentialVelocity.normalized;
-                    float frictionMagnitude = friction * separationForceMagnitude * 0.5f;
-                    Vector3 frictionForce = frictionDirection * frictionMagnitude;
-
-                    pointB.ApplyForce(frictionForce);
-                    Debug.Log($"Applied friction to B: {frictionForce} (magnitude: {frictionMagnitude})");
-                }
-                else
-                {
-                    Debug.Log("No tangential velocity for friction on B");
-                }
+                ApplyFrictionForce(pointB, -relativeVelocity, normal, separationForceMagnitude, true);
             }
         }
     }
 
+    private void ApplyFrictionForce(MassPoint point, Vector3 relativeVelocity, Vector3 normal, float normalForce, bool isPointB)
+    {
+        Vector3 tangentialVelocity = relativeVelocity - Vector3.Project(relativeVelocity, normal);
 
+        if (tangentialVelocity.magnitude > 0.01f)
+        {
+            Vector3 frictionDirection = -tangentialVelocity.normalized;
+            float frictionMagnitude = friction * normalForce * 0.3f; // Reduced friction multiplier
+            Vector3 frictionForce = frictionDirection * frictionMagnitude;
+
+            point.ApplyForce(frictionForce);
+
+            if (showDebug)
+            {
+                Debug.Log($"Applied friction to {(isPointB ? "B" : "A")}: {frictionForce} (magnitude: {frictionMagnitude})");
+            }
+        }
+    }
 
     private void ApplyVelocityDamping(MassPoint pointA, MassPoint pointB, Vector3 normal, bool isAStatic, bool isBStatic)
     {
@@ -217,14 +295,22 @@ public class SimpleCollisionHandler : MonoBehaviour
         {
             Vector3 oldVelocity = pointA.velocity;
             pointA.velocity *= velocityDamping;
-            Debug.Log($"Damped velocity A: {oldVelocity} -> {pointA.velocity}");
+
+            if (showDebug)
+            {
+                Debug.Log($"Damped velocity A: {oldVelocity} -> {pointA.velocity}");
+            }
         }
 
         if (!pointB.isPinned && !isBStatic)
         {
             Vector3 oldVelocity = pointB.velocity;
             pointB.velocity *= velocityDamping;
-            Debug.Log($"Damped velocity B: {oldVelocity} -> {pointB.velocity}");
+
+            if (showDebug)
+            {
+                Debug.Log($"Damped velocity B: {oldVelocity} -> {pointB.velocity}");
+            }
         }
     }
 
