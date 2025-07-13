@@ -376,7 +376,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &674526944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,15 +392,18 @@ MonoBehaviour:
   globalRestitution: 0.5
   globalFriction: 0.4
   dampingFactor: 0.5
-  collisionResponseStrength: 0.3
-  separationBias: 0.03
+  collisionResponseStrength: 0.5
+  separationBias: 0.3
   usePositionCorrection: 1
-  useVelocityCorrection: 1
+  useVelocityCorrection: 0
   showCollisionDebug: 1
   debugLineDuration: 0.1
-  maxCollisionForce: 30
+  maxCollisionForce: 100
   minPenetrationForResponse: 0.01
-  velocityThreshold: 0.1
+  maxPenetrationDepth: 5
+  staticObjectMass: 1000
+  emergencyPenetrationThreshold: 0.05
+  emergencyForceMultiplier: 10
 --- !u!4 &674526945
 Transform:
   m_ObjectHideFlags: 0
@@ -628,7 +631,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1432361990
 Transform:
   m_ObjectHideFlags: 0
@@ -651,7 +654,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1432361989}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a44af1fa2004704d8af5c067d74e611, type: 3}
   m_Name: 
@@ -664,7 +667,9 @@ MonoBehaviour:
   enableCollisionCaching: 0
   cacheValidityTime: 0.016
   minCollisionInterval: 0.05
+  maxAcceptablePenetration: 5
   minPenetrationDepth: 0.02
+  ignoreExtremeCollisions: 1
   showBroadPhaseDebug: 0
   showNarrowPhaseDebug: 0
   logCollisionStats: 0
@@ -734,7 +739,7 @@ MonoBehaviour:
   boundingShapeType: 0
   meshSourceObject: {fileID: 0}
   useCustomSpringProperties: 1
-  mass: 10000
+  mass: 1000
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   initialVelocity: {x: 0, y: 0, z: 0}
@@ -879,7 +884,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1715684846
 Transform:
   m_ObjectHideFlags: 0
@@ -910,7 +915,7 @@ MonoBehaviour:
   isCreated: 0
   previousIsCreated: 0
   connectionRadius: 0
-  resolution: 5
+  resolution: 40
   springStiffness: 500
   springDamping: 2
   massShapeType: 0
@@ -988,8 +993,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 551809566b9096d4989dbf376d60b5af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityStrength: 5
-  airTemperature: 20
+  gravityStrength: 0
+  airTemperature: 0
   airPressure: 101325
   gasConstant: 287.05
 --- !u!4 &1896529661
@@ -1025,7 +1030,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8988c881874f4cb4db33f58b6a8e7416, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1224,7 +1229,7 @@ MonoBehaviour:
   boundingShapeType: 0
   meshSourceObject: {fileID: 1298921294}
   useCustomSpringProperties: 1
-  mass: 100
+  mass: 1000
   velocity: {x: 0, y: 0, z: 0}
   forceAccumulator: {x: 0, y: 0, z: 0}
   initialVelocity: {x: 0, y: 0, z: 0}
@@ -1239,7 +1244,7 @@ MonoBehaviour:
   customFractureThreshold: 10000
   customDamping: 0.1
   shapeType: 1
-  _isStatic: 1
+  _isStatic: 0
 --- !u!114 &2094849919
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,8 +10,8 @@ public class MassPoint
     public Vector3 velocity;
     public float mass;
     public bool isPinned;
+    public Vector3 forceAccumulator = Vector3.zero; // NEW
 
-    public Vector3 acceleration; // Added acceleration storage
     public PhysicalObject physicalObject;
     public float signedDistance;
     public string sourceName;
@@ -22,53 +22,40 @@ public class MassPoint
         this.id = globalIDCounter++;
         this.position = position;
         this.velocity = Vector3.zero;
-        this.acceleration = Vector3.zero; // Initialize acceleration
         this.physicalObject = physicalObject;
         this.sourceName = name;
     }
 
-    public void ApplyForce(Vector3 force, float deltaTime)
+    public void ApplyForce(Vector3 force)
     {
         if (isPinned) return;
-        if (mass <= 0f)
-        {
-            Debug.LogError($"MassPoint {id} has zero or negative mass! Force = {force}");
-            return;
-        }
+
         if (force.magnitude > 1000f)
         {
             Debug.LogWarning($"Excessive force detected: {force.magnitude}");
             force = force.normalized * 1000f;
         }
 
-
-        // F = m * a => a = F / m
-        Vector3 newAcceleration = force / mass;
-        acceleration += newAcceleration; // Accumulate acceleration (forces can come multiple times per step)
+        forceAccumulator += force; // accumulate forces, not acceleration
     }
+
 
     public void Integrate(float deltaTime)
     {
         if (isPinned)
         {
-            // Clamp velocity to prevent explosion
-            if (velocity.magnitude > 50f)
-            {
-                velocity = velocity.normalized * 50f;
-            }
-
-            // Keep pinned points fixed: zero velocity and acceleration
             velocity = Vector3.zero;
-            acceleration = Vector3.zero;
+            forceAccumulator = Vector3.zero;
             return;
         }
+        if (mass <= 0) return;
 
-        // Semi-implicit Euler integration:
+        Vector3 acceleration = forceAccumulator / mass;
         velocity += acceleration * deltaTime;
         position += velocity * deltaTime;
 
-        // Clear acceleration after integration for next frame
         acceleration = Vector3.zero;
+        forceAccumulator = Vector3.zero;
     }
 
     public override bool Equals(object obj)
@@ -82,4 +69,7 @@ public class MassPoint
     {
         return position.GetHashCode();
     }
+    
+
+
 }

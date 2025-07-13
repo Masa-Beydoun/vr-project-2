@@ -15,10 +15,11 @@ public class MassPointController : MonoBehaviour
     {
         if (point == null) return;
 
-        isPinned = point.isPinned; // display current state (don't set it!)
-
+        //isPinned = point.isPinned; // display current state (don't set it!)
+        point.isPinned = isPinned;
         if (point.isPinned)
         {
+            Debug.Log($"[Pinned] Point ID: {point.id}, Position: {transform.position}");
             point.position = transform.position;
             point.velocity = Vector3.zero;
         }
@@ -27,4 +28,5 @@ public class MassPointController : MonoBehaviour
             transform.position = point.position;
         }
     }
+
 }

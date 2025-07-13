@@ -37,11 +37,10 @@ public static class VoxelFiller
 
                         GameObject go = Object.Instantiate(pointPrefab, p, Quaternion.identity, parent);
                         go.transform.localScale = Vector3.one * voxelSize;
+                        go.name = $"Point_{uniquePoints.Count}";
 
                         var po = go.GetComponent<PhysicalObject>() ?? go.AddComponent<PhysicalObject>();
                         var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
-                        //go.AddComponent<CollisionBody>();
-
 
                         MassPoint mp = new MassPoint(p, po, parent.name);
                         controller.Initialize(mp);

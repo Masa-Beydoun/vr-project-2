@@ -11,7 +11,7 @@ public class Spring
     public LineRenderer lineRenderer;
     private float currentForceMagnitude = 0f;
     private static float observedMaxForce = 1f;
-    public string objectName="spring";
+    public string objectName = "spring";
 
     [HideInInspector] public float springStiffness;
     [HideInInspector] public float springDamping;
@@ -35,7 +35,7 @@ public class Spring
         lineRenderer.useWorldSpace = true;
     }
 
-    public void ApplyForce(float deltaTime)
+    public void ComputeForces()
     {
         if (broken) return;
 
@@ -60,8 +60,8 @@ public class Spring
 
         Vector3 totalForce = springForce + dampingForce;
 
-        pointA.ApplyForce(totalForce, deltaTime);
-        pointB.ApplyForce(-totalForce, deltaTime);
+        pointA.ApplyForce(totalForce);
+        pointB.ApplyForce(-totalForce);
 
         currentForceMagnitude = springForce.magnitude;
         if (currentForceMagnitude > observedMaxForce)
@@ -70,8 +70,6 @@ public class Spring
 
     public void UpdateLine()
     {
-        //Debug.Log("Updating line between: " + pointA.position + " and " + pointB.position);
-
         if (broken)
         {
             lineRenderer.material.color = Color.black;
@@ -87,9 +85,6 @@ public class Spring
         lineRenderer.SetPosition(0, pointA.position);
         lineRenderer.SetPosition(1, pointB.position);
 
-        // Just for testing
         Debug.DrawLine(pointA.position, pointB.position, Color.red, 2f);
-
     }
-
 }

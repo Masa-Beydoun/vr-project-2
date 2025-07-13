@@ -145,7 +145,6 @@ public class SpringMassSystem : MonoBehaviour
     }
     private void ApplyFillStrategy(HashSet<MassPoint> uniquePoints)
     {
-        Debug.Log("filling");
         switch (generationMode)
         {
             case MeshPointGenerationMode.FillUsingBounds:
@@ -259,19 +258,19 @@ public class SpringMassSystem : MonoBehaviour
                 s.UpdateLine();
             return;
         }
-
+      
         float dt = Time.fixedDeltaTime;
         Vector3 gravity = SimulationEnvironment.Instance.GetGravity();
 
         // Apply gravity to all mass points
         foreach (var p in allPoints)
         {
-            p.ApplyForce(gravity * p.mass, dt);
+            p.ApplyForce(gravity * p.mass);
         }
 
         // Apply spring forces
         foreach (var s in springs)
-            s.ApplyForce(dt);
+            s.ComputeForces();
 
         // Integrate all mass points
         foreach (var p in allPoints)
@@ -283,14 +282,13 @@ public class SpringMassSystem : MonoBehaviour
         CalculateCenterOfMass();
         Vector3 centerOfMassMovement = centerOfMass - previousCenterOfMass;
 
-
         foreach (var p in allPoints)
         {
             if (p.physicalObject != null && !p.physicalObject.isStatic)
             {
                 // Don't update the main object's position here - it's handled above
                 var controller = p.physicalObject.GetComponent<MassPointController>();
-                if (controller != null)
+                if (controller != null && !controller.isPinned)
                 {
                     controller.transform.position = p.position;
                 }
@@ -601,10 +599,10 @@ public class SpringMassSystem : MonoBehaviour
                 go.name = $"MeshPoint_{uniquePoints.Count}";
 
                 var controller = go.GetComponent<MassPointController>() ?? go.AddComponent<MassPointController>();
+
                 string source = gameObject.name;
                 MassPoint mp = new MassPoint(worldPos, physicalObject, source);
                 controller.Initialize(mp);
-
                 uniquePoints.Add(mp);
             }
         }
